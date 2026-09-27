@@ -1,0 +1,51 @@
+schema_version: 1
+circuit_id: circuit_0469
+analoggenie_folder_id: 605
+simulation_stage: gf180mcu_mos
+pdk:
+  name: GF180MCU
+  corner: typical
+  voltage_class: 3p3
+  statistical: false
+migration_scope:
+  mos: GF180 nfet_03v3/pfet_03v3
+  resistor: ideal_retained
+  capacitor: ideal_retained
+  bjt_diode_inductor: ideal_retained
+initial_source: simulation/parameter/ideal_param.yaml
+initial_operating_parameters:
+  VDD: 3.3
+  IB1: -0.0001
+  VSS: 0.0
+final_operating_parameters:
+  VDD: 3.3
+  IB1: -0.0001
+  VSS: 0.0
+device_parameters:
+  BJT:
+    Q0:
+      model: NPN_IDEAL
+      area: 1.0
+      retained_ideal: true
+    Q1:
+      model: NPN_IDEAL
+      area: 1.0
+      retained_ideal: true
+  R:
+    R1:
+      model: ideal_resistor
+      R_ohm: 10000.0
+    R0:
+      model: ideal_resistor
+      R_ohm: 10000.0
+search:
+  attempt_count: 0
+  initial_values_retained: true
+  changed_parameters: []
+  objective: first functional PASS; no performance optimization
+functional_validation:
+  overall_status: PASS
+  remaining_issue: null
+  no_applicable_device_for_stage: true
+  topology_limitation: false
+  pdk_eligibility: ELIGIBLE

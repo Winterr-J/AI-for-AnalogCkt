@@ -1,0 +1,20 @@
+target_specs:
+  current_error:
+    operator: "<="
+    value: 0.04  # REQUIRED: configure the formal research target before running.
+  output_resistance:
+    operator: ">="
+    value: 26000000   # REQUIRED: configure the formal research target before running.
+
+active_learning:
+  max_iterations: 5
+  beta: 0.7
+  context_k: 5
+  retrieval_k: 3
+  committee_size: 5
+
+data:
+  d0_path: d0/d0_v3_seed42.jsonl
+
+output:
+  output_dir: active_learning_output

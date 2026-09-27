@@ -1,0 +1,98 @@
+schema_version: 2
+circuit_id: circuit_0469
+circuit_type: "current mirrors"
+scope: device_parameters_only
+data_type_vocabulary:
+  - continuous
+  - categorial
+device_parameters:
+  Q0:
+    device_type: npn
+    source_device_type: npn
+    tunable_parameters:
+      Q0_model:
+        parameter_category: model
+        data_type: categorial
+        optimizable: true
+        unit: unitless
+      m:
+        parameter_category: physical
+        data_type: continuous
+        optimizable: true
+        unit: unitless
+        integer_only: true
+  Q1:
+    device_type: npn
+    source_device_type: npn
+    tunable_parameters:
+      Q1_model:
+        parameter_category: model
+        data_type: categorial
+        optimizable: true
+        unit: unitless
+      m:
+        parameter_category: physical
+        data_type: continuous
+        optimizable: true
+        unit: unitless
+        integer_only: true
+  R1:
+    device_type: resistor
+    source_device_type: resistor
+    tunable_parameters:
+      R1_model:
+        parameter_category: model
+        data_type: categorial
+        optimizable: true
+        unit: unitless
+      R:
+        parameter_category: electrical
+        data_type: continuous
+        optimizable: true
+        unit: Ohm
+      W:
+        parameter_category: physical
+        data_type: continuous
+        optimizable: true
+        unit: um
+      L:
+        parameter_category: physical
+        data_type: continuous
+        optimizable: true
+        unit: um
+      m:
+        parameter_category: physical
+        data_type: continuous
+        optimizable: true
+        unit: unitless
+        integer_only: true
+  R0:
+    device_type: resistor
+    source_device_type: resistor
+    tunable_parameters:
+      R0_model:
+        parameter_category: model
+        data_type: categorial
+        optimizable: true
+        unit: unitless
+      R:
+        parameter_category: electrical
+        data_type: continuous
+        optimizable: true
+        unit: Ohm
+      W:
+        parameter_category: physical
+        data_type: continuous
+        optimizable: true
+        unit: um
+      L:
+        parameter_category: physical
+        data_type: continuous
+        optimizable: true
+        unit: um
+      m:
+        parameter_category: physical
+        data_type: continuous
+        optimizable: true
+        unit: unitless
+        integer_only: true

@@ -1,0 +1,470 @@
+schema_version: parameter_template_v1
+circuit:
+  circuit_id: circuit_0469
+  circuit_type: CurrentMirror
+  circuit_subtype: emitter_degenerated_bjt_current_mirror
+  simulation_environment: ideal
+parameters:
+  - name: IB1
+    parameter_id: IB1
+    declared_name: IB1
+    semantic_category: bias_parameter
+    physical_role: reference_current
+    source_kind: source_interface
+    device_instance: IB1
+    topology_element: IIB1
+    device_type: current_source
+    parameter_kind: current
+    validity_status: VALID
+    binding_status: BOUND
+    optimization_eligible: true
+    nominal_value: -0.0001
+    unit: A
+    variable_type: continuous
+    admissible_range:
+      lower: -0.01
+      upper: -0.000001
+      scale: log-magnitude
+      transform: log_magnitude
+      fixed_sign: negative
+    discrete_options: []
+    range_status: VALID
+    range_source: IDEAL_BIAS_CURRENT_MAGNITUDE_RANGE_V1
+    notes: >-
+      Frozen Stage A classifies IB1 as an internal bias/reference current and
+      makes it optimization-eligible. The signed SPICE value is negative for
+      injection from VSS into node IB1; magnitude is 100 uA at the working point.
+  - name: IOUT1
+    parameter_id: IOUT1
+    declared_name: IOUT1
+    semantic_category: operating_condition
+    physical_role: output_compliance
+    source_kind: source_interface
+    device_instance: VIOUT1
+    topology_element: VIOUT1
+    device_type: voltage_source
+    parameter_kind: voltage
+    validity_status: VALID
+    binding_status: BOUND
+    optimization_eligible: false
+    nominal_value: 1.65
+    unit: V
+    variable_type: fixed
+    admissible_range:
+      lower: null
+      upper: null
+      scale: null
+      transform: null
+      fixed_sign: null
+    discrete_options: []
+    range_status: NOT_APPLICABLE
+    range_source: null
+    notes: >-
+      Gold Set and frozen Stage A classify IOUT1 as external output-compliance,
+      not a design variable. It is explicitly excluded from X.
+  - name: NPN_MODEL
+    parameter_id: NPN_MODEL
+    declared_name: NPN_MODEL
+    semantic_category: constraint_or_process
+    physical_role: shared_bjt_model_family
+    source_kind: model
+    device_instance: null
+    topology_element: null
+    device_type: null
+    parameter_kind: model_family
+    validity_status: VALID
+    binding_status: BOUND
+    optimization_eligible: false
+    nominal_value: NPN_IDEAL
+    unit: unitless
+    variable_type: categorical
+    admissible_range:
+      lower: null
+      upper: null
+      scale: null
+      transform: null
+      fixed_sign: null
+    discrete_options: [NPN_IDEAL]
+    range_status: NOT_APPLICABLE
+    range_source: null
+    notes: Fixed ideal Gummel-Poon NPN model shared by Q0 and Q1.
+  - name: Q0.area
+    parameter_id: Q0.area
+    declared_name: null
+    semantic_category: device_parameter
+    physical_role: output_transistor_area_scale
+    source_kind: device_instance
+    device_instance: Q0
+    topology_element: Q0
+    device_type: bjt_npn
+    parameter_kind: area
+    validity_status: VALID
+    binding_status: DECLARED_UNBOUND
+    optimization_eligible: false
+    nominal_value: 1.0
+    unit: ratio
+    variable_type: continuous
+    admissible_range:
+      lower: null
+      upper: null
+      scale: null
+      transform: null
+      fixed_sign: null
+    discrete_options: []
+    range_status: NOT_APPLICABLE
+    range_source: null
+    notes: >-
+      The ideal working-point file records area=1.0, but the trusted topology
+      does not expose area as a build_circuit argument; Stage A therefore keeps
+      the canonical target declared-unbound and ineligible.
+  - name: Q0.m
+    parameter_id: Q0.m
+    declared_name: null
+    semantic_category: device_parameter
+    physical_role: output_transistor_multiplicity
+    source_kind: device_instance
+    device_instance: Q0
+    topology_element: Q0
+    device_type: bjt_npn
+    parameter_kind: multiplicity
+    validity_status: VALID
+    binding_status: DECLARED_UNBOUND
+    optimization_eligible: false
+    nominal_value: 1
+    unit: count
+    variable_type: integer
+    admissible_range:
+      lower: null
+      upper: null
+      scale: null
+      transform: null
+      fixed_sign: null
+    discrete_options: []
+    range_status: NOT_APPLICABLE
+    range_source: null
+    notes: >-
+      The ideal working-point file records m=1, but multiplicity is omitted
+      from the trusted topology interface and is not an optimizer dimension.
+  - name: Q1.area
+    parameter_id: Q1.area
+    declared_name: null
+    semantic_category: device_parameter
+    physical_role: reference_transistor_area_scale
+    source_kind: device_instance
+    device_instance: Q1
+    topology_element: Q1
+    device_type: bjt_npn
+    parameter_kind: area
+    validity_status: VALID
+    binding_status: DECLARED_UNBOUND
+    optimization_eligible: false
+    nominal_value: 1.0
+    unit: ratio
+    variable_type: continuous
+    admissible_range:
+      lower: null
+      upper: null
+      scale: null
+      transform: null
+      fixed_sign: null
+    discrete_options: []
+    range_status: NOT_APPLICABLE
+    range_source: null
+    notes: >-
+      The ideal working-point file records area=1.0, but the trusted topology
+      does not expose area as a build_circuit argument; Stage A therefore keeps
+      the canonical target declared-unbound and ineligible.
+  - name: Q1.m
+    parameter_id: Q1.m
+    declared_name: null
+    semantic_category: device_parameter
+    physical_role: reference_transistor_multiplicity
+    source_kind: device_instance
+    device_instance: Q1
+    topology_element: Q1
+    device_type: bjt_npn
+    parameter_kind: multiplicity
+    validity_status: VALID
+    binding_status: DECLARED_UNBOUND
+    optimization_eligible: false
+    nominal_value: 1
+    unit: count
+    variable_type: integer
+    admissible_range:
+      lower: null
+      upper: null
+      scale: null
+      transform: null
+      fixed_sign: null
+    discrete_options: []
+    range_status: NOT_APPLICABLE
+    range_source: null
+    notes: >-
+      The ideal working-point file records m=1, but multiplicity is omitted
+      from the trusted topology interface and is not an optimizer dimension.
+  - name: R0.L
+    parameter_id: R0.L
+    declared_name: null
+    semantic_category: device_parameter
+    physical_role: reference_branch_resistor_length
+    source_kind: device_instance
+    device_instance: R0
+    topology_element: R0
+    device_type: resistor
+    parameter_kind: length
+    validity_status: VALID
+    binding_status: DECLARED_UNBOUND
+    optimization_eligible: false
+    nominal_value: null
+    unit: m
+    variable_type: continuous
+    admissible_range:
+      lower: null
+      upper: null
+      scale: null
+      transform: null
+      fixed_sign: null
+    discrete_options: []
+    range_status: NOT_APPLICABLE
+    range_source: null
+    notes: Geometry is not exposed by the trusted ideal topology.
+  - name: R0.W
+    parameter_id: R0.W
+    declared_name: null
+    semantic_category: device_parameter
+    physical_role: reference_branch_resistor_width
+    source_kind: device_instance
+    device_instance: R0
+    topology_element: R0
+    device_type: resistor
+    parameter_kind: width
+    validity_status: VALID
+    binding_status: DECLARED_UNBOUND
+    optimization_eligible: false
+    nominal_value: null
+    unit: m
+    variable_type: continuous
+    admissible_range:
+      lower: null
+      upper: null
+      scale: null
+      transform: null
+      fixed_sign: null
+    discrete_options: []
+    range_status: NOT_APPLICABLE
+    range_source: null
+    notes: Geometry is not exposed by the trusted ideal topology.
+  - name: R0.m
+    parameter_id: R0.m
+    declared_name: null
+    semantic_category: device_parameter
+    physical_role: reference_branch_resistor_multiplicity
+    source_kind: device_instance
+    device_instance: R0
+    topology_element: R0
+    device_type: resistor
+    parameter_kind: multiplicity
+    validity_status: VALID
+    binding_status: DECLARED_UNBOUND
+    optimization_eligible: false
+    nominal_value: null
+    unit: count
+    variable_type: integer
+    admissible_range:
+      lower: null
+      upper: null
+      scale: null
+      transform: null
+      fixed_sign: null
+    discrete_options: []
+    range_status: NOT_APPLICABLE
+    range_source: null
+    notes: Multiplicity is not exposed by the trusted ideal topology.
+  - name: R0
+    parameter_id: R0.resistance
+    declared_name: R0
+    semantic_category: device_parameter
+    physical_role: reference_branch_emitter_degeneration
+    source_kind: device_instance
+    device_instance: R0
+    topology_element: R0
+    device_type: resistor
+    parameter_kind: resistance
+    validity_status: VALID
+    binding_status: BOUND
+    optimization_eligible: true
+    nominal_value: 10000.0
+    unit: ohm
+    variable_type: continuous
+    admissible_range:
+      lower: 100.0
+      upper: 1000000.0
+      scale: log
+      transform: null
+      fixed_sign: null
+    discrete_options: []
+    range_status: VALID
+    range_source: IDEAL_PASSIVE_NOMINAL_WINDOW_V1
+    notes: Independent emitter-degeneration resistance for the Q1 reference branch.
+  - name: R1.L
+    parameter_id: R1.L
+    declared_name: null
+    semantic_category: device_parameter
+    physical_role: output_branch_resistor_length
+    source_kind: device_instance
+    device_instance: R1
+    topology_element: R1
+    device_type: resistor
+    parameter_kind: length
+    validity_status: VALID
+    binding_status: DECLARED_UNBOUND
+    optimization_eligible: false
+    nominal_value: null
+    unit: m
+    variable_type: continuous
+    admissible_range:
+      lower: null
+      upper: null
+      scale: null
+      transform: null
+      fixed_sign: null
+    discrete_options: []
+    range_status: NOT_APPLICABLE
+    range_source: null
+    notes: Geometry is not exposed by the trusted ideal topology.
+  - name: R1.W
+    parameter_id: R1.W
+    declared_name: null
+    semantic_category: device_parameter
+    physical_role: output_branch_resistor_width
+    source_kind: device_instance
+    device_instance: R1
+    topology_element: R1
+    device_type: resistor
+    parameter_kind: width
+    validity_status: VALID
+    binding_status: DECLARED_UNBOUND
+    optimization_eligible: false
+    nominal_value: null
+    unit: m
+    variable_type: continuous
+    admissible_range:
+      lower: null
+      upper: null
+      scale: null
+      transform: null
+      fixed_sign: null
+    discrete_options: []
+    range_status: NOT_APPLICABLE
+    range_source: null
+    notes: Geometry is not exposed by the trusted ideal topology.
+  - name: R1.m
+    parameter_id: R1.m
+    declared_name: null
+    semantic_category: device_parameter
+    physical_role: output_branch_resistor_multiplicity
+    source_kind: device_instance
+    device_instance: R1
+    topology_element: R1
+    device_type: resistor
+    parameter_kind: multiplicity
+    validity_status: VALID
+    binding_status: DECLARED_UNBOUND
+    optimization_eligible: false
+    nominal_value: null
+    unit: count
+    variable_type: integer
+    admissible_range:
+      lower: null
+      upper: null
+      scale: null
+      transform: null
+      fixed_sign: null
+    discrete_options: []
+    range_status: NOT_APPLICABLE
+    range_source: null
+    notes: Multiplicity is not exposed by the trusted ideal topology.
+  - name: R1
+    parameter_id: R1.resistance
+    declared_name: R1
+    semantic_category: device_parameter
+    physical_role: output_branch_emitter_degeneration
+    source_kind: device_instance
+    device_instance: R1
+    topology_element: R1
+    device_type: resistor
+    parameter_kind: resistance
+    validity_status: VALID
+    binding_status: BOUND
+    optimization_eligible: true
+    nominal_value: 10000.0
+    unit: ohm
+    variable_type: continuous
+    admissible_range:
+      lower: 100.0
+      upper: 1000000.0
+      scale: log
+      transform: null
+      fixed_sign: null
+    discrete_options: []
+    range_status: VALID
+    range_source: IDEAL_PASSIVE_NOMINAL_WINDOW_V1
+    notes: Independent emitter-degeneration resistance for the Q0 output branch.
+bindings:
+  - binding_id: bind_IB1_identity
+    relation_type: identity
+    members: [IB1]
+    expression: "IB1 = X.IB1"
+    independent_variable: IB1
+    dependent_variables: []
+  - binding_id: bind_R0_identity
+    relation_type: identity
+    members: [R0.resistance]
+    expression: "R0.resistance = X.R0"
+    independent_variable: R0
+    dependent_variables: []
+  - binding_id: bind_R1_identity
+    relation_type: identity
+    members: [R1.resistance]
+    expression: "R1.resistance = X.R1"
+    independent_variable: R1
+    dependent_variables: []
+  - binding_id: bind_shared_npn_model
+    relation_type: shared_parameter
+    members: [Q0.model, Q1.model]
+    expression: "Q0.model = Q1.model = NPN_MODEL"
+    independent_variable: NPN_MODEL
+    dependent_variables: [Q0.model, Q1.model]
+relation_audit:
+  equality: []
+  shared_parameter: [bind_shared_npn_model]
+  ratio: []
+  topology_constraint: [constraint_IOUT1_not_in_X, constraint_fixed_ideal_npn_model]
+constraints:
+  - constraint_id: constraint_IOUT1_not_in_X
+    type: operating_condition_exclusion
+    expression: "IOUT1 not in optimization_space.variables"
+    source: frozen Stage A T2_OUTPUT_COMPLIANCE and Held-out Gold H3-O01
+    applies_to: [IOUT1]
+  - constraint_id: constraint_fixed_ideal_npn_model
+    type: fixed_process_constraint
+    expression: "NPN_MODEL = NPN_IDEAL"
+    source: simulation/parameter/ideal_param.yaml
+    applies_to: [NPN_MODEL, Q0, Q1]
+optimization_space:
+  variables: [IB1, R0, R1]
+  dimension_before_binding: 3
+  effective_dimension_after_binding: 3
+validation:
+  all_optimization_parameters_have_ranges: true
+  all_units_resolved: true
+  all_bindings_explicit: true
+  operating_conditions_excluded_from_X: true
+  unresolved_items: []
+provenance:
+  stage_a: param_extraction.stage_a frozen runtime pipeline
+  stage_b: param_extraction.stage_b IdealRangeProvider v1 frozen runtime pipeline
+  nominal_values:
+    - dataset/circuit_0469/simulation/parameter/ideal_param.yaml
+    - dataset/circuit_0469/simulation/results/ideal/op_results.yaml
+    - dataset/circuit_0469/topology/circuit_0469.py

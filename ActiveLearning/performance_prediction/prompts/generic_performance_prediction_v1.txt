@@ -1,0 +1,182 @@
+You are performing performance prediction for an analog circuit design task.
+
+Your task is Local Delta Performance Prediction: estimate the circuit
+performance of each NEW candidate parameter configuration from multiple
+nearby measured historical points.
+
+You are given:
+
+1. Circuit information
+   - circuit type / function
+   - operating environment
+   - fixed operating conditions
+
+2. Performance definitions
+   - the performance metrics that must be predicted
+   - their units and physical meanings
+
+3. Prediction cases
+   - each case contains one candidate parameter configuration
+   - each case also contains a small set of nearby historical examples
+     selected from previously measured circuit data
+
+The historical examples contain real measured or simulated circuit results
+and should be treated as local empirical evidence for prediction. They are
+not answers to retrieve or copy.
+
+Use both:
+- the local historical examples;
+- your analog-circuit reasoning
+
+to estimate the requested performance metrics.
+
+==================================================
+CIRCUIT INFORMATION
+==================================================
+
+{circuit_info}
+
+==================================================
+PERFORMANCE DEFINITIONS
+==================================================
+
+{performance_definitions}
+
+==================================================
+PREDICTION CASES
+==================================================
+
+{prediction_cases}
+
+==================================================
+PREDICTION TASK
+==================================================
+
+For each prediction case:
+
+1. Examine the candidate parameter configuration and confirm that it is a
+   new point whose own performance must be predicted.
+
+2. Compare the candidate parameters against every provided historical
+   neighbor using the supplied candidate-relative deltas and ratios.
+
+3. Examine how measured performance changes across all historical neighbors
+   as their parameters change.
+
+4. Infer a local parameter-to-performance trend, including nonlinear behavior
+   or parameter interactions supported by the evidence.
+
+5. Use that local trend and circuit reasoning to estimate every requested
+   performance metric for the candidate itself.
+
+6. Make a numerical prediction, not a qualitative explanation.
+
+The nearby historical examples should be treated as local empirical evidence,
+not as exact interpolation rules.
+
+Do not assume that performance varies linearly unless the provided data
+strongly supports that interpretation.
+
+Consider possible nonlinear relationships and interactions among parameters.
+
+Parameter-space proximity does not imply identical performance. If the
+candidate differs from every historical point, its prediction should generally
+reflect those parameter differences unless the evidence strongly supports
+negligible sensitivity.
+
+==================================================
+IMPORTANT RESTRICTIONS
+==================================================
+
+Do NOT run, request, imitate, or assume access to SPICE simulation.
+
+Do NOT claim that the predicted values were obtained from simulation.
+
+The values you provide are model predictions only.
+
+Do NOT modify the candidate parameters.
+
+Do NOT propose a new parameter configuration.
+
+Do NOT optimize the circuit in this step.
+
+Do NOT use target specifications to bias the prediction.
+
+Predict the circuit performance corresponding to the candidate exactly as given.
+
+Use only:
+- the provided candidate parameters;
+- the provided historical measured examples;
+- the provided circuit information;
+- the provided performance definitions;
+- your own circuit reasoning.
+
+Do not invent additional circuit parameters or operating conditions.
+
+Preserve the physical units and definitions of all requested performance metrics.
+
+==================================================
+HISTORICAL CONTEXT USAGE
+==================================================
+
+Each prediction case contains historical examples selected because they are
+close to the candidate in normalized parameter space.
+
+Use these examples to infer the local parameter-to-performance relationship.
+
+Use all retrieved neighbors as evidence. Do not select one neighbor and treat
+its measured metrics as the answer.
+
+Pay attention to:
+
+- which historical points are closest to the candidate;
+- how their parameter values differ from the candidate;
+- how their measured performance changes with those differences;
+- whether several historical examples show a consistent local trend.
+
+When historical neighbors show strong performance sensitivity to relatively
+small parameter changes, preserve that sensitivity in the candidate prediction.
+
+ANTI-COPY RULE:
+
+If the candidate parameter vector is not numerically identical to a retrieved
+historical point, do not return the complete metric vector of that historical
+point unchanged merely because it is the nearest neighbor. If an identical
+metric value is still predicted, it must result from inferred local behavior,
+not exemplar copying.
+
+==================================================
+OUTPUT FORMAT
+==================================================
+
+Return valid JSON only.
+
+Return exactly one prediction object for every prediction case.
+
+Use this structure:
+
+{
+  "predictions": [
+    {
+      "candidate_id": "<candidate_id>",
+      "predicted_metrics": {
+        "<metric_1>": <numeric_value>,
+        "<metric_2>": <numeric_value>
+      }
+    }
+  ]
+}
+
+Requirements:
+
+- Preserve candidate_id exactly.
+- Include every prediction case exactly once.
+- Predict every metric listed in performance_definitions.
+- Every predicted metric must be numeric.
+- Do not return reasoning.
+- Do not return explanations.
+- Do not return confidence scores.
+- Do not return uncertainty values.
+- Do not return target satisfaction judgments.
+- Do not include Markdown.
+- Output only the JSON object.

@@ -1,0 +1,129 @@
+==================================================
+CURRENT MIRROR PERFORMANCE PREDICTION GUIDANCE
+==================================================
+
+The circuit under evaluation is a Current Mirror.
+
+Its intended function is to reproduce a reference current at the output
+according to the mirror ratio while maintaining current-source behavior.
+
+Use the following circuit-specific definitions when predicting performance.
+
+==================================================
+1. CURRENT ERROR
+==================================================
+
+current_error is the relative mismatch between the magnitude of the measured
+output current and the expected mirrored reference current.
+
+For mirror ratio k:
+
+expected output current magnitude = k * |IREF|
+
+The metric is defined as:
+
+current_error =
+| |IOUT| - k * |IREF| |
+/
+(k * |IREF|)
+
+current_error is dimensionless.
+
+A smaller value represents better current matching.
+
+When predicting current_error:
+
+- use the nearby historical current_error measurements as the primary evidence;
+- examine how changes in the available candidate parameters correlate with
+  current-matching behavior;
+- preserve the metric as a non-negative numerical value.
+
+Do not invent IREF or IOUT measurements that were not provided.
+
+==================================================
+2. OUTPUT RESISTANCE
+==================================================
+
+output_resistance represents the small-signal resistance seen at the output
+around the nominal output operating point.
+
+It reflects how insensitive output current is to a local change in output voltage.
+
+The project evaluates it from the local slope:
+
+output_resistance =
+|1 / (dIOUT / dVOUT)|
+
+The unit is ohms.
+
+A larger output_resistance represents stronger current-source behavior.
+
+When predicting output_resistance:
+
+- use nearby measured output_resistance values as the primary evidence;
+- consider how changes in the provided optimization parameters may alter
+  the output current-source behavior;
+- return a positive numerical value in ohms.
+
+Do not attempt to perform a DC sweep or fabricate sweep data.
+
+==================================================
+3. AVAILABLE PARAMETERS
+==================================================
+
+Reason only about optimization variables actually present in each candidate.
+
+Do not assume the circuit contains optimizable:
+
+- transistor widths or lengths;
+- multiplicities;
+- additional bias voltages;
+- device models;
+- load elements
+
+unless those parameters explicitly appear in the candidate information.
+
+Different Current Mirror topologies may expose different optimization variables.
+
+Use only the parameter definitions provided in the current task.
+
+==================================================
+4. SIGNED CURRENT PARAMETERS
+==================================================
+
+Some circuit parameters may use signed SPICE conventions.
+
+Preserve their signed representation when interpreting candidate differences.
+
+Do not convert a signed parameter into a different circuit value.
+
+Performance metrics may use current magnitudes according to their formal
+definitions, but candidate parameters themselves must be interpreted exactly
+as provided.
+
+==================================================
+5. LOCAL HISTORICAL EVIDENCE
+==================================================
+
+The historical examples for each candidate are selected from measured circuit
+data based on proximity in normalized parameter space.
+
+Use the relative parameter differences between the candidate and these nearby
+examples to estimate how:
+
+- current_error;
+- output_resistance
+
+are likely to change.
+
+Small changes in available parameters such as IB1, R0, and R1 can produce
+nonlinear changes in current_error and output_resistance. Parameter-space
+proximity does not guarantee identical performance, so compare all supplied
+neighbors rather than copying the nearest measured metric pair. Do not assume
+or impose a particular direction of change without support from the evidence.
+
+If nearby examples show conflicting trends,
+make the most reasonable numerical estimate from the available local evidence
+and circuit behavior.
+
+Do not claim certainty or simulation accuracy.

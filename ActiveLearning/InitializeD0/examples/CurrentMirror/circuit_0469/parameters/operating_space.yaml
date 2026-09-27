@@ -1,0 +1,34 @@
+schema_version: 1
+circuit_id: circuit_0469
+circuit_type: "current mirrors"
+scope: operating_parameters_only
+conditional_constraints:
+  voltage_class_compatibility: "VDD and all driven voltages must respect the lowest voltage rating among selected device models"
+  bias_voltage_compatibility: "DC bias and waveform extrema must remain between VSS and VDD unless the testbench explicitly uses a bipolar source"
+  current_compatibility: "IB* and IIN* magnitudes must not exceed 0.01 A and sign must follow the simulation testbench direction"
+VDD:
+  parameter_type: supply_voltage
+  value_type: continuous
+  optimizable: true
+  default: 3.3
+  unit: V
+  range:
+    minimum: 1.8
+    maximum: 10.0
+VSS:
+  parameter_type: supply_voltage
+  value_type: continuous
+  optimizable: false
+  fixed_value: 0.0
+  unit: V
+IB1:
+  source_port: IB1
+  parameter_type: bias_current
+  value_type: continuous
+  optimizable: true
+  default: 0.0001
+  unit: A
+  range:
+    minimum: -0.01
+    maximum: 0.01
+  sign_convention: "positive value follows the generated testbench source direction"

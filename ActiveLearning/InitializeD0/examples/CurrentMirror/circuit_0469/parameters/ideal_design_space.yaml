@@ -1,0 +1,138 @@
+schema_version: 2
+circuit_id: circuit_0469
+circuit_type: "current mirrors"
+scope: ideal_device_parameters_only
+model_library:
+  ideal_resistor:
+    device_type: resistor
+    model_type: ideal_linear_resistor
+  ideal_gummel_poon_npn:
+    device_type: npn
+    model_type: Gummel_Poon
+    model_parameters:
+      IS:
+        optimizable: false
+        default: 1e-15
+        unit: A
+      BF:
+        optimizable: false
+        default: 100.0
+        unit: unitless
+      VAF:
+        optimizable: false
+        default: 100.0
+        unit: V
+device_design_space:
+  Q0:
+    device_type: npn
+    model_parameter: Q0_model
+    selectable_models:
+      - ideal_gummel_poon_npn
+    parameters:
+      m:
+        data_type: continuous
+        minimum: 1
+        maximum: 100
+        default: 1
+        unit: unitless
+        scale: linear
+        constraint_source: GF180MCU_limit
+        integer_only: true
+  Q1:
+    device_type: npn
+    model_parameter: Q1_model
+    selectable_models:
+      - ideal_gummel_poon_npn
+    parameters:
+      m:
+        data_type: continuous
+        minimum: 1
+        maximum: 100
+        default: 1
+        unit: unitless
+        scale: linear
+        constraint_source: GF180MCU_limit
+        integer_only: true
+  R1:
+    device_type: resistor
+    model_parameter: R1_model
+    selectable_models:
+      - ideal_resistor
+    parameters:
+      R:
+        data_type: continuous
+        minimum: 1.0
+        maximum: 1000000000.0
+        default: 10000.0
+        unit: Ohm
+        scale: log
+        constraint_source: GF180MCU_model_envelope_search_bound
+      W:
+        data_type: continuous
+        minimum: 0.8
+        maximum: 100.0
+        default: 1.0
+        unit: um
+        scale: log
+        constraint_source: GF180MCU_limit
+      L:
+        data_type: continuous
+        minimum: 0.42
+        maximum: 1000.0
+        default: 10.0
+        unit: um
+        scale: log
+        constraint_source: GF180MCU_limit
+      m:
+        data_type: continuous
+        minimum: 1
+        maximum: 100
+        default: 1
+        unit: unitless
+        scale: linear
+        constraint_source: GF180MCU_limit
+        integer_only: true
+  R0:
+    device_type: resistor
+    model_parameter: R0_model
+    selectable_models:
+      - ideal_resistor
+    parameters:
+      R:
+        data_type: continuous
+        minimum: 1.0
+        maximum: 1000000000.0
+        default: 10000.0
+        unit: Ohm
+        scale: log
+        constraint_source: GF180MCU_model_envelope_search_bound
+      W:
+        data_type: continuous
+        minimum: 0.8
+        maximum: 100.0
+        default: 1.0
+        unit: um
+        scale: log
+        constraint_source: GF180MCU_limit
+      L:
+        data_type: continuous
+        minimum: 0.42
+        maximum: 1000.0
+        default: 10.0
+        unit: um
+        scale: log
+        constraint_source: GF180MCU_limit
+      m:
+        data_type: continuous
+        minimum: 1
+        maximum: 100
+        default: 1
+        unit: unitless
+        scale: linear
+        constraint_source: GF180MCU_limit
+        integer_only: true
+notes:
+  fixed_model_parameters: "Ideal MOS VTO/KP/LAMBDA, BJT IS/BF/VAF, and diode IS/N are defaults and are not optimizable"
+  geometry_alignment: "W, L, and m limits follow the corresponding GF180MCU envelopes where a native scalable primitive exists"
+  hierarchy_note: "Logic and transmission-gate symbols remain hierarchical blocks; wrapper-level W/L is not invented"
+  separation_note: "Operating values are stored separately in operating_space.yaml"

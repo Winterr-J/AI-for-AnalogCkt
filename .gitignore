@@ -1,0 +1,17 @@
+# Ignore everything by default
+/*
+
+# Keep gitignore itself
+!/.gitignore
+
+# Track ActiveLearning only
+!/ActiveLearning/
+!/ActiveLearning/**
+
+# Still ignore Python/cache/secrets inside ActiveLearning
+ActiveLearning/**/__pycache__/
+ActiveLearning/**/*.pyc
+ActiveLearning/**/.pytest_cache/
+ActiveLearning/**/.mypy_cache/
+ActiveLearning/**/.env
+ActiveLearning/**/*.key

@@ -1,0 +1,3290 @@
+schema_version: 2
+circuit_id: circuit_0469
+scope: GF180MCU_device_parameters_only
+pdk:
+  technology: GF180MCU
+  default_corner: typical
+  corner_options:
+  - typical
+  - ff
+  - ss
+  - fs
+  - sf
+  statistical_options:
+  - false
+  - true
+  local_model_root: D:/analogCkt/pdks/gf180/gf180mcu-pdk
+model_catalog:
+  nmos:
+    nfet_03v3:
+      device_type: nmos
+      voltage_class: 3p3
+      variant: standard
+      simulator_model: nmos_3p3
+      model_type: BSIM4
+      optimizable_parameters:
+        W:
+          data_type: continuous
+          minimum: 0.22
+          maximum: 100.0
+          default: 10.0
+          unit: um
+          scale: log
+          constraint_source: GF180MCU_LV_instance_model_limit
+        L:
+          data_type: continuous
+          minimum: 0.28
+          maximum: 50.0
+          default: 1.0
+          unit: um
+          scale: log
+          constraint_source: GF180MCU_LV_instance_model_limit
+        m:
+          data_type: continuous
+          minimum: 1
+          maximum: 100
+          default: 1
+          unit: unitless
+          scale: linear
+          constraint_source: dataset_optimization_bound
+          integer_only: true
+        nf:
+          data_type: continuous
+          minimum: 1
+          maximum: 100
+          default: 1
+          unit: unitless
+          scale: linear
+          constraint_source: dataset_optimization_bound
+          integer_only: true
+    nfet_03v3_dss:
+      device_type: nmos
+      voltage_class: 3p3
+      variant: drain_side_SAB
+      simulator_model: nmos_3p3_sab
+      model_type: BSIM4
+      optimizable_parameters:
+        W:
+          data_type: continuous
+          minimum: 0.22
+          maximum: 100.0
+          default: 10.0
+          unit: um
+          scale: log
+          constraint_source: GF180MCU_LV_instance_model_limit
+        L:
+          data_type: continuous
+          minimum: 0.28
+          maximum: 50.0
+          default: 1.0
+          unit: um
+          scale: log
+          constraint_source: GF180MCU_LV_instance_model_limit
+        m:
+          data_type: continuous
+          minimum: 1
+          maximum: 100
+          default: 1
+          unit: unitless
+          scale: linear
+          constraint_source: dataset_optimization_bound
+          integer_only: true
+        nf:
+          data_type: continuous
+          minimum: 1
+          maximum: 100
+          default: 1
+          unit: unitless
+          scale: linear
+          constraint_source: dataset_optimization_bound
+          integer_only: true
+    nfet_06v0:
+      device_type: nmos
+      voltage_class: 6p0
+      variant: standard
+      simulator_model: nmos_6p0
+      model_type: BSIM4
+      optimizable_parameters:
+        W:
+          data_type: continuous
+          minimum: 0.3
+          maximum: 100.0
+          default: 10.0
+          unit: um
+          scale: log
+          constraint_source: GF180MCU_LV_instance_model_limit
+        L:
+          data_type: continuous
+          minimum: 0.6
+          maximum: 50.0
+          default: 1.0
+          unit: um
+          scale: log
+          constraint_source: GF180MCU_LV_instance_model_limit
+        m:
+          data_type: continuous
+          minimum: 1
+          maximum: 100
+          default: 1
+          unit: unitless
+          scale: linear
+          constraint_source: dataset_optimization_bound
+          integer_only: true
+        nf:
+          data_type: continuous
+          minimum: 1
+          maximum: 100
+          default: 1
+          unit: unitless
+          scale: linear
+          constraint_source: dataset_optimization_bound
+          integer_only: true
+    nfet_06v0_dss:
+      device_type: nmos
+      voltage_class: 6p0
+      variant: drain_side_SAB
+      simulator_model: nmos_6p0_sab
+      model_type: BSIM4
+      optimizable_parameters:
+        W:
+          data_type: continuous
+          minimum: 0.3
+          maximum: 100.0
+          default: 10.0
+          unit: um
+          scale: log
+          constraint_source: GF180MCU_LV_instance_model_limit
+        L:
+          data_type: continuous
+          minimum: 0.6
+          maximum: 50.0
+          default: 1.0
+          unit: um
+          scale: log
+          constraint_source: GF180MCU_LV_instance_model_limit
+        m:
+          data_type: continuous
+          minimum: 1
+          maximum: 100
+          default: 1
+          unit: unitless
+          scale: linear
+          constraint_source: dataset_optimization_bound
+          integer_only: true
+        nf:
+          data_type: continuous
+          minimum: 1
+          maximum: 100
+          default: 1
+          unit: unitless
+          scale: linear
+          constraint_source: dataset_optimization_bound
+          integer_only: true
+    nfet_06v0_nvt:
+      device_type: nmos
+      voltage_class: 6p0
+      variant: native_threshold
+      simulator_model: nmos_6p0_nat
+      model_type: BSIM4
+      optimizable_parameters:
+        W:
+          data_type: continuous
+          minimum: 0.8
+          maximum: 100.0
+          default: 10.0
+          unit: um
+          scale: log
+          constraint_source: GF180MCU_LV_instance_model_limit
+        L:
+          data_type: continuous
+          minimum: 1.8
+          maximum: 50.0
+          default: 1.8
+          unit: um
+          scale: log
+          constraint_source: GF180MCU_LV_instance_model_limit
+        m:
+          data_type: continuous
+          minimum: 1
+          maximum: 100
+          default: 1
+          unit: unitless
+          scale: linear
+          constraint_source: dataset_optimization_bound
+          integer_only: true
+        nf:
+          data_type: continuous
+          minimum: 1
+          maximum: 100
+          default: 1
+          unit: unitless
+          scale: linear
+          constraint_source: dataset_optimization_bound
+          integer_only: true
+    nfet_10v0_asym:
+      device_type: nmos
+      voltage_class: 10p0
+      variant: asymmetric_drain
+      simulator_model: nmos_10p0_asym
+      model_type: BSIM4_asymmetric_LDMOS
+      optimizable_parameters:
+        W:
+          data_type: continuous
+          minimum: 4.0
+          maximum: 50.0
+          default: 25.0
+          unit: um
+          scale: log
+          constraint_source: GF180MCU_HV_recommended_instance_range
+        L:
+          data_type: continuous
+          minimum: 0.6
+          maximum: 20.0
+          default: 0.6
+          unit: um
+          scale: log
+          constraint_source: GF180MCU_HV_recommended_instance_range
+        m:
+          data_type: continuous
+          minimum: 1
+          maximum: 100
+          default: 1
+          unit: unitless
+          scale: linear
+          constraint_source: dataset_optimization_bound
+          integer_only: true
+        nf:
+          data_type: continuous
+          minimum: 1
+          maximum: 100
+          default: 1
+          unit: unitless
+          scale: linear
+          constraint_source: dataset_optimization_bound
+          integer_only: true
+  pmos:
+    pfet_03v3:
+      device_type: pmos
+      voltage_class: 3p3
+      variant: standard
+      simulator_model: pmos_3p3
+      model_type: BSIM4
+      optimizable_parameters:
+        W:
+          data_type: continuous
+          minimum: 0.22
+          maximum: 50.0
+          default: 20.0
+          unit: um
+          scale: log
+          constraint_source: GF180MCU_LV_instance_model_limit
+        L:
+          data_type: continuous
+          minimum: 0.28
+          maximum: 100.0
+          default: 1.0
+          unit: um
+          scale: log
+          constraint_source: GF180MCU_LV_instance_model_limit
+        m:
+          data_type: continuous
+          minimum: 1
+          maximum: 100
+          default: 1
+          unit: unitless
+          scale: linear
+          constraint_source: dataset_optimization_bound
+          integer_only: true
+        nf:
+          data_type: continuous
+          minimum: 1
+          maximum: 100
+          default: 1
+          unit: unitless
+          scale: linear
+          constraint_source: dataset_optimization_bound
+          integer_only: true
+    pfet_03v3_dss:
+      device_type: pmos
+      voltage_class: 3p3
+      variant: drain_side_SAB
+      simulator_model: pmos_3p3_sab
+      model_type: BSIM4
+      optimizable_parameters:
+        W:
+          data_type: continuous
+          minimum: 0.22
+          maximum: 50.0
+          default: 20.0
+          unit: um
+          scale: log
+          constraint_source: GF180MCU_LV_instance_model_limit
+        L:
+          data_type: continuous
+          minimum: 0.28
+          maximum: 100.0
+          default: 1.0
+          unit: um
+          scale: log
+          constraint_source: GF180MCU_LV_instance_model_limit
+        m:
+          data_type: continuous
+          minimum: 1
+          maximum: 100
+          default: 1
+          unit: unitless
+          scale: linear
+          constraint_source: dataset_optimization_bound
+          integer_only: true
+        nf:
+          data_type: continuous
+          minimum: 1
+          maximum: 100
+          default: 1
+          unit: unitless
+          scale: linear
+          constraint_source: dataset_optimization_bound
+          integer_only: true
+    pfet_06v0:
+      device_type: pmos
+      voltage_class: 6p0
+      variant: standard
+      simulator_model: pmos_6p0
+      model_type: BSIM4
+      optimizable_parameters:
+        W:
+          data_type: continuous
+          minimum: 0.3
+          maximum: 100.0
+          default: 20.0
+          unit: um
+          scale: log
+          constraint_source: GF180MCU_LV_instance_model_limit
+        L:
+          data_type: continuous
+          minimum: 0.5
+          maximum: 50.0
+          default: 1.0
+          unit: um
+          scale: log
+          constraint_source: GF180MCU_LV_instance_model_limit
+        m:
+          data_type: continuous
+          minimum: 1
+          maximum: 100
+          default: 1
+          unit: unitless
+          scale: linear
+          constraint_source: dataset_optimization_bound
+          integer_only: true
+        nf:
+          data_type: continuous
+          minimum: 1
+          maximum: 100
+          default: 1
+          unit: unitless
+          scale: linear
+          constraint_source: dataset_optimization_bound
+          integer_only: true
+    pfet_06v0_dss:
+      device_type: pmos
+      voltage_class: 6p0
+      variant: drain_side_SAB
+      simulator_model: pmos_6p0_sab
+      model_type: BSIM4
+      optimizable_parameters:
+        W:
+          data_type: continuous
+          minimum: 0.3
+          maximum: 100.0
+          default: 20.0
+          unit: um
+          scale: log
+          constraint_source: GF180MCU_LV_instance_model_limit
+        L:
+          data_type: continuous
+          minimum: 0.5
+          maximum: 50.0
+          default: 1.0
+          unit: um
+          scale: log
+          constraint_source: GF180MCU_LV_instance_model_limit
+        m:
+          data_type: continuous
+          minimum: 1
+          maximum: 100
+          default: 1
+          unit: unitless
+          scale: linear
+          constraint_source: dataset_optimization_bound
+          integer_only: true
+        nf:
+          data_type: continuous
+          minimum: 1
+          maximum: 100
+          default: 1
+          unit: unitless
+          scale: linear
+          constraint_source: dataset_optimization_bound
+          integer_only: true
+    pfet_10v0_asym:
+      device_type: pmos
+      voltage_class: 10p0
+      variant: asymmetric_drain
+      simulator_model: pmos_10p0_asym
+      model_type: BSIM4_asymmetric_LDMOS
+      optimizable_parameters:
+        W:
+          data_type: continuous
+          minimum: 4.0
+          maximum: 50.0
+          default: 25.0
+          unit: um
+          scale: log
+          constraint_source: GF180MCU_HV_recommended_instance_range
+        L:
+          data_type: continuous
+          minimum: 0.6
+          maximum: 20.0
+          default: 0.6
+          unit: um
+          scale: log
+          constraint_source: GF180MCU_HV_recommended_instance_range
+        m:
+          data_type: continuous
+          minimum: 1
+          maximum: 100
+          default: 1
+          unit: unitless
+          scale: linear
+          constraint_source: dataset_optimization_bound
+          integer_only: true
+        nf:
+          data_type: continuous
+          minimum: 1
+          maximum: 100
+          default: 1
+          unit: unitless
+          scale: linear
+          constraint_source: dataset_optimization_bound
+          integer_only: true
+  resistor:
+    npolyf_u:
+      device_type: resistor
+      description: unsalicided N+ poly
+      voltage_class: 3p3_6p0
+      optimizable_parameters:
+        W:
+          data_type: continuous
+          minimum: 0.8
+          maximum: 100.0
+          default: 0.8
+          unit: um
+          scale: log
+          constraint_source: GF180MCU_rule_plus_dataset_maximum
+        L:
+          data_type: continuous
+          minimum: 0.42
+          maximum: 1000.0
+          default: 10.0
+          unit: um
+          scale: log
+          constraint_source: GF180MCU_rule_plus_dataset_maximum
+        m:
+          data_type: continuous
+          minimum: 1
+          maximum: 100
+          default: 1
+          unit: unitless
+          scale: linear
+          constraint_source: dataset_optimization_bound
+          integer_only: true
+    ppolyf_u:
+      device_type: resistor
+      description: unsalicided P+ poly
+      voltage_class: 3p3_6p0
+      optimizable_parameters:
+        W:
+          data_type: continuous
+          minimum: 0.8
+          maximum: 100.0
+          default: 0.8
+          unit: um
+          scale: log
+          constraint_source: GF180MCU_rule_plus_dataset_maximum
+        L:
+          data_type: continuous
+          minimum: 0.42
+          maximum: 1000.0
+          default: 10.0
+          unit: um
+          scale: log
+          constraint_source: GF180MCU_rule_plus_dataset_maximum
+        m:
+          data_type: continuous
+          minimum: 1
+          maximum: 100
+          default: 1
+          unit: unitless
+          scale: linear
+          constraint_source: dataset_optimization_bound
+          integer_only: true
+    ppolyf_u_1k:
+      device_type: resistor
+      description: 1 kOhm/square high-Rs P+ poly
+      voltage_class: 3p3
+      optimizable_parameters:
+        W:
+          data_type: continuous
+          minimum: 1.0
+          maximum: 100.0
+          default: 1.0
+          unit: um
+          scale: log
+          constraint_source: GF180MCU_rule_plus_dataset_maximum
+        L:
+          data_type: continuous
+          minimum: 0.42
+          maximum: 1000.0
+          default: 10.0
+          unit: um
+          scale: log
+          constraint_source: GF180MCU_rule_plus_dataset_maximum
+        m:
+          data_type: continuous
+          minimum: 1
+          maximum: 100
+          default: 1
+          unit: unitless
+          scale: linear
+          constraint_source: dataset_optimization_bound
+          integer_only: true
+    ppolyf_u_2k:
+      device_type: resistor
+      description: 2 kOhm/square high-Rs P+ poly
+      voltage_class: 3p3
+      optimizable_parameters:
+        W:
+          data_type: continuous
+          minimum: 1.0
+          maximum: 100.0
+          default: 1.0
+          unit: um
+          scale: log
+          constraint_source: GF180MCU_rule_plus_dataset_maximum
+        L:
+          data_type: continuous
+          minimum: 0.42
+          maximum: 1000.0
+          default: 10.0
+          unit: um
+          scale: log
+          constraint_source: GF180MCU_rule_plus_dataset_maximum
+        m:
+          data_type: continuous
+          minimum: 1
+          maximum: 100
+          default: 1
+          unit: unitless
+          scale: linear
+          constraint_source: dataset_optimization_bound
+          integer_only: true
+    ppolyf_u_3k:
+      device_type: resistor
+      description: 3 kOhm/square high-Rs P+ poly
+      voltage_class: 3p3_6p0
+      optimizable_parameters:
+        W:
+          data_type: continuous
+          minimum: 1.0
+          maximum: 100.0
+          default: 1.0
+          unit: um
+          scale: log
+          constraint_source: GF180MCU_rule_plus_dataset_maximum
+        L:
+          data_type: continuous
+          minimum: 0.42
+          maximum: 1000.0
+          default: 10.0
+          unit: um
+          scale: log
+          constraint_source: GF180MCU_rule_plus_dataset_maximum
+        m:
+          data_type: continuous
+          minimum: 1
+          maximum: 100
+          default: 1
+          unit: unitless
+          scale: linear
+          constraint_source: dataset_optimization_bound
+          integer_only: true
+    ppolyf_u_1k_6p0:
+      device_type: resistor
+      description: 1 kOhm/square high-Rs P+ poly
+      voltage_class: 6p0
+      optimizable_parameters:
+        W:
+          data_type: continuous
+          minimum: 1.0
+          maximum: 100.0
+          default: 1.0
+          unit: um
+          scale: log
+          constraint_source: GF180MCU_rule_plus_dataset_maximum
+        L:
+          data_type: continuous
+          minimum: 0.42
+          maximum: 1000.0
+          default: 10.0
+          unit: um
+          scale: log
+          constraint_source: GF180MCU_rule_plus_dataset_maximum
+        m:
+          data_type: continuous
+          minimum: 1
+          maximum: 100
+          default: 1
+          unit: unitless
+          scale: linear
+          constraint_source: dataset_optimization_bound
+          integer_only: true
+    ppolyf_u_2k_6p0:
+      device_type: resistor
+      description: 2 kOhm/square high-Rs P+ poly
+      voltage_class: 6p0
+      optimizable_parameters:
+        W:
+          data_type: continuous
+          minimum: 1.0
+          maximum: 100.0
+          default: 1.0
+          unit: um
+          scale: log
+          constraint_source: GF180MCU_rule_plus_dataset_maximum
+        L:
+          data_type: continuous
+          minimum: 0.42
+          maximum: 1000.0
+          default: 10.0
+          unit: um
+          scale: log
+          constraint_source: GF180MCU_rule_plus_dataset_maximum
+        m:
+          data_type: continuous
+          minimum: 1
+          maximum: 100
+          default: 1
+          unit: unitless
+          scale: linear
+          constraint_source: dataset_optimization_bound
+          integer_only: true
+    nplus_u:
+      device_type: resistor
+      description: unsalicided N+ diffusion
+      voltage_class: 3p3_6p0
+      optimizable_parameters:
+        W:
+          data_type: continuous
+          minimum: 0.3
+          maximum: 100.0
+          default: 0.3
+          unit: um
+          scale: log
+          constraint_source: GF180MCU_rule_plus_dataset_maximum
+        L:
+          data_type: continuous
+          minimum: 0.42
+          maximum: 1000.0
+          default: 10.0
+          unit: um
+          scale: log
+          constraint_source: GF180MCU_rule_plus_dataset_maximum
+        m:
+          data_type: continuous
+          minimum: 1
+          maximum: 100
+          default: 1
+          unit: unitless
+          scale: linear
+          constraint_source: dataset_optimization_bound
+          integer_only: true
+    pplus_u:
+      device_type: resistor
+      description: unsalicided P+ diffusion
+      voltage_class: 3p3_6p0
+      optimizable_parameters:
+        W:
+          data_type: continuous
+          minimum: 0.3
+          maximum: 100.0
+          default: 0.3
+          unit: um
+          scale: log
+          constraint_source: GF180MCU_rule_plus_dataset_maximum
+        L:
+          data_type: continuous
+          minimum: 0.42
+          maximum: 1000.0
+          default: 10.0
+          unit: um
+          scale: log
+          constraint_source: GF180MCU_rule_plus_dataset_maximum
+        m:
+          data_type: continuous
+          minimum: 1
+          maximum: 100
+          default: 1
+          unit: unitless
+          scale: linear
+          constraint_source: dataset_optimization_bound
+          integer_only: true
+    npolyf_s:
+      device_type: resistor
+      description: salicided N+ poly
+      voltage_class: 3p3_6p0
+      optimizable_parameters:
+        W:
+          data_type: continuous
+          minimum: 0.22
+          maximum: 100.0
+          default: 0.22
+          unit: um
+          scale: log
+          constraint_source: GF180MCU_rule_plus_dataset_maximum
+        L:
+          data_type: continuous
+          minimum: 0.42
+          maximum: 1000.0
+          default: 10.0
+          unit: um
+          scale: log
+          constraint_source: GF180MCU_rule_plus_dataset_maximum
+        m:
+          data_type: continuous
+          minimum: 1
+          maximum: 100
+          default: 1
+          unit: unitless
+          scale: linear
+          constraint_source: dataset_optimization_bound
+          integer_only: true
+    ppolyf_s:
+      device_type: resistor
+      description: salicided P+ poly
+      voltage_class: 3p3_6p0
+      optimizable_parameters:
+        W:
+          data_type: continuous
+          minimum: 0.22
+          maximum: 100.0
+          default: 0.22
+          unit: um
+          scale: log
+          constraint_source: GF180MCU_rule_plus_dataset_maximum
+        L:
+          data_type: continuous
+          minimum: 0.42
+          maximum: 1000.0
+          default: 10.0
+          unit: um
+          scale: log
+          constraint_source: GF180MCU_rule_plus_dataset_maximum
+        m:
+          data_type: continuous
+          minimum: 1
+          maximum: 100
+          default: 1
+          unit: unitless
+          scale: linear
+          constraint_source: dataset_optimization_bound
+          integer_only: true
+    nplus_s:
+      device_type: resistor
+      description: salicided N+ diffusion
+      voltage_class: 3p3_6p0
+      optimizable_parameters:
+        W:
+          data_type: continuous
+          minimum: 0.3
+          maximum: 100.0
+          default: 0.3
+          unit: um
+          scale: log
+          constraint_source: GF180MCU_rule_plus_dataset_maximum
+        L:
+          data_type: continuous
+          minimum: 0.42
+          maximum: 1000.0
+          default: 10.0
+          unit: um
+          scale: log
+          constraint_source: GF180MCU_rule_plus_dataset_maximum
+        m:
+          data_type: continuous
+          minimum: 1
+          maximum: 100
+          default: 1
+          unit: unitless
+          scale: linear
+          constraint_source: dataset_optimization_bound
+          integer_only: true
+    pplus_s:
+      device_type: resistor
+      description: salicided P+ diffusion
+      voltage_class: 3p3_6p0
+      optimizable_parameters:
+        W:
+          data_type: continuous
+          minimum: 0.3
+          maximum: 100.0
+          default: 0.3
+          unit: um
+          scale: log
+          constraint_source: GF180MCU_rule_plus_dataset_maximum
+        L:
+          data_type: continuous
+          minimum: 0.42
+          maximum: 1000.0
+          default: 10.0
+          unit: um
+          scale: log
+          constraint_source: GF180MCU_rule_plus_dataset_maximum
+        m:
+          data_type: continuous
+          minimum: 1
+          maximum: 100
+          default: 1
+          unit: unitless
+          scale: linear
+          constraint_source: dataset_optimization_bound
+          integer_only: true
+    nwell:
+      device_type: resistor
+      description: N-well resistor
+      voltage_class: 3p3_6p0
+      optimizable_parameters:
+        W:
+          data_type: continuous
+          minimum: 2.0
+          maximum: 100.0
+          default: 2.0
+          unit: um
+          scale: log
+          constraint_source: GF180MCU_rule_plus_dataset_maximum
+        L:
+          data_type: continuous
+          minimum: 0.42
+          maximum: 1000.0
+          default: 10.0
+          unit: um
+          scale: log
+          constraint_source: GF180MCU_rule_plus_dataset_maximum
+        m:
+          data_type: continuous
+          minimum: 1
+          maximum: 100
+          default: 1
+          unit: unitless
+          scale: linear
+          constraint_source: dataset_optimization_bound
+          integer_only: true
+    rm1:
+      device_type: resistor
+      description: metal-1 resistor
+      voltage_class: 3p3_6p0
+      optimizable_parameters:
+        W:
+          data_type: continuous
+          minimum: 0.23
+          maximum: 100.0
+          default: 0.23
+          unit: um
+          scale: log
+          constraint_source: GF180MCU_rule_plus_dataset_maximum
+        L:
+          data_type: continuous
+          minimum: 0.42
+          maximum: 1000.0
+          default: 10.0
+          unit: um
+          scale: log
+          constraint_source: GF180MCU_rule_plus_dataset_maximum
+        m:
+          data_type: continuous
+          minimum: 1
+          maximum: 100
+          default: 1
+          unit: unitless
+          scale: linear
+          constraint_source: dataset_optimization_bound
+          integer_only: true
+    rm2:
+      device_type: resistor
+      description: metal-2 resistor
+      voltage_class: 3p3_6p0
+      optimizable_parameters:
+        W:
+          data_type: continuous
+          minimum: 0.28
+          maximum: 100.0
+          default: 0.28
+          unit: um
+          scale: log
+          constraint_source: GF180MCU_rule_plus_dataset_maximum
+        L:
+          data_type: continuous
+          minimum: 0.42
+          maximum: 1000.0
+          default: 10.0
+          unit: um
+          scale: log
+          constraint_source: GF180MCU_rule_plus_dataset_maximum
+        m:
+          data_type: continuous
+          minimum: 1
+          maximum: 100
+          default: 1
+          unit: unitless
+          scale: linear
+          constraint_source: dataset_optimization_bound
+          integer_only: true
+    rm3:
+      device_type: resistor
+      description: metal-3 resistor
+      voltage_class: 3p3_6p0
+      optimizable_parameters:
+        W:
+          data_type: continuous
+          minimum: 0.28
+          maximum: 100.0
+          default: 0.28
+          unit: um
+          scale: log
+          constraint_source: GF180MCU_rule_plus_dataset_maximum
+        L:
+          data_type: continuous
+          minimum: 0.42
+          maximum: 1000.0
+          default: 10.0
+          unit: um
+          scale: log
+          constraint_source: GF180MCU_rule_plus_dataset_maximum
+        m:
+          data_type: continuous
+          minimum: 1
+          maximum: 100
+          default: 1
+          unit: unitless
+          scale: linear
+          constraint_source: dataset_optimization_bound
+          integer_only: true
+    tm6k:
+      device_type: resistor
+      description: 6 kA top-metal resistor
+      voltage_class: 3p3_6p0
+      optimizable_parameters:
+        W:
+          data_type: continuous
+          minimum: 0.36
+          maximum: 100.0
+          default: 0.36
+          unit: um
+          scale: log
+          constraint_source: GF180MCU_rule_plus_dataset_maximum
+        L:
+          data_type: continuous
+          minimum: 0.42
+          maximum: 1000.0
+          default: 10.0
+          unit: um
+          scale: log
+          constraint_source: GF180MCU_rule_plus_dataset_maximum
+        m:
+          data_type: continuous
+          minimum: 1
+          maximum: 100
+          default: 1
+          unit: unitless
+          scale: linear
+          constraint_source: dataset_optimization_bound
+          integer_only: true
+    tm9k:
+      device_type: resistor
+      description: 9 kA top-metal resistor
+      voltage_class: 3p3_6p0
+      optimizable_parameters:
+        W:
+          data_type: continuous
+          minimum: 0.44
+          maximum: 100.0
+          default: 0.44
+          unit: um
+          scale: log
+          constraint_source: GF180MCU_rule_plus_dataset_maximum
+        L:
+          data_type: continuous
+          minimum: 0.42
+          maximum: 1000.0
+          default: 10.0
+          unit: um
+          scale: log
+          constraint_source: GF180MCU_rule_plus_dataset_maximum
+        m:
+          data_type: continuous
+          minimum: 1
+          maximum: 100
+          default: 1
+          unit: unitless
+          scale: linear
+          constraint_source: dataset_optimization_bound
+          integer_only: true
+    tm11k:
+      device_type: resistor
+      description: 11 kA top-metal resistor
+      voltage_class: 3p3_6p0
+      optimizable_parameters:
+        W:
+          data_type: continuous
+          minimum: 0.44
+          maximum: 100.0
+          default: 0.44
+          unit: um
+          scale: log
+          constraint_source: GF180MCU_rule_plus_dataset_maximum
+        L:
+          data_type: continuous
+          minimum: 0.42
+          maximum: 1000.0
+          default: 10.0
+          unit: um
+          scale: log
+          constraint_source: GF180MCU_rule_plus_dataset_maximum
+        m:
+          data_type: continuous
+          minimum: 1
+          maximum: 100
+          default: 1
+          unit: unitless
+          scale: linear
+          constraint_source: dataset_optimization_bound
+          integer_only: true
+    tm30k:
+      device_type: resistor
+      description: 30 kA top-metal resistor
+      voltage_class: 3p3_6p0
+      optimizable_parameters:
+        W:
+          data_type: continuous
+          minimum: 1.8
+          maximum: 100.0
+          default: 1.8
+          unit: um
+          scale: log
+          constraint_source: GF180MCU_rule_plus_dataset_maximum
+        L:
+          data_type: continuous
+          minimum: 0.42
+          maximum: 1000.0
+          default: 10.0
+          unit: um
+          scale: log
+          constraint_source: GF180MCU_rule_plus_dataset_maximum
+        m:
+          data_type: continuous
+          minimum: 1
+          maximum: 100
+          default: 1
+          unit: unitless
+          scale: linear
+          constraint_source: dataset_optimization_bound
+          integer_only: true
+  capacitor:
+    cap_mim_1p0fF:
+      device_type: capacitor
+      description: 1.0 fF/um^2 MIM
+      voltage_class: up_to_6p0
+      optimizable_parameters:
+        W:
+          data_type: continuous
+          minimum: 5.0
+          maximum: 100.0
+          default: 10.0
+          unit: um
+          scale: linear
+          constraint_source: GF180MCU_MIM_8_single_cap_rule
+        L:
+          data_type: continuous
+          minimum: 5.0
+          maximum: 100.0
+          default: 10.0
+          unit: um
+          scale: linear
+          constraint_source: GF180MCU_MIM_8_single_cap_rule
+        m:
+          data_type: continuous
+          minimum: 1
+          maximum: 100
+          default: 1
+          unit: unitless
+          scale: linear
+          constraint_source: dataset_optimization_bound
+          integer_only: true
+      nominal_density: 1.0
+      nominal_density_unit: fF/um^2
+    cap_mim_1p5fF:
+      device_type: capacitor
+      description: 1.5 fF/um^2 MIM
+      voltage_class: up_to_6p0
+      optimizable_parameters:
+        W:
+          data_type: continuous
+          minimum: 5.0
+          maximum: 100.0
+          default: 10.0
+          unit: um
+          scale: linear
+          constraint_source: GF180MCU_MIM_8_single_cap_rule
+        L:
+          data_type: continuous
+          minimum: 5.0
+          maximum: 100.0
+          default: 10.0
+          unit: um
+          scale: linear
+          constraint_source: GF180MCU_MIM_8_single_cap_rule
+        m:
+          data_type: continuous
+          minimum: 1
+          maximum: 100
+          default: 1
+          unit: unitless
+          scale: linear
+          constraint_source: dataset_optimization_bound
+          integer_only: true
+      nominal_density: 1.5
+      nominal_density_unit: fF/um^2
+    cap_mim_2p0fF:
+      device_type: capacitor
+      description: 2.0 fF/um^2 MIM
+      voltage_class: up_to_6p0
+      optimizable_parameters:
+        W:
+          data_type: continuous
+          minimum: 5.0
+          maximum: 100.0
+          default: 10.0
+          unit: um
+          scale: linear
+          constraint_source: GF180MCU_MIM_8_single_cap_rule
+        L:
+          data_type: continuous
+          minimum: 5.0
+          maximum: 100.0
+          default: 10.0
+          unit: um
+          scale: linear
+          constraint_source: GF180MCU_MIM_8_single_cap_rule
+        m:
+          data_type: continuous
+          minimum: 1
+          maximum: 100
+          default: 1
+          unit: unitless
+          scale: linear
+          constraint_source: dataset_optimization_bound
+          integer_only: true
+      nominal_density: 2.0
+      nominal_density_unit: fF/um^2
+    cap_nmos_03v3:
+      device_type: capacitor
+      description: 3.3 V inversion-mode NMOS capacitor
+      voltage_class: 3p3
+      optimizable_parameters:
+        W:
+          data_type: continuous
+          minimum: 1.0
+          maximum: 100.0
+          default: 10.0
+          unit: um
+          scale: linear
+          constraint_source: GF180MCU_layout_rule_plus_model_envelope
+        L:
+          data_type: continuous
+          minimum: 0.28
+          maximum: 50.0
+          default: 10.0
+          unit: um
+          scale: linear
+          constraint_source: GF180MCU_layout_rule_plus_model_envelope
+        m:
+          data_type: continuous
+          minimum: 1
+          maximum: 100
+          default: 1
+          unit: unitless
+          scale: linear
+          constraint_source: dataset_optimization_bound
+          integer_only: true
+    cap_pmos_03v3:
+      device_type: capacitor
+      description: 3.3 V inversion-mode PMOS capacitor
+      voltage_class: 3p3
+      optimizable_parameters:
+        W:
+          data_type: continuous
+          minimum: 1.0
+          maximum: 100.0
+          default: 10.0
+          unit: um
+          scale: linear
+          constraint_source: GF180MCU_layout_rule_plus_model_envelope
+        L:
+          data_type: continuous
+          minimum: 0.28
+          maximum: 50.0
+          default: 10.0
+          unit: um
+          scale: linear
+          constraint_source: GF180MCU_layout_rule_plus_model_envelope
+        m:
+          data_type: continuous
+          minimum: 1
+          maximum: 100
+          default: 1
+          unit: unitless
+          scale: linear
+          constraint_source: dataset_optimization_bound
+          integer_only: true
+    cap_nmos_03v3_b:
+      device_type: capacitor
+      description: 3.3 V NMOS capacitor in N-well
+      voltage_class: 3p3
+      optimizable_parameters:
+        W:
+          data_type: continuous
+          minimum: 1.0
+          maximum: 100.0
+          default: 10.0
+          unit: um
+          scale: linear
+          constraint_source: GF180MCU_layout_rule_plus_model_envelope
+        L:
+          data_type: continuous
+          minimum: 0.28
+          maximum: 50.0
+          default: 10.0
+          unit: um
+          scale: linear
+          constraint_source: GF180MCU_layout_rule_plus_model_envelope
+        m:
+          data_type: continuous
+          minimum: 1
+          maximum: 100
+          default: 1
+          unit: unitless
+          scale: linear
+          constraint_source: dataset_optimization_bound
+          integer_only: true
+    cap_pmos_03v3_b:
+      device_type: capacitor
+      description: 3.3 V PMOS capacitor in P-well
+      voltage_class: 3p3
+      optimizable_parameters:
+        W:
+          data_type: continuous
+          minimum: 1.0
+          maximum: 100.0
+          default: 10.0
+          unit: um
+          scale: linear
+          constraint_source: GF180MCU_layout_rule_plus_model_envelope
+        L:
+          data_type: continuous
+          minimum: 0.28
+          maximum: 50.0
+          default: 10.0
+          unit: um
+          scale: linear
+          constraint_source: GF180MCU_layout_rule_plus_model_envelope
+        m:
+          data_type: continuous
+          minimum: 1
+          maximum: 100
+          default: 1
+          unit: unitless
+          scale: linear
+          constraint_source: dataset_optimization_bound
+          integer_only: true
+    cap_nmos_06v0:
+      device_type: capacitor
+      description: 6 V inversion-mode NMOS capacitor
+      voltage_class: 6p0
+      optimizable_parameters:
+        W:
+          data_type: continuous
+          minimum: 1.0
+          maximum: 100.0
+          default: 10.0
+          unit: um
+          scale: linear
+          constraint_source: GF180MCU_layout_rule_plus_model_envelope
+        L:
+          data_type: continuous
+          minimum: 0.6
+          maximum: 50.0
+          default: 10.0
+          unit: um
+          scale: linear
+          constraint_source: GF180MCU_layout_rule_plus_model_envelope
+        m:
+          data_type: continuous
+          minimum: 1
+          maximum: 100
+          default: 1
+          unit: unitless
+          scale: linear
+          constraint_source: dataset_optimization_bound
+          integer_only: true
+    cap_pmos_06v0:
+      device_type: capacitor
+      description: 6 V inversion-mode PMOS capacitor
+      voltage_class: 6p0
+      optimizable_parameters:
+        W:
+          data_type: continuous
+          minimum: 1.0
+          maximum: 100.0
+          default: 10.0
+          unit: um
+          scale: linear
+          constraint_source: GF180MCU_layout_rule_plus_model_envelope
+        L:
+          data_type: continuous
+          minimum: 0.6
+          maximum: 50.0
+          default: 10.0
+          unit: um
+          scale: linear
+          constraint_source: GF180MCU_layout_rule_plus_model_envelope
+        m:
+          data_type: continuous
+          minimum: 1
+          maximum: 100
+          default: 1
+          unit: unitless
+          scale: linear
+          constraint_source: dataset_optimization_bound
+          integer_only: true
+    cap_nmos_06v0_b:
+      device_type: capacitor
+      description: 6 V NMOS capacitor in N-well
+      voltage_class: 6p0
+      optimizable_parameters:
+        W:
+          data_type: continuous
+          minimum: 1.0
+          maximum: 100.0
+          default: 10.0
+          unit: um
+          scale: linear
+          constraint_source: GF180MCU_layout_rule_plus_model_envelope
+        L:
+          data_type: continuous
+          minimum: 0.6
+          maximum: 50.0
+          default: 10.0
+          unit: um
+          scale: linear
+          constraint_source: GF180MCU_layout_rule_plus_model_envelope
+        m:
+          data_type: continuous
+          minimum: 1
+          maximum: 100
+          default: 1
+          unit: unitless
+          scale: linear
+          constraint_source: dataset_optimization_bound
+          integer_only: true
+    cap_pmos_06v0_b:
+      device_type: capacitor
+      description: 6 V PMOS capacitor in P-well
+      voltage_class: 6p0
+      optimizable_parameters:
+        W:
+          data_type: continuous
+          minimum: 1.0
+          maximum: 100.0
+          default: 10.0
+          unit: um
+          scale: linear
+          constraint_source: GF180MCU_layout_rule_plus_model_envelope
+        L:
+          data_type: continuous
+          minimum: 0.6
+          maximum: 50.0
+          default: 10.0
+          unit: um
+          scale: linear
+          constraint_source: GF180MCU_layout_rule_plus_model_envelope
+        m:
+          data_type: continuous
+          minimum: 1
+          maximum: 100
+          default: 1
+          unit: unitless
+          scale: linear
+          constraint_source: dataset_optimization_bound
+          integer_only: true
+  npn:
+    npn_10p00x10p00:
+      device_type: npn
+      model_type: Gummel_Poon
+      scalable: false
+      fixed_emitter_width: 10.0
+      fixed_emitter_length: 10.0
+      unit: um
+      optimizable_parameters:
+        m:
+          data_type: continuous
+          minimum: 1
+          maximum: 100
+          default: 1
+          unit: unitless
+          scale: linear
+          constraint_source: dataset_optimization_bound
+          integer_only: true
+    npn_05p00x05p00:
+      device_type: npn
+      model_type: Gummel_Poon
+      scalable: false
+      fixed_emitter_width: 5.0
+      fixed_emitter_length: 5.0
+      unit: um
+      optimizable_parameters:
+        m:
+          data_type: continuous
+          minimum: 1
+          maximum: 100
+          default: 1
+          unit: unitless
+          scale: linear
+          constraint_source: dataset_optimization_bound
+          integer_only: true
+    npn_00p54x16p00:
+      device_type: npn
+      model_type: Gummel_Poon
+      scalable: false
+      fixed_emitter_width: 0.54
+      fixed_emitter_length: 16.0
+      unit: um
+      optimizable_parameters:
+        m:
+          data_type: continuous
+          minimum: 1
+          maximum: 100
+          default: 1
+          unit: unitless
+          scale: linear
+          constraint_source: dataset_optimization_bound
+          integer_only: true
+    npn_00p54x08p00:
+      device_type: npn
+      model_type: Gummel_Poon
+      scalable: false
+      fixed_emitter_width: 0.54
+      fixed_emitter_length: 8.0
+      unit: um
+      optimizable_parameters:
+        m:
+          data_type: continuous
+          minimum: 1
+          maximum: 100
+          default: 1
+          unit: unitless
+          scale: linear
+          constraint_source: dataset_optimization_bound
+          integer_only: true
+    npn_00p54x04p00:
+      device_type: npn
+      model_type: Gummel_Poon
+      scalable: false
+      fixed_emitter_width: 0.54
+      fixed_emitter_length: 4.0
+      unit: um
+      optimizable_parameters:
+        m:
+          data_type: continuous
+          minimum: 1
+          maximum: 100
+          default: 1
+          unit: unitless
+          scale: linear
+          constraint_source: dataset_optimization_bound
+          integer_only: true
+    npn_00p54x02p00:
+      device_type: npn
+      model_type: Gummel_Poon
+      scalable: false
+      fixed_emitter_width: 0.54
+      fixed_emitter_length: 2.0
+      unit: um
+      optimizable_parameters:
+        m:
+          data_type: continuous
+          minimum: 1
+          maximum: 100
+          default: 1
+          unit: unitless
+          scale: linear
+          constraint_source: dataset_optimization_bound
+          integer_only: true
+  pnp:
+    pnp_10p00x10p00:
+      device_type: pnp
+      model_type: Gummel_Poon
+      scalable: false
+      fixed_emitter_width: 10.0
+      fixed_emitter_length: 10.0
+      unit: um
+      optimizable_parameters:
+        m:
+          data_type: continuous
+          minimum: 1
+          maximum: 100
+          default: 1
+          unit: unitless
+          scale: linear
+          constraint_source: dataset_optimization_bound
+          integer_only: true
+    pnp_05p00x05p00:
+      device_type: pnp
+      model_type: Gummel_Poon
+      scalable: false
+      fixed_emitter_width: 5.0
+      fixed_emitter_length: 5.0
+      unit: um
+      optimizable_parameters:
+        m:
+          data_type: continuous
+          minimum: 1
+          maximum: 100
+          default: 1
+          unit: unitless
+          scale: linear
+          constraint_source: dataset_optimization_bound
+          integer_only: true
+    vpnp_0.42x10:
+      device_type: pnp
+      model_type: Gummel_Poon
+      scalable: false
+      fixed_emitter_width: 0.42
+      fixed_emitter_length: 10.0
+      unit: um
+      optimizable_parameters:
+        m:
+          data_type: continuous
+          minimum: 1
+          maximum: 100
+          default: 1
+          unit: unitless
+          scale: linear
+          constraint_source: dataset_optimization_bound
+          integer_only: true
+    vpnp_0.42x5:
+      device_type: pnp
+      model_type: Gummel_Poon
+      scalable: false
+      fixed_emitter_width: 0.42
+      fixed_emitter_length: 5.0
+      unit: um
+      optimizable_parameters:
+        m:
+          data_type: continuous
+          minimum: 1
+          maximum: 100
+          default: 1
+          unit: unitless
+          scale: linear
+          constraint_source: dataset_optimization_bound
+          integer_only: true
+  diode:
+    diode_nd2ps_03v3:
+      device_type: diode
+      model_type: SPICE_diode
+      scalable: true
+      optimizable_parameters:
+        W:
+          data_type: continuous
+          minimum: 0.22
+          maximum: 100.0
+          default: 1.0
+          unit: um
+          scale: log
+          constraint_source: GF180MCU_diode_PCell_limit
+        L:
+          data_type: continuous
+          minimum: 0.36
+          maximum: 100.0
+          default: 1.0
+          unit: um
+          scale: log
+          constraint_source: GF180MCU_diode_PCell_limit
+        m:
+          data_type: continuous
+          minimum: 1
+          maximum: 100
+          default: 1
+          unit: unitless
+          scale: linear
+          constraint_source: dataset_optimization_bound
+          integer_only: true
+      derived_simulator_parameters:
+      - area
+      - pj
+    diode_pd2nw_03v3:
+      device_type: diode
+      model_type: SPICE_diode
+      scalable: true
+      optimizable_parameters:
+        W:
+          data_type: continuous
+          minimum: 0.22
+          maximum: 100.0
+          default: 1.0
+          unit: um
+          scale: log
+          constraint_source: GF180MCU_diode_PCell_limit
+        L:
+          data_type: continuous
+          minimum: 0.36
+          maximum: 100.0
+          default: 1.0
+          unit: um
+          scale: log
+          constraint_source: GF180MCU_diode_PCell_limit
+        m:
+          data_type: continuous
+          minimum: 1
+          maximum: 100
+          default: 1
+          unit: unitless
+          scale: linear
+          constraint_source: dataset_optimization_bound
+          integer_only: true
+      derived_simulator_parameters:
+      - area
+      - pj
+    diode_nd2ps_06v0:
+      device_type: diode
+      model_type: SPICE_diode
+      scalable: true
+      optimizable_parameters:
+        W:
+          data_type: continuous
+          minimum: 0.22
+          maximum: 100.0
+          default: 1.0
+          unit: um
+          scale: log
+          constraint_source: GF180MCU_diode_PCell_limit
+        L:
+          data_type: continuous
+          minimum: 0.36
+          maximum: 100.0
+          default: 1.0
+          unit: um
+          scale: log
+          constraint_source: GF180MCU_diode_PCell_limit
+        m:
+          data_type: continuous
+          minimum: 1
+          maximum: 100
+          default: 1
+          unit: unitless
+          scale: linear
+          constraint_source: dataset_optimization_bound
+          integer_only: true
+      derived_simulator_parameters:
+      - area
+      - pj
+    diode_pd2nw_06v0:
+      device_type: diode
+      model_type: SPICE_diode
+      scalable: true
+      optimizable_parameters:
+        W:
+          data_type: continuous
+          minimum: 0.22
+          maximum: 100.0
+          default: 1.0
+          unit: um
+          scale: log
+          constraint_source: GF180MCU_diode_PCell_limit
+        L:
+          data_type: continuous
+          minimum: 0.36
+          maximum: 100.0
+          default: 1.0
+          unit: um
+          scale: log
+          constraint_source: GF180MCU_diode_PCell_limit
+        m:
+          data_type: continuous
+          minimum: 1
+          maximum: 100
+          default: 1
+          unit: unitless
+          scale: linear
+          constraint_source: dataset_optimization_bound
+          integer_only: true
+      derived_simulator_parameters:
+      - area
+      - pj
+    diode_nw2ps_03v3:
+      device_type: diode
+      model_type: SPICE_diode
+      scalable: true
+      optimizable_parameters:
+        W:
+          data_type: continuous
+          minimum: 0.22
+          maximum: 100.0
+          default: 1.0
+          unit: um
+          scale: log
+          constraint_source: GF180MCU_diode_PCell_limit
+        L:
+          data_type: continuous
+          minimum: 0.36
+          maximum: 100.0
+          default: 1.0
+          unit: um
+          scale: log
+          constraint_source: GF180MCU_diode_PCell_limit
+        m:
+          data_type: continuous
+          minimum: 1
+          maximum: 100
+          default: 1
+          unit: unitless
+          scale: linear
+          constraint_source: dataset_optimization_bound
+          integer_only: true
+      derived_simulator_parameters:
+      - area
+      - pj
+    diode_nw2ps_06v0:
+      device_type: diode
+      model_type: SPICE_diode
+      scalable: true
+      optimizable_parameters:
+        W:
+          data_type: continuous
+          minimum: 0.22
+          maximum: 100.0
+          default: 1.0
+          unit: um
+          scale: log
+          constraint_source: GF180MCU_diode_PCell_limit
+        L:
+          data_type: continuous
+          minimum: 0.36
+          maximum: 100.0
+          default: 1.0
+          unit: um
+          scale: log
+          constraint_source: GF180MCU_diode_PCell_limit
+        m:
+          data_type: continuous
+          minimum: 1
+          maximum: 100
+          default: 1
+          unit: unitless
+          scale: linear
+          constraint_source: dataset_optimization_bound
+          integer_only: true
+      derived_simulator_parameters:
+      - area
+      - pj
+    diode_pw2dw:
+      device_type: diode
+      model_type: SPICE_diode
+      scalable: true
+      optimizable_parameters:
+        W:
+          data_type: continuous
+          minimum: 0.22
+          maximum: 100.0
+          default: 1.0
+          unit: um
+          scale: log
+          constraint_source: GF180MCU_diode_PCell_limit
+        L:
+          data_type: continuous
+          minimum: 0.36
+          maximum: 100.0
+          default: 1.0
+          unit: um
+          scale: log
+          constraint_source: GF180MCU_diode_PCell_limit
+        m:
+          data_type: continuous
+          minimum: 1
+          maximum: 100
+          default: 1
+          unit: unitless
+          scale: linear
+          constraint_source: dataset_optimization_bound
+          integer_only: true
+      derived_simulator_parameters:
+      - area
+      - pj
+    diode_dw2ps:
+      device_type: diode
+      model_type: SPICE_diode
+      scalable: true
+      optimizable_parameters:
+        W:
+          data_type: continuous
+          minimum: 0.22
+          maximum: 100.0
+          default: 1.0
+          unit: um
+          scale: log
+          constraint_source: GF180MCU_diode_PCell_limit
+        L:
+          data_type: continuous
+          minimum: 0.36
+          maximum: 100.0
+          default: 1.0
+          unit: um
+          scale: log
+          constraint_source: GF180MCU_diode_PCell_limit
+        m:
+          data_type: continuous
+          minimum: 1
+          maximum: 100
+          default: 1
+          unit: unitless
+          scale: linear
+          constraint_source: dataset_optimization_bound
+          integer_only: true
+      derived_simulator_parameters:
+      - area
+      - pj
+    sc_diode:
+      device_type: diode
+      model_type: SPICE_diode
+      scalable: true
+      optimizable_parameters:
+        W:
+          data_type: continuous
+          minimum: 0.62
+          maximum: 100.0
+          default: 0.62
+          unit: um
+          scale: log
+          constraint_source: GF180MCU_diode_PCell_limit
+        L:
+          data_type: continuous
+          minimum: 1.0
+          maximum: 100.0
+          default: 1.0
+          unit: um
+          scale: log
+          constraint_source: GF180MCU_diode_PCell_limit
+        m:
+          data_type: continuous
+          minimum: 1
+          maximum: 100
+          default: 1
+          unit: unitless
+          scale: linear
+          constraint_source: dataset_optimization_bound
+          integer_only: true
+      derived_simulator_parameters:
+      - area
+      - pj
+  inductor:
+    external_extracted_inductor:
+      device_type: inductor
+      pdk_native_model: false
+      migration_method: external_lumped_model_or_post_layout_extraction
+      optimizable_parameters:
+        L:
+          data_type: continuous
+          minimum: 1.0e-12
+          maximum: 0.001
+          default: 1.0e-09
+          unit: H
+          scale: log
+          constraint_source: dataset_search_bound_no_native_GF180_inductor_model
+        m:
+          data_type: continuous
+          minimum: 1
+          maximum: 100
+          default: 1
+          unit: unitless
+          scale: linear
+          constraint_source: dataset_optimization_bound
+          integer_only: true
+  transmission_gate:
+    gf180mcu_cmos_transmission_gate_03v3:
+      device_type: transmission_gate
+      pdk_primitive: false
+      voltage_class: 3p3
+      implementation: expand_to_nfet_03v3_and_pfet_03v3_subcircuit
+    gf180mcu_cmos_transmission_gate_06v0:
+      device_type: transmission_gate
+      pdk_primitive: false
+      voltage_class: 6p0
+      implementation: expand_to_nfet_06v0_and_pfet_06v0_subcircuit
+  inverter:
+    gf180mcu_cmos_inverter_03v3:
+      device_type: inverter
+      pdk_primitive: false
+      voltage_class: 3p3
+      implementation: expand_to_nfet_03v3_and_pfet_03v3_subcircuit
+    gf180mcu_cmos_inverter_06v0:
+      device_type: inverter
+      pdk_primitive: false
+      voltage_class: 6p0
+      implementation: expand_to_nfet_06v0_and_pfet_06v0_subcircuit
+  xor:
+    gf180mcu_cmos_xor_03v3:
+      device_type: xor
+      pdk_primitive: false
+      voltage_class: 3p3
+      implementation: expand_to_nfet_03v3_and_pfet_03v3_subcircuit
+    gf180mcu_cmos_xor_06v0:
+      device_type: xor
+      pdk_primitive: false
+      voltage_class: 6p0
+      implementation: expand_to_nfet_06v0_and_pfet_06v0_subcircuit
+  pfd:
+    gf180mcu_cmos_pfd_03v3:
+      device_type: pfd
+      pdk_primitive: false
+      voltage_class: 3p3
+      implementation: expand_to_nfet_03v3_and_pfet_03v3_subcircuit
+    gf180mcu_cmos_pfd_06v0:
+      device_type: pfd
+      pdk_primitive: false
+      voltage_class: 6p0
+      implementation: expand_to_nfet_06v0_and_pfet_06v0_subcircuit
+device_design_space:
+  Q0:
+    device_type: npn
+    model_parameter: Q0_model
+    model_data_type: categorial
+    default_model: npn_10p00x10p00
+    selectable_models:
+      - npn_10p00x10p00
+      - npn_05p00x05p00
+      - npn_00p54x16p00
+      - npn_00p54x08p00
+      - npn_00p54x04p00
+      - npn_00p54x02p00
+    parameter_constraints_by_model:
+      npn_10p00x10p00:
+        m:
+          data_type: continuous
+          minimum: 1
+          maximum: 100
+          default: 1
+          unit: unitless
+          scale: linear
+          constraint_source: dataset_optimization_bound
+          integer_only: true
+      npn_05p00x05p00:
+        m:
+          data_type: continuous
+          minimum: 1
+          maximum: 100
+          default: 1
+          unit: unitless
+          scale: linear
+          constraint_source: dataset_optimization_bound
+          integer_only: true
+      npn_00p54x16p00:
+        m:
+          data_type: continuous
+          minimum: 1
+          maximum: 100
+          default: 1
+          unit: unitless
+          scale: linear
+          constraint_source: dataset_optimization_bound
+          integer_only: true
+      npn_00p54x08p00:
+        m:
+          data_type: continuous
+          minimum: 1
+          maximum: 100
+          default: 1
+          unit: unitless
+          scale: linear
+          constraint_source: dataset_optimization_bound
+          integer_only: true
+      npn_00p54x04p00:
+        m:
+          data_type: continuous
+          minimum: 1
+          maximum: 100
+          default: 1
+          unit: unitless
+          scale: linear
+          constraint_source: dataset_optimization_bound
+          integer_only: true
+      npn_00p54x02p00:
+        m:
+          data_type: continuous
+          minimum: 1
+          maximum: 100
+          default: 1
+          unit: unitless
+          scale: linear
+          constraint_source: dataset_optimization_bound
+          integer_only: true
+  Q1:
+    device_type: npn
+    model_parameter: Q1_model
+    model_data_type: categorial
+    default_model: npn_10p00x10p00
+    selectable_models:
+      - npn_10p00x10p00
+      - npn_05p00x05p00
+      - npn_00p54x16p00
+      - npn_00p54x08p00
+      - npn_00p54x04p00
+      - npn_00p54x02p00
+    parameter_constraints_by_model:
+      npn_10p00x10p00:
+        m:
+          data_type: continuous
+          minimum: 1
+          maximum: 100
+          default: 1
+          unit: unitless
+          scale: linear
+          constraint_source: dataset_optimization_bound
+          integer_only: true
+      npn_05p00x05p00:
+        m:
+          data_type: continuous
+          minimum: 1
+          maximum: 100
+          default: 1
+          unit: unitless
+          scale: linear
+          constraint_source: dataset_optimization_bound
+          integer_only: true
+      npn_00p54x16p00:
+        m:
+          data_type: continuous
+          minimum: 1
+          maximum: 100
+          default: 1
+          unit: unitless
+          scale: linear
+          constraint_source: dataset_optimization_bound
+          integer_only: true
+      npn_00p54x08p00:
+        m:
+          data_type: continuous
+          minimum: 1
+          maximum: 100
+          default: 1
+          unit: unitless
+          scale: linear
+          constraint_source: dataset_optimization_bound
+          integer_only: true
+      npn_00p54x04p00:
+        m:
+          data_type: continuous
+          minimum: 1
+          maximum: 100
+          default: 1
+          unit: unitless
+          scale: linear
+          constraint_source: dataset_optimization_bound
+          integer_only: true
+      npn_00p54x02p00:
+        m:
+          data_type: continuous
+          minimum: 1
+          maximum: 100
+          default: 1
+          unit: unitless
+          scale: linear
+          constraint_source: dataset_optimization_bound
+          integer_only: true
+  R1:
+    device_type: resistor
+    model_parameter: R1_model
+    model_data_type: categorial
+    default_model: ppolyf_u
+    selectable_models:
+    - npolyf_u
+    - ppolyf_u
+    - ppolyf_u_1k
+    - ppolyf_u_2k
+    - ppolyf_u_3k
+    - ppolyf_u_1k_6p0
+    - ppolyf_u_2k_6p0
+    - nplus_u
+    - pplus_u
+    - npolyf_s
+    - ppolyf_s
+    - nplus_s
+    - pplus_s
+    - nwell
+    - rm1
+    - rm2
+    - rm3
+    - tm6k
+    - tm9k
+    - tm11k
+    - tm30k
+    parameter_constraints_by_model:
+      npolyf_u:
+        W:
+          data_type: continuous
+          minimum: 0.8
+          maximum: 100.0
+          default: 0.8
+          unit: um
+          scale: log
+          constraint_source: GF180MCU_rule_plus_dataset_maximum
+        L:
+          data_type: continuous
+          minimum: 0.42
+          maximum: 1000.0
+          default: 10.0
+          unit: um
+          scale: log
+          constraint_source: GF180MCU_rule_plus_dataset_maximum
+        m:
+          data_type: continuous
+          minimum: 1
+          maximum: 100
+          default: 1
+          unit: unitless
+          scale: linear
+          constraint_source: dataset_optimization_bound
+          integer_only: true
+      ppolyf_u:
+        W:
+          data_type: continuous
+          minimum: 0.8
+          maximum: 100.0
+          default: 0.8
+          unit: um
+          scale: log
+          constraint_source: GF180MCU_rule_plus_dataset_maximum
+        L:
+          data_type: continuous
+          minimum: 0.42
+          maximum: 1000.0
+          default: 10.0
+          unit: um
+          scale: log
+          constraint_source: GF180MCU_rule_plus_dataset_maximum
+        m:
+          data_type: continuous
+          minimum: 1
+          maximum: 100
+          default: 1
+          unit: unitless
+          scale: linear
+          constraint_source: dataset_optimization_bound
+          integer_only: true
+      ppolyf_u_1k:
+        W:
+          data_type: continuous
+          minimum: 1.0
+          maximum: 100.0
+          default: 1.0
+          unit: um
+          scale: log
+          constraint_source: GF180MCU_rule_plus_dataset_maximum
+        L:
+          data_type: continuous
+          minimum: 0.42
+          maximum: 1000.0
+          default: 10.0
+          unit: um
+          scale: log
+          constraint_source: GF180MCU_rule_plus_dataset_maximum
+        m:
+          data_type: continuous
+          minimum: 1
+          maximum: 100
+          default: 1
+          unit: unitless
+          scale: linear
+          constraint_source: dataset_optimization_bound
+          integer_only: true
+      ppolyf_u_2k:
+        W:
+          data_type: continuous
+          minimum: 1.0
+          maximum: 100.0
+          default: 1.0
+          unit: um
+          scale: log
+          constraint_source: GF180MCU_rule_plus_dataset_maximum
+        L:
+          data_type: continuous
+          minimum: 0.42
+          maximum: 1000.0
+          default: 10.0
+          unit: um
+          scale: log
+          constraint_source: GF180MCU_rule_plus_dataset_maximum
+        m:
+          data_type: continuous
+          minimum: 1
+          maximum: 100
+          default: 1
+          unit: unitless
+          scale: linear
+          constraint_source: dataset_optimization_bound
+          integer_only: true
+      ppolyf_u_3k:
+        W:
+          data_type: continuous
+          minimum: 1.0
+          maximum: 100.0
+          default: 1.0
+          unit: um
+          scale: log
+          constraint_source: GF180MCU_rule_plus_dataset_maximum
+        L:
+          data_type: continuous
+          minimum: 0.42
+          maximum: 1000.0
+          default: 10.0
+          unit: um
+          scale: log
+          constraint_source: GF180MCU_rule_plus_dataset_maximum
+        m:
+          data_type: continuous
+          minimum: 1
+          maximum: 100
+          default: 1
+          unit: unitless
+          scale: linear
+          constraint_source: dataset_optimization_bound
+          integer_only: true
+      ppolyf_u_1k_6p0:
+        W:
+          data_type: continuous
+          minimum: 1.0
+          maximum: 100.0
+          default: 1.0
+          unit: um
+          scale: log
+          constraint_source: GF180MCU_rule_plus_dataset_maximum
+        L:
+          data_type: continuous
+          minimum: 0.42
+          maximum: 1000.0
+          default: 10.0
+          unit: um
+          scale: log
+          constraint_source: GF180MCU_rule_plus_dataset_maximum
+        m:
+          data_type: continuous
+          minimum: 1
+          maximum: 100
+          default: 1
+          unit: unitless
+          scale: linear
+          constraint_source: dataset_optimization_bound
+          integer_only: true
+      ppolyf_u_2k_6p0:
+        W:
+          data_type: continuous
+          minimum: 1.0
+          maximum: 100.0
+          default: 1.0
+          unit: um
+          scale: log
+          constraint_source: GF180MCU_rule_plus_dataset_maximum
+        L:
+          data_type: continuous
+          minimum: 0.42
+          maximum: 1000.0
+          default: 10.0
+          unit: um
+          scale: log
+          constraint_source: GF180MCU_rule_plus_dataset_maximum
+        m:
+          data_type: continuous
+          minimum: 1
+          maximum: 100
+          default: 1
+          unit: unitless
+          scale: linear
+          constraint_source: dataset_optimization_bound
+          integer_only: true
+      nplus_u:
+        W:
+          data_type: continuous
+          minimum: 0.3
+          maximum: 100.0
+          default: 0.3
+          unit: um
+          scale: log
+          constraint_source: GF180MCU_rule_plus_dataset_maximum
+        L:
+          data_type: continuous
+          minimum: 0.42
+          maximum: 1000.0
+          default: 10.0
+          unit: um
+          scale: log
+          constraint_source: GF180MCU_rule_plus_dataset_maximum
+        m:
+          data_type: continuous
+          minimum: 1
+          maximum: 100
+          default: 1
+          unit: unitless
+          scale: linear
+          constraint_source: dataset_optimization_bound
+          integer_only: true
+      pplus_u:
+        W:
+          data_type: continuous
+          minimum: 0.3
+          maximum: 100.0
+          default: 0.3
+          unit: um
+          scale: log
+          constraint_source: GF180MCU_rule_plus_dataset_maximum
+        L:
+          data_type: continuous
+          minimum: 0.42
+          maximum: 1000.0
+          default: 10.0
+          unit: um
+          scale: log
+          constraint_source: GF180MCU_rule_plus_dataset_maximum
+        m:
+          data_type: continuous
+          minimum: 1
+          maximum: 100
+          default: 1
+          unit: unitless
+          scale: linear
+          constraint_source: dataset_optimization_bound
+          integer_only: true
+      npolyf_s:
+        W:
+          data_type: continuous
+          minimum: 0.22
+          maximum: 100.0
+          default: 0.22
+          unit: um
+          scale: log
+          constraint_source: GF180MCU_rule_plus_dataset_maximum
+        L:
+          data_type: continuous
+          minimum: 0.42
+          maximum: 1000.0
+          default: 10.0
+          unit: um
+          scale: log
+          constraint_source: GF180MCU_rule_plus_dataset_maximum
+        m:
+          data_type: continuous
+          minimum: 1
+          maximum: 100
+          default: 1
+          unit: unitless
+          scale: linear
+          constraint_source: dataset_optimization_bound
+          integer_only: true
+      ppolyf_s:
+        W:
+          data_type: continuous
+          minimum: 0.22
+          maximum: 100.0
+          default: 0.22
+          unit: um
+          scale: log
+          constraint_source: GF180MCU_rule_plus_dataset_maximum
+        L:
+          data_type: continuous
+          minimum: 0.42
+          maximum: 1000.0
+          default: 10.0
+          unit: um
+          scale: log
+          constraint_source: GF180MCU_rule_plus_dataset_maximum
+        m:
+          data_type: continuous
+          minimum: 1
+          maximum: 100
+          default: 1
+          unit: unitless
+          scale: linear
+          constraint_source: dataset_optimization_bound
+          integer_only: true
+      nplus_s:
+        W:
+          data_type: continuous
+          minimum: 0.3
+          maximum: 100.0
+          default: 0.3
+          unit: um
+          scale: log
+          constraint_source: GF180MCU_rule_plus_dataset_maximum
+        L:
+          data_type: continuous
+          minimum: 0.42
+          maximum: 1000.0
+          default: 10.0
+          unit: um
+          scale: log
+          constraint_source: GF180MCU_rule_plus_dataset_maximum
+        m:
+          data_type: continuous
+          minimum: 1
+          maximum: 100
+          default: 1
+          unit: unitless
+          scale: linear
+          constraint_source: dataset_optimization_bound
+          integer_only: true
+      pplus_s:
+        W:
+          data_type: continuous
+          minimum: 0.3
+          maximum: 100.0
+          default: 0.3
+          unit: um
+          scale: log
+          constraint_source: GF180MCU_rule_plus_dataset_maximum
+        L:
+          data_type: continuous
+          minimum: 0.42
+          maximum: 1000.0
+          default: 10.0
+          unit: um
+          scale: log
+          constraint_source: GF180MCU_rule_plus_dataset_maximum
+        m:
+          data_type: continuous
+          minimum: 1
+          maximum: 100
+          default: 1
+          unit: unitless
+          scale: linear
+          constraint_source: dataset_optimization_bound
+          integer_only: true
+      nwell:
+        W:
+          data_type: continuous
+          minimum: 2.0
+          maximum: 100.0
+          default: 2.0
+          unit: um
+          scale: log
+          constraint_source: GF180MCU_rule_plus_dataset_maximum
+        L:
+          data_type: continuous
+          minimum: 0.42
+          maximum: 1000.0
+          default: 10.0
+          unit: um
+          scale: log
+          constraint_source: GF180MCU_rule_plus_dataset_maximum
+        m:
+          data_type: continuous
+          minimum: 1
+          maximum: 100
+          default: 1
+          unit: unitless
+          scale: linear
+          constraint_source: dataset_optimization_bound
+          integer_only: true
+      rm1:
+        W:
+          data_type: continuous
+          minimum: 0.23
+          maximum: 100.0
+          default: 0.23
+          unit: um
+          scale: log
+          constraint_source: GF180MCU_rule_plus_dataset_maximum
+        L:
+          data_type: continuous
+          minimum: 0.42
+          maximum: 1000.0
+          default: 10.0
+          unit: um
+          scale: log
+          constraint_source: GF180MCU_rule_plus_dataset_maximum
+        m:
+          data_type: continuous
+          minimum: 1
+          maximum: 100
+          default: 1
+          unit: unitless
+          scale: linear
+          constraint_source: dataset_optimization_bound
+          integer_only: true
+      rm2:
+        W:
+          data_type: continuous
+          minimum: 0.28
+          maximum: 100.0
+          default: 0.28
+          unit: um
+          scale: log
+          constraint_source: GF180MCU_rule_plus_dataset_maximum
+        L:
+          data_type: continuous
+          minimum: 0.42
+          maximum: 1000.0
+          default: 10.0
+          unit: um
+          scale: log
+          constraint_source: GF180MCU_rule_plus_dataset_maximum
+        m:
+          data_type: continuous
+          minimum: 1
+          maximum: 100
+          default: 1
+          unit: unitless
+          scale: linear
+          constraint_source: dataset_optimization_bound
+          integer_only: true
+      rm3:
+        W:
+          data_type: continuous
+          minimum: 0.28
+          maximum: 100.0
+          default: 0.28
+          unit: um
+          scale: log
+          constraint_source: GF180MCU_rule_plus_dataset_maximum
+        L:
+          data_type: continuous
+          minimum: 0.42
+          maximum: 1000.0
+          default: 10.0
+          unit: um
+          scale: log
+          constraint_source: GF180MCU_rule_plus_dataset_maximum
+        m:
+          data_type: continuous
+          minimum: 1
+          maximum: 100
+          default: 1
+          unit: unitless
+          scale: linear
+          constraint_source: dataset_optimization_bound
+          integer_only: true
+      tm6k:
+        W:
+          data_type: continuous
+          minimum: 0.36
+          maximum: 100.0
+          default: 0.36
+          unit: um
+          scale: log
+          constraint_source: GF180MCU_rule_plus_dataset_maximum
+        L:
+          data_type: continuous
+          minimum: 0.42
+          maximum: 1000.0
+          default: 10.0
+          unit: um
+          scale: log
+          constraint_source: GF180MCU_rule_plus_dataset_maximum
+        m:
+          data_type: continuous
+          minimum: 1
+          maximum: 100
+          default: 1
+          unit: unitless
+          scale: linear
+          constraint_source: dataset_optimization_bound
+          integer_only: true
+      tm9k:
+        W:
+          data_type: continuous
+          minimum: 0.44
+          maximum: 100.0
+          default: 0.44
+          unit: um
+          scale: log
+          constraint_source: GF180MCU_rule_plus_dataset_maximum
+        L:
+          data_type: continuous
+          minimum: 0.42
+          maximum: 1000.0
+          default: 10.0
+          unit: um
+          scale: log
+          constraint_source: GF180MCU_rule_plus_dataset_maximum
+        m:
+          data_type: continuous
+          minimum: 1
+          maximum: 100
+          default: 1
+          unit: unitless
+          scale: linear
+          constraint_source: dataset_optimization_bound
+          integer_only: true
+      tm11k:
+        W:
+          data_type: continuous
+          minimum: 0.44
+          maximum: 100.0
+          default: 0.44
+          unit: um
+          scale: log
+          constraint_source: GF180MCU_rule_plus_dataset_maximum
+        L:
+          data_type: continuous
+          minimum: 0.42
+          maximum: 1000.0
+          default: 10.0
+          unit: um
+          scale: log
+          constraint_source: GF180MCU_rule_plus_dataset_maximum
+        m:
+          data_type: continuous
+          minimum: 1
+          maximum: 100
+          default: 1
+          unit: unitless
+          scale: linear
+          constraint_source: dataset_optimization_bound
+          integer_only: true
+      tm30k:
+        W:
+          data_type: continuous
+          minimum: 1.8
+          maximum: 100.0
+          default: 1.8
+          unit: um
+          scale: log
+          constraint_source: GF180MCU_rule_plus_dataset_maximum
+        L:
+          data_type: continuous
+          minimum: 0.42
+          maximum: 1000.0
+          default: 10.0
+          unit: um
+          scale: log
+          constraint_source: GF180MCU_rule_plus_dataset_maximum
+        m:
+          data_type: continuous
+          minimum: 1
+          maximum: 100
+          default: 1
+          unit: unitless
+          scale: linear
+          constraint_source: dataset_optimization_bound
+          integer_only: true
+  R0:
+    device_type: resistor
+    model_parameter: R0_model
+    model_data_type: categorial
+    default_model: ppolyf_u
+    selectable_models:
+    - npolyf_u
+    - ppolyf_u
+    - ppolyf_u_1k
+    - ppolyf_u_2k
+    - ppolyf_u_3k
+    - ppolyf_u_1k_6p0
+    - ppolyf_u_2k_6p0
+    - nplus_u
+    - pplus_u
+    - npolyf_s
+    - ppolyf_s
+    - nplus_s
+    - pplus_s
+    - nwell
+    - rm1
+    - rm2
+    - rm3
+    - tm6k
+    - tm9k
+    - tm11k
+    - tm30k
+    parameter_constraints_by_model:
+      npolyf_u:
+        W:
+          data_type: continuous
+          minimum: 0.8
+          maximum: 100.0
+          default: 0.8
+          unit: um
+          scale: log
+          constraint_source: GF180MCU_rule_plus_dataset_maximum
+        L:
+          data_type: continuous
+          minimum: 0.42
+          maximum: 1000.0
+          default: 10.0
+          unit: um
+          scale: log
+          constraint_source: GF180MCU_rule_plus_dataset_maximum
+        m:
+          data_type: continuous
+          minimum: 1
+          maximum: 100
+          default: 1
+          unit: unitless
+          scale: linear
+          constraint_source: dataset_optimization_bound
+          integer_only: true
+      ppolyf_u:
+        W:
+          data_type: continuous
+          minimum: 0.8
+          maximum: 100.0
+          default: 0.8
+          unit: um
+          scale: log
+          constraint_source: GF180MCU_rule_plus_dataset_maximum
+        L:
+          data_type: continuous
+          minimum: 0.42
+          maximum: 1000.0
+          default: 10.0
+          unit: um
+          scale: log
+          constraint_source: GF180MCU_rule_plus_dataset_maximum
+        m:
+          data_type: continuous
+          minimum: 1
+          maximum: 100
+          default: 1
+          unit: unitless
+          scale: linear
+          constraint_source: dataset_optimization_bound
+          integer_only: true
+      ppolyf_u_1k:
+        W:
+          data_type: continuous
+          minimum: 1.0
+          maximum: 100.0
+          default: 1.0
+          unit: um
+          scale: log
+          constraint_source: GF180MCU_rule_plus_dataset_maximum
+        L:
+          data_type: continuous
+          minimum: 0.42
+          maximum: 1000.0
+          default: 10.0
+          unit: um
+          scale: log
+          constraint_source: GF180MCU_rule_plus_dataset_maximum
+        m:
+          data_type: continuous
+          minimum: 1
+          maximum: 100
+          default: 1
+          unit: unitless
+          scale: linear
+          constraint_source: dataset_optimization_bound
+          integer_only: true
+      ppolyf_u_2k:
+        W:
+          data_type: continuous
+          minimum: 1.0
+          maximum: 100.0
+          default: 1.0
+          unit: um
+          scale: log
+          constraint_source: GF180MCU_rule_plus_dataset_maximum
+        L:
+          data_type: continuous
+          minimum: 0.42
+          maximum: 1000.0
+          default: 10.0
+          unit: um
+          scale: log
+          constraint_source: GF180MCU_rule_plus_dataset_maximum
+        m:
+          data_type: continuous
+          minimum: 1
+          maximum: 100
+          default: 1
+          unit: unitless
+          scale: linear
+          constraint_source: dataset_optimization_bound
+          integer_only: true
+      ppolyf_u_3k:
+        W:
+          data_type: continuous
+          minimum: 1.0
+          maximum: 100.0
+          default: 1.0
+          unit: um
+          scale: log
+          constraint_source: GF180MCU_rule_plus_dataset_maximum
+        L:
+          data_type: continuous
+          minimum: 0.42
+          maximum: 1000.0
+          default: 10.0
+          unit: um
+          scale: log
+          constraint_source: GF180MCU_rule_plus_dataset_maximum
+        m:
+          data_type: continuous
+          minimum: 1
+          maximum: 100
+          default: 1
+          unit: unitless
+          scale: linear
+          constraint_source: dataset_optimization_bound
+          integer_only: true
+      ppolyf_u_1k_6p0:
+        W:
+          data_type: continuous
+          minimum: 1.0
+          maximum: 100.0
+          default: 1.0
+          unit: um
+          scale: log
+          constraint_source: GF180MCU_rule_plus_dataset_maximum
+        L:
+          data_type: continuous
+          minimum: 0.42
+          maximum: 1000.0
+          default: 10.0
+          unit: um
+          scale: log
+          constraint_source: GF180MCU_rule_plus_dataset_maximum
+        m:
+          data_type: continuous
+          minimum: 1
+          maximum: 100
+          default: 1
+          unit: unitless
+          scale: linear
+          constraint_source: dataset_optimization_bound
+          integer_only: true
+      ppolyf_u_2k_6p0:
+        W:
+          data_type: continuous
+          minimum: 1.0
+          maximum: 100.0
+          default: 1.0
+          unit: um
+          scale: log
+          constraint_source: GF180MCU_rule_plus_dataset_maximum
+        L:
+          data_type: continuous
+          minimum: 0.42
+          maximum: 1000.0
+          default: 10.0
+          unit: um
+          scale: log
+          constraint_source: GF180MCU_rule_plus_dataset_maximum
+        m:
+          data_type: continuous
+          minimum: 1
+          maximum: 100
+          default: 1
+          unit: unitless
+          scale: linear
+          constraint_source: dataset_optimization_bound
+          integer_only: true
+      nplus_u:
+        W:
+          data_type: continuous
+          minimum: 0.3
+          maximum: 100.0
+          default: 0.3
+          unit: um
+          scale: log
+          constraint_source: GF180MCU_rule_plus_dataset_maximum
+        L:
+          data_type: continuous
+          minimum: 0.42
+          maximum: 1000.0
+          default: 10.0
+          unit: um
+          scale: log
+          constraint_source: GF180MCU_rule_plus_dataset_maximum
+        m:
+          data_type: continuous
+          minimum: 1
+          maximum: 100
+          default: 1
+          unit: unitless
+          scale: linear
+          constraint_source: dataset_optimization_bound
+          integer_only: true
+      pplus_u:
+        W:
+          data_type: continuous
+          minimum: 0.3
+          maximum: 100.0
+          default: 0.3
+          unit: um
+          scale: log
+          constraint_source: GF180MCU_rule_plus_dataset_maximum
+        L:
+          data_type: continuous
+          minimum: 0.42
+          maximum: 1000.0
+          default: 10.0
+          unit: um
+          scale: log
+          constraint_source: GF180MCU_rule_plus_dataset_maximum
+        m:
+          data_type: continuous
+          minimum: 1
+          maximum: 100
+          default: 1
+          unit: unitless
+          scale: linear
+          constraint_source: dataset_optimization_bound
+          integer_only: true
+      npolyf_s:
+        W:
+          data_type: continuous
+          minimum: 0.22
+          maximum: 100.0
+          default: 0.22
+          unit: um
+          scale: log
+          constraint_source: GF180MCU_rule_plus_dataset_maximum
+        L:
+          data_type: continuous
+          minimum: 0.42
+          maximum: 1000.0
+          default: 10.0
+          unit: um
+          scale: log
+          constraint_source: GF180MCU_rule_plus_dataset_maximum
+        m:
+          data_type: continuous
+          minimum: 1
+          maximum: 100
+          default: 1
+          unit: unitless
+          scale: linear
+          constraint_source: dataset_optimization_bound
+          integer_only: true
+      ppolyf_s:
+        W:
+          data_type: continuous
+          minimum: 0.22
+          maximum: 100.0
+          default: 0.22
+          unit: um
+          scale: log
+          constraint_source: GF180MCU_rule_plus_dataset_maximum
+        L:
+          data_type: continuous
+          minimum: 0.42
+          maximum: 1000.0
+          default: 10.0
+          unit: um
+          scale: log
+          constraint_source: GF180MCU_rule_plus_dataset_maximum
+        m:
+          data_type: continuous
+          minimum: 1
+          maximum: 100
+          default: 1
+          unit: unitless
+          scale: linear
+          constraint_source: dataset_optimization_bound
+          integer_only: true
+      nplus_s:
+        W:
+          data_type: continuous
+          minimum: 0.3
+          maximum: 100.0
+          default: 0.3
+          unit: um
+          scale: log
+          constraint_source: GF180MCU_rule_plus_dataset_maximum
+        L:
+          data_type: continuous
+          minimum: 0.42
+          maximum: 1000.0
+          default: 10.0
+          unit: um
+          scale: log
+          constraint_source: GF180MCU_rule_plus_dataset_maximum
+        m:
+          data_type: continuous
+          minimum: 1
+          maximum: 100
+          default: 1
+          unit: unitless
+          scale: linear
+          constraint_source: dataset_optimization_bound
+          integer_only: true
+      pplus_s:
+        W:
+          data_type: continuous
+          minimum: 0.3
+          maximum: 100.0
+          default: 0.3
+          unit: um
+          scale: log
+          constraint_source: GF180MCU_rule_plus_dataset_maximum
+        L:
+          data_type: continuous
+          minimum: 0.42
+          maximum: 1000.0
+          default: 10.0
+          unit: um
+          scale: log
+          constraint_source: GF180MCU_rule_plus_dataset_maximum
+        m:
+          data_type: continuous
+          minimum: 1
+          maximum: 100
+          default: 1
+          unit: unitless
+          scale: linear
+          constraint_source: dataset_optimization_bound
+          integer_only: true
+      nwell:
+        W:
+          data_type: continuous
+          minimum: 2.0
+          maximum: 100.0
+          default: 2.0
+          unit: um
+          scale: log
+          constraint_source: GF180MCU_rule_plus_dataset_maximum
+        L:
+          data_type: continuous
+          minimum: 0.42
+          maximum: 1000.0
+          default: 10.0
+          unit: um
+          scale: log
+          constraint_source: GF180MCU_rule_plus_dataset_maximum
+        m:
+          data_type: continuous
+          minimum: 1
+          maximum: 100
+          default: 1
+          unit: unitless
+          scale: linear
+          constraint_source: dataset_optimization_bound
+          integer_only: true
+      rm1:
+        W:
+          data_type: continuous
+          minimum: 0.23
+          maximum: 100.0
+          default: 0.23
+          unit: um
+          scale: log
+          constraint_source: GF180MCU_rule_plus_dataset_maximum
+        L:
+          data_type: continuous
+          minimum: 0.42
+          maximum: 1000.0
+          default: 10.0
+          unit: um
+          scale: log
+          constraint_source: GF180MCU_rule_plus_dataset_maximum
+        m:
+          data_type: continuous
+          minimum: 1
+          maximum: 100
+          default: 1
+          unit: unitless
+          scale: linear
+          constraint_source: dataset_optimization_bound
+          integer_only: true
+      rm2:
+        W:
+          data_type: continuous
+          minimum: 0.28
+          maximum: 100.0
+          default: 0.28
+          unit: um
+          scale: log
+          constraint_source: GF180MCU_rule_plus_dataset_maximum
+        L:
+          data_type: continuous
+          minimum: 0.42
+          maximum: 1000.0
+          default: 10.0
+          unit: um
+          scale: log
+          constraint_source: GF180MCU_rule_plus_dataset_maximum
+        m:
+          data_type: continuous
+          minimum: 1
+          maximum: 100
+          default: 1
+          unit: unitless
+          scale: linear
+          constraint_source: dataset_optimization_bound
+          integer_only: true
+      rm3:
+        W:
+          data_type: continuous
+          minimum: 0.28
+          maximum: 100.0
+          default: 0.28
+          unit: um
+          scale: log
+          constraint_source: GF180MCU_rule_plus_dataset_maximum
+        L:
+          data_type: continuous
+          minimum: 0.42
+          maximum: 1000.0
+          default: 10.0
+          unit: um
+          scale: log
+          constraint_source: GF180MCU_rule_plus_dataset_maximum
+        m:
+          data_type: continuous
+          minimum: 1
+          maximum: 100
+          default: 1
+          unit: unitless
+          scale: linear
+          constraint_source: dataset_optimization_bound
+          integer_only: true
+      tm6k:
+        W:
+          data_type: continuous
+          minimum: 0.36
+          maximum: 100.0
+          default: 0.36
+          unit: um
+          scale: log
+          constraint_source: GF180MCU_rule_plus_dataset_maximum
+        L:
+          data_type: continuous
+          minimum: 0.42
+          maximum: 1000.0
+          default: 10.0
+          unit: um
+          scale: log
+          constraint_source: GF180MCU_rule_plus_dataset_maximum
+        m:
+          data_type: continuous
+          minimum: 1
+          maximum: 100
+          default: 1
+          unit: unitless
+          scale: linear
+          constraint_source: dataset_optimization_bound
+          integer_only: true
+      tm9k:
+        W:
+          data_type: continuous
+          minimum: 0.44
+          maximum: 100.0
+          default: 0.44
+          unit: um
+          scale: log
+          constraint_source: GF180MCU_rule_plus_dataset_maximum
+        L:
+          data_type: continuous
+          minimum: 0.42
+          maximum: 1000.0
+          default: 10.0
+          unit: um
+          scale: log
+          constraint_source: GF180MCU_rule_plus_dataset_maximum
+        m:
+          data_type: continuous
+          minimum: 1
+          maximum: 100
+          default: 1
+          unit: unitless
+          scale: linear
+          constraint_source: dataset_optimization_bound
+          integer_only: true
+      tm11k:
+        W:
+          data_type: continuous
+          minimum: 0.44
+          maximum: 100.0
+          default: 0.44
+          unit: um
+          scale: log
+          constraint_source: GF180MCU_rule_plus_dataset_maximum
+        L:
+          data_type: continuous
+          minimum: 0.42
+          maximum: 1000.0
+          default: 10.0
+          unit: um
+          scale: log
+          constraint_source: GF180MCU_rule_plus_dataset_maximum
+        m:
+          data_type: continuous
+          minimum: 1
+          maximum: 100
+          default: 1
+          unit: unitless
+          scale: linear
+          constraint_source: dataset_optimization_bound
+          integer_only: true
+      tm30k:
+        W:
+          data_type: continuous
+          minimum: 1.8
+          maximum: 100.0
+          default: 1.8
+          unit: um
+          scale: log
+          constraint_source: GF180MCU_rule_plus_dataset_maximum
+        L:
+          data_type: continuous
+          minimum: 0.42
+          maximum: 1000.0
+          default: 10.0
+          unit: um
+          scale: log
+          constraint_source: GF180MCU_rule_plus_dataset_maximum
+        m:
+          data_type: continuous
+          minimum: 1
+          maximum: 100
+          default: 1
+          unit: unitless
+          scale: linear
+          constraint_source: dataset_optimization_bound
+          integer_only: true
+notes:
+  model_scope: all documented scalable GF180MCU MOS, resistor, and capacitor choices relevant to source device types
+  model_dependent_constraints: apply the W/L/m/nf limits under the selected model
+  separation_note: Operating values are stored separately in operating_space.yaml
+  extended_device_note: GF180 BJT choices are fixed geometries; diode W/L bounds follow installed PCells; no native scalable
+    inductor model is present in the installed open PDK
+  hierarchy_note: Transmission gates and logic symbols are non-primitive templates and must be expanded to MOS subcircuits
+    before device sizing
+constraint_sources:
+  LV_MOS_models: https://gf180mcu-pdk.readthedocs.io/en/latest/analog/model_parameters/LV/LV_1_4_1.html
+  LV_MOS_limits: https://gf180mcu-pdk.readthedocs.io/en/latest/analog/model_parameters/LV/LV_1_5_1.html
+  10V_MOS_models_and_limits: https://gf180mcu-pdk.readthedocs.io/en/latest/analog/model_parameters/HV/HV_1_2.html
+  resistor_models: https://gf180mcu-pdk.readthedocs.io/en/latest/analog/model_parameters/LV/LV_4.html
+  MIM_rules: https://gf180mcu-pdk.readthedocs.io/en/latest/physical_verification/design_manual/drm_10_4_1.html
+  BJT_catalog: installed GF180MCU docs analog/model_parameters/LV/tables_clear/05_BJTs.csv
+  diode_catalog: installed GF180MCU docs analog/model_parameters/LV/tables_clear/04_Diodes.csv
+  diode_PCell_limits: installed gf180mcu_fd_pr cells/klayout/pymacros/cells/diode.py
+  inductor_availability: installed open GF180MCU PDK contains IND_MK layout guidance but no characterized scalable SPICE inductor
+    model
+circuit_type: current mirrors

@@ -1,0 +1,9 @@
+circuit_id: circuit_0469
+circuit_number: 0469
+analoggenie_folder_id: 605
+circuit_type: current mirrors
+circuit_name: Emitter-degenerated BJT current mirror (AnalogGenie 605)
+circuit_function: Copies a reference current into one or more output branches for bias generation and current scaling using the emitter-degenerated bjt current mirror topology.
+source_ports: VSS, IOUT1, IB1
+device_summary: npn=2, resistor=2
+actual_circuit_type: emitter-degenerated BJT current mirror

@@ -1,0 +1,132 @@
+==================================================
+CURRENT MIRROR DESIGN GUIDANCE
+==================================================
+
+The circuit under design is a Current Mirror.
+
+Its intended function is to reproduce a reference current at the output
+according to the specified mirror ratio while maintaining current-source behavior
+under the required operating conditions.
+
+Use the following circuit-type-specific guidance together with the generic
+inverse-design instructions.
+
+==================================================
+1. CURRENT ERROR
+==================================================
+
+current_error measures how closely the output current matches
+the expected mirrored reference current.
+
+For mirror ratio k:
+
+expected output current magnitude = k * |IREF|
+
+Smaller current_error is better.
+
+When current_error appears in the target specifications,
+reason about how changes in the available optimization variables may improve
+current matching.
+
+Do not invent an IREF or IOUT value.
+Use only historical measured values when referring to existing circuit behavior.
+
+==================================================
+2. OUTPUT RESISTANCE
+==================================================
+
+output_resistance represents how insensitive the output current is
+to changes in output voltage around the nominal operating point.
+
+Larger output_resistance is better.
+
+When output_resistance appears in the target specifications,
+consider parameter changes that may improve current-source behavior
+while also considering their effect on the other requested metrics.
+
+==================================================
+3. JOINT TARGET SATISFACTION
+==================================================
+
+Consider current_error and output_resistance jointly whenever both appear in
+the target specifications. Smaller current_error is better and larger
+output_resistance is better, but the task is not to optimize either metric
+without limit. The priority is to satisfy both target thresholds simultaneously.
+
+If a historical point is already close to both targets, prefer a moderate,
+evidence-based modification near that point unless the historical samples
+clearly support a larger move that improves the joint objective.
+
+Do not imitate a historical sample merely because it has very low current_error
+when its output_resistance is severely below target. Likewise, do not pursue
+output_resistance far beyond target while allowing current matching to become
+strongly unsatisfied. Account for the possible trade-off between current
+matching and output resistance, and let the historical data determine the
+parameter direction.
+
+==================================================
+4. FUNCTIONAL FEASIBILITY
+==================================================
+
+Historical context samples may include:
+
+functional_feasible
+
+This indicates whether a previously simulated design passed the Current Mirror
+functional checks, including:
+
+- output-current stability over the tested output-compliance region;
+- reference-current tracking.
+
+Use this information as supporting design evidence.
+
+Prefer trends supported by functionally feasible historical samples.
+
+However, functional_feasible itself is not a substitute for the explicit
+performance targets in target_specs.
+
+==================================================
+5. PARAMETER REASONING
+==================================================
+
+Reason only about optimization variables that actually appear
+in the provided parameter space.
+
+Depending on the specific Current Mirror topology,
+the available variables may influence:
+
+- reference and output current matching;
+- bias and operating point;
+- current-source behavior;
+- output resistance;
+- trade-offs among the target performance metrics.
+
+Do not assume the existence of:
+
+- transistor width or length;
+- device multiplicity;
+- extra bias voltages;
+- device-model choices;
+- load parameters;
+- additional circuit elements
+
+unless they explicitly appear as optimization variables.
+
+Use the actual parameter space of the current circuit.
+
+==================================================
+6. SIGNED CURRENT CONVENTION
+==================================================
+
+A current parameter may use a signed SPICE convention.
+
+Preserve the sign convention shown in:
+
+- the parameter space;
+- the nominal parameter values;
+- the historical context samples.
+
+Do not convert a signed circuit parameter into its absolute magnitude.
+
+Performance definitions may use current magnitudes,
+but x_seed must preserve the parameter representation required by the circuit.

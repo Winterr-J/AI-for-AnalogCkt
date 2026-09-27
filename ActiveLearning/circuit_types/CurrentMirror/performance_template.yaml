@@ -1,0 +1,86 @@
+schema_version: performance_template_v1
+performance_template:
+  circuit_type: current_mirror
+  template_version: v1
+  active_metrics:
+    - current_error
+    - output_resistance
+  metrics:
+    current_error:
+      name: current_error
+      enabled_in_v1: true
+      description: >-
+        Relative error between the measured output current and the expected
+        mirrored reference current.
+      unit: ratio
+      direction: minimize
+      required_analysis:
+        - OP
+      required_measurements:
+        - IREF
+        - IOUT
+      calculation:
+        type: derived
+        expression: >-
+          abs(IOUT - mirror_ratio * IREF) / abs(mirror_ratio * IREF)
+      validity_requirements:
+        - "IREF != 0"
+      implementation:
+        status: pending
+        note: >-
+          Exact circuit-specific source/branch mapping will be defined later
+          in performance_config / evaluator.
+    output_resistance:
+      name: output_resistance
+      enabled_in_v1: true
+      description: >-
+        Effective small-signal/local output resistance of the current mirror
+        around the nominal output operating point.
+      unit: ohm
+      direction: maximize
+      required_analysis:
+        - DC
+      required_measurements:
+        - VOUT
+        - IOUT
+      calculation:
+        type: derived
+        expression: "abs(dVOUT / dIOUT)"
+      validity_requirements:
+        - "finite local VOUT and IOUT samples are available"
+        - "dIOUT != 0"
+      extraction:
+        method: local_slope
+        implementation_status: pending
+        sweep_window: null
+        number_of_points: null
+        fitting_method: null
+        fitting_tolerance: null
+      implementation:
+        status: pending
+        note: >-
+          Exact local DC sweep range and regression details are evaluator
+          implementation details and are intentionally deferred to the SPICE
+          evaluator milestone.
+    power:
+      name: power
+      enabled_in_v1: false
+      description: >-
+        Circuit power consumption under nominal operating conditions.
+      unit: W
+      direction: minimize
+      required_analysis:
+        - OP
+      required_measurements:
+        - supply_voltage
+        - supply_current
+      calculation:
+        type: derived
+        expression: "sum(abs(V_supply * I_supply))"
+      validity_requirements:
+        - "an explicit circuit supply-power boundary is defined"
+      implementation:
+        status: deferred
+        reason: >-
+          circuit_0469 has no explicit supply-power boundary suitable for the
+          generic VDD * IDD definition.

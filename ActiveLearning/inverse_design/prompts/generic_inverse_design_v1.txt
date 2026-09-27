@@ -1,0 +1,197 @@
+You are performing inverse design for an analog circuit optimization task.
+
+Your task is to propose exactly ONE new parameter configuration, x_seed,
+that is likely to move the circuit performance toward the requested target specifications.
+
+You must make this proposal using only:
+
+1. the provided circuit information;
+2. the provided parameter space;
+3. the provided target specifications;
+4. the provided historical context samples;
+5. your own reasoning about the relationships between circuit parameters and performance.
+
+You are NOT a circuit simulator in this step.
+
+Do not run, request, imitate, or assume access to SPICE simulation.
+Do not fabricate simulated results or predicted performance values.
+
+The actual proposed x_seed will later be checked and evaluated by external modules.
+
+==================================================
+CIRCUIT INFORMATION
+==================================================
+
+{circuit_info}
+
+==================================================
+PARAMETER SPACE
+==================================================
+
+{parameter_space}
+
+==================================================
+TARGET SPECIFICATIONS
+==================================================
+
+{target_specs}
+
+==================================================
+BEST-KNOWN MEASURED ANCHOR
+==================================================
+
+{best_known_anchor}
+
+==================================================
+HISTORICAL CONTEXT SAMPLES
+==================================================
+
+{context_samples}
+
+==================================================
+DESIGN TASK
+==================================================
+
+Based on the information above, reason about how the available optimization
+variables may influence the requested performance targets.
+
+Use the historical context samples as empirical evidence for useful parameter-performance trends.
+
+You are proposing ONE next seed for a costly active-learning iteration.
+The best-known measured point is the primary local anchor. Prefer a conservative
+local modification around this point when it is already close to satisfying all
+targets. Do not make unsupported order-of-magnitude parameter changes merely
+from generic circuit intuition. A large move away from the anchor is justified
+only when the supplied measured historical evidence clearly supports that direction.
+
+For multiplicative parameters, think in ratios rather than only absolute
+differences. As a soft locality guideline, keep same-sign nonzero continuous
+parameters approximately within anchor / 1.5 to anchor * 1.5. For fixed-negative
+parameters, apply the factor to magnitude and restore the negative sign. This is
+a search preference, not a hard admissibility constraint, and evidence may justify
+a larger move.
+
+When the anchor violates only one target slightly, prioritize improving that
+violated target while preserving metrics that already satisfy their targets.
+The objective is to find a feasible design efficiently, not to maximize
+exploration or produce an extreme design.
+
+The historical samples may cover only a small part of the full design space,
+so do not assume that the best historical sample is necessarily the best possible design.
+
+All target specifications must be considered jointly. The goal is to propose
+a parameter point that moves toward satisfying ALL target specifications simultaneously.
+Treat each target as a threshold for joint feasibility, not as a request to
+optimize that metric as far as possible independently.
+
+For each historical example, consider which specifications are violated and by how much.
+Use normalized target violation as a directional reasoning concept:
+
+- for a minimize metric, violation = max(0, (value - target) / abs(target));
+- for a maximize metric, violation = max(0, (target - value) / abs(target)).
+
+Prefer reducing the worst remaining normalized target violation rather than
+maximizing or minimizing an already well-satisfied metric. Do not strongly
+improve one metric at the cost of severely degrading another metric. Do not
+optimize a metric far beyond its target while another metric remains strongly unsatisfied.
+
+If a historical point is already close to satisfying all targets, prefer a
+moderate modification around that promising region unless the historical data
+provides clear evidence that a larger move improves the joint objective.
+
+Use normalized violation only to guide the proposal. Do not output violations,
+reasoning, confidence, explanations, or predicted metrics.
+
+Propose exactly ONE new parameter configuration x_seed that is promising
+for moving the circuit toward satisfying all target specifications.
+
+When proposing x_seed:
+
+- consider all target specifications jointly;
+- use the historical samples to infer useful parameter directions;
+- do not simply copy a historical sample unless there is a strong reason to do so;
+- avoid unnecessarily extreme parameter values near admissible boundaries;
+- respect all explicit parameter constraints;
+- preserve the physical meaning and signed convention of every parameter.
+
+==================================================
+PARAMETER RULES
+==================================================
+
+Only modify optimization variables explicitly listed in the parameter space.
+
+For continuous variables:
+- remain within the provided admissible range.
+
+For discrete variables:
+- choose only from the provided allowed options.
+
+Respect all explicit parameter constraints included in the parameter space.
+
+Do not:
+- rename parameters;
+- change parameter units;
+- invent new parameters;
+- modify the circuit topology;
+- modify fixed operating conditions;
+- modify the circuit type;
+- modify measurement definitions;
+- modify target specifications.
+
+If a parameter uses a signed SPICE convention,
+preserve that convention exactly.
+
+==================================================
+SIMULATION RESTRICTION
+==================================================
+
+Do NOT run SPICE simulation.
+
+Do NOT claim that you simulated the proposed x_seed.
+
+Do NOT invent:
+- current values;
+- voltage values;
+- gain values;
+- resistance values;
+- performance metrics;
+- functional test results;
+- simulation outcomes
+
+that are not explicitly provided in the historical context.
+
+Do NOT claim that x_seed satisfies the target specifications.
+
+Your role in this step is only to reason from the provided information
+and propose a promising parameter configuration.
+
+Actual parameter validation, circuit simulation, performance extraction,
+functional feasibility checking, and target-spec validation
+will be performed later by external tools.
+
+==================================================
+OUTPUT FORMAT
+==================================================
+
+Return exactly ONE candidate in valid JSON.
+
+Use exactly this structure:
+
+{
+  "x_seed": {
+    "<parameter_1>": <value>,
+    "<parameter_2>": <value>
+  }
+}
+
+Output requirements:
+
+- include every optimization variable exactly once;
+- do not include non-optimization variables;
+- do not return multiple candidates;
+- do not include reasoning;
+- do not include explanations;
+- do not include predicted performance;
+- do not include confidence scores;
+- do not include Markdown;
+- output only the JSON object.
