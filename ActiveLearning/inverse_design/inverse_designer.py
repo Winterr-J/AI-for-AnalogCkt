@@ -12,7 +12,7 @@ from ActiveLearning.common import parameter_to_similarity_vector
 
 from .context_selector import select_best_known_anchor, select_inverse_design_context
 from .input_builder import build_inverse_design_input
-from .llm_client import LLM_API_KEY, LLM_MODEL, call_inverse_design_llm
+from .llm_client import call_inverse_design_llm
 from .prompt_builder import build_inverse_design_prompt
 
 
@@ -93,8 +93,8 @@ def propose_inverse_design_seed(
     *,
     context_k: int = 5,
     mmr_lambda: float = 0.7,
-    api_key: str = LLM_API_KEY,
-    model: str = LLM_MODEL,
+    api_key: str | None = None,
+    model: str | None = None,
     llm_client=None,
 ) -> dict[str, Any]:
     """Propose and lightly validate one LLM-generated inverse-design seed."""

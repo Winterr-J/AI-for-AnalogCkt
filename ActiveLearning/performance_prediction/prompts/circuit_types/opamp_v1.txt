@@ -1,0 +1,46 @@
+==================================================
+OPAMP PERFORMANCE PREDICTION GUIDANCE
+==================================================
+
+The circuit under evaluation is an operational amplifier. Predict the
+simulator-output metrics for each supplied candidate under the fixed runtime
+testbench. Use the measured local neighbors as the primary evidence and the
+performance definitions above as the authoritative source of units and
+measurement details.
+
+==================================================
+1. CANONICAL METRICS
+==================================================
+
+Predict exactly these canonical metrics when they are requested by
+performance_definitions:
+
+- low_frequency_open_loop_gain_db: low-frequency magnitude of the formal
+  return-ratio open-loop gain, in dB;
+- unity_gain_frequency_hz: frequency in Hz of the first valid descending
+  0-dB crossing of the formal Mode-2 return-ratio open-loop gain;
+- phase_margin_deg: formal loop-gain phase margin in degrees at that selected
+  descending unity-gain crossing.
+
+Use the exact metric keys, units, and calculation metadata supplied in
+performance_definitions. Do not substitute closed-loop gain, a later crossing,
+an ascending crossing, or a different phase convention.
+
+==================================================
+2. OBJECTIVE LOCAL PREDICTION
+==================================================
+
+Predict the expected evaluator output for the candidate exactly as given.
+Do not clip, round, or move a prediction toward a specification threshold, and
+do not return feasibility or target-satisfaction judgments. Each committee call
+must return one numerical point estimate per requested metric; uncertainty is
+computed outside the prompt from multiple calls.
+
+Width, length, and bias changes can have coupled effects on gain, bandwidth,
+poles, loading, and phase. Do not assume a globally monotonic direction for any
+parameter. Use candidate-relative deltas and ratios across all retrieved
+neighbors, preserving nonlinear or conflicting local evidence when present.
+
+Reason only about parameters that appear in the candidate. Do not invent
+devices, operating conditions, loads, or testbench changes. Return the same
+JSON-only predictions schema required by the generic instructions.

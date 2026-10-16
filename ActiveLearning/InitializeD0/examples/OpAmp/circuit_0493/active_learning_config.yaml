@@ -1,0 +1,59 @@
+benchmark_version: opamp_0493_v1
+performance_target_selected: true
+
+target_specs:
+  low_frequency_open_loop_gain_db:
+    operator: ">="
+    value: 40.0
+  unity_gain_frequency_hz:
+    operator: ">="
+    value: 4000000.0
+  phase_margin_deg:
+    operator: ">="
+    value: 87.8
+
+target_roles:
+  low_frequency_open_loop_gain_db: constraint
+  unity_gain_frequency_hz: primary_objective_threshold
+  phase_margin_deg: stability_guard
+
+active_learning:
+  max_iterations: 5
+
+validity:
+  enabled: true
+  mode: semantic_near_tie
+  k: 5
+  epsilon: 1.0e-12
+  near_tie_tau: 0.025
+
+data:
+  d0_path: d0/d0_v4_seed42.jsonl
+  initialize_if_missing: false
+  sampling_mode: v4
+  seed: 42
+  n_samples: 20
+  n_local: 10
+  n_global: 9
+  local_radius: 0.002
+
+target_provenance:
+  circuit_id: circuit_0493
+  circuit_type: OpAmp
+  benchmark_version: opamp_0493_v1
+  source_artifact: ActiveLearning/results/profiling/circuit_0493/formal_two_anchor_v2/analysis/formal_target_evidence.json
+  formal_evaluations: 200
+  strict_valid: 117
+  target_supporters: 12
+  nominal_region_supporters: 3
+  outer_region_supporters: 9
+  nominal_reference_meets_spec: false
+  outer_anchor_meets_spec: false
+  rationale:
+    phase_margin_deg: >-
+      PM >= 87.8 degrees is an empirical topology-specific stability guard
+      derived from the circuit_0493 formal profiling distribution; it is not
+      a universal OpAmp threshold or a theoretical physical boundary.
+    outer_anchor: >-
+      focused_nominal_r0p01_038 located a supported valid region but is not
+      itself a benchmark solution.

@@ -1,0 +1,7 @@
+# Initial CurrentMirror/OpAmp Active Learning runtime (Ubuntu validation pending).
+# ngspice and libngspice0 are Ubuntu system packages, not pip dependencies.
+PySpice
+numpy
+scipy
+PyYAML
+openai

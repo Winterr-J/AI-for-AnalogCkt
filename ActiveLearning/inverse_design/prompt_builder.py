@@ -12,6 +12,7 @@ _PROMPT_DIR = Path(__file__).parent / "prompts"
 _GENERIC_PROMPT_PATH = _PROMPT_DIR / "generic_inverse_design_v1.txt"
 _CIRCUIT_TEMPLATE_FILES = {
     "currentmirror": "current_mirror_v1.txt",
+    "opamp": "opamp_v1.txt",
 }
 _STRUCTURED_SECTIONS = (
     "circuit_info",

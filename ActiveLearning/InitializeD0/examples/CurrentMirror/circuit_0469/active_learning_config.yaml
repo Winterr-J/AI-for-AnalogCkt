@@ -9,6 +9,7 @@ target_specs:
 active_learning:
   max_iterations: 5
   beta: 0.7
+  acquisition_mode: uncertainty_reward
   context_k: 5
   retrieval_k: 3
   committee_size: 5

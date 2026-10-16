@@ -1,0 +1,54 @@
+circuit:
+  id: circuit_0469
+  original_id: 605
+  original_type: current mirrors
+  topology_name: Emitter-degenerated BJT current mirror (AnalogGenie 605)
+  original_category: current mirrors
+  actual_circuit_type: emitter-degenerated BJT current mirror
+models:
+  npn:
+    name: NPN_IDEAL
+    IS: 1.0e-15
+    BF: 100.0
+    VAF: 100.0
+    EG: 1.11
+    XTI: 3.0
+devices:
+  BJT:
+    Q0:
+      model: NPN_IDEAL
+      area: 1.0
+      m: 1
+    Q1:
+      model: NPN_IDEAL
+      area: 1.0
+      m: 1
+  R:
+    R1:
+      model: ideal_resistor
+      R_ohm: 10000.0
+    R0:
+      model: ideal_resistor
+      R_ohm: 10000.0
+operating_parameters: &id001
+  VDD: 3.3
+  IB1: -0.0001
+  VSS: 0.0
+pnp_devices: null
+adjusted_from_global_default: []
+search_policy: global ideal defaults, then limited operating-parameter sweep; first
+  functional point; no performance optimization
+functional_assessment:
+  required_analyses:
+  - op
+  - dc
+  overall: PASS
+  reasons: null
+functional_audit:
+  final_functional_status: PASS
+  best_working_point: *id001
+  remaining_issue: null
+  topology_limitation: false
+  pdk_eligibility: ELIGIBLE
+  validation_policy: cell/core validated by its own function; non-core analyses do
+    not cause functional failure

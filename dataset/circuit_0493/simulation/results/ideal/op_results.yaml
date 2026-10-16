@@ -1,0 +1,292 @@
+status: PASS
+node_voltages:
+  net0107: 2.1558831269886016
+  net015: 3.273514760627186
+  net0116: 2.329341464687023
+  net099: 2.2907955214833846
+  net0124: 2.432060091871748
+  net0126: 3.286959501064112
+  net0128: 3.1677424424911385
+  net0106: 1.011766253810244
+  net8: 1.146233774074958
+  net0110: 2.292467551922045
+  net059: 0.1364373433507558
+  net056: 1.3181251483641834
+  net060: 0.13675411744192117
+  net0127: 0.13162061133064426
+  net0125: 0.13316498660987397
+  net097: 2.153159923462242
+  net0112: 1.5273614464282992
+  vout1: 0.2581333119837703
+  net0111: 2.015546180164612
+  ib1: 1.1446926334479937
+  vin2: 2.5
+  vin1: 2.5
+  vdd: 3.3000000000000003
+branch_currents:
+  vvdd: -0.0010749977904456393
+  vvin1: -2.5e-12
+  vvin2: -2.5e-12
+mos_operating_regions:
+  M11:
+    id: 0.0001009702658598173
+    gm: 0.0006482266644483403
+    vgs: 1.0115276468381196
+    vds: 2.0199949368523678
+    vth: null
+    vdsat: 0.3115276468381195
+    conducting: true
+    region: saturation
+  M12:
+    id: 9.999999885530748e-05
+    gm: 0.0006388306244952904
+    vgs: 1.0130720221173495
+    vds: 1.0130720221173495
+    vth: null
+    vdsat: 0.3130720221173494
+    conducting: true
+    region: saturation
+  M10:
+    id: 9.999999742737354e-05
+    gm: 0.00026393418207437046
+    vgs: 1.1446926334479937
+    vds: 0.13162061133064418
+    vth: null
+    vdsat: 0.4446926334479936
+    conducting: true
+    region: triode_or_unknown
+  M9:
+    id: 0.00010097026342032752
+    gm: 0.0002670392897661005
+    vgs: 1.1446926334479937
+    vds: 0.13316498660987408
+    vth: null
+    vdsat: 0.4446926334479936
+    conducting: true
+    region: triode_or_unknown
+  M15:
+    id: 9.746344939452016e-05
+    gm: 0.0006330058943015543
+    vgs: 1.0079385160060725
+    vds: 1.390607328986378
+    vth: null
+    vdsat: 0.30793851600607247
+    conducting: true
+    region: saturation
+  M16:
+    id: 9.726703599379493e-05
+    gm: 0.000631081040880027
+    vgs: 1.008255290097238
+    vds: 1.1816878050134276
+    vth: null
+    vdsat: 0.30825529009723784
+    conducting: true
+    region: saturation
+  M8:
+    id: 0.00010320691821796029
+    gm: 0.00027425630242933495
+    vgs: 1.1446926334479937
+    vds: 0.13675411744192112
+    vth: null
+    vdsat: 0.4446926334479936
+    conducting: true
+    region: triode_or_unknown
+  M17:
+    id: 0.00010301053926702653
+    gm: 0.00027361929264793595
+    vgs: 1.1446926334479937
+    vds: 0.13643734335075575
+    vth: null
+    vdsat: 0.4446926334479936
+    conducting: true
+    region: triode_or_unknown
+  M22:
+    id: 4.280193395646773e-06
+    gm: 0.00013148356325849483
+    vgs: 0.765106105493746
+    vds: 0.488184733736313
+    vth: null
+    vdsat: 0.06510610549374596
+    conducting: true
+    region: saturation
+  M24:
+    id: 0.00020368944868409856
+    gm: 0.0009129270770690219
+    vgs: 1.146233774074958
+    vds: 1.146233774074958
+    vth: null
+    vdsat: 0.4462337740749579
+    conducting: true
+    region: saturation
+  M25:
+    id: 0.00020368945328903376
+    gm: 0.0009129270848535601
+    vgs: 1.1462337778470872
+    vds: 1.1462337778470872
+    vth: null
+    vdsat: 0.4462337778470872
+    conducting: true
+    region: saturation
+  M27:
+    id: 0.0003623674679340488
+    gm: 0.0005189319362377691
+    vgs: 1.5273614464282992
+    vds: 0.2581333119837703
+    vth: null
+    vdsat: 0.8273614464282991
+    conducting: true
+    region: triode_or_unknown
+  M21:
+    id: 0.0002017531059253427
+    gm: 0.0009073822668896147
+    vgs: 1.1446926334479937
+    vds: 1.011766253810244
+    vth: null
+    vdsat: 0.4446926334479936
+    conducting: true
+    region: saturation
+  M0:
+    id: 0.0001009702698816214
+    gm: 0.00026521479747845203
+    vgs: 1.1468400765377584
+    vds: 0.1322575575088618
+    vth: null
+    vdsat: -0.44684007653775837
+    conducting: true
+    region: triode_or_unknown
+  M1:
+    id: 1.1486975626432435e-05
+    gm: 2.608780005627652e-05
+    vgs: 1.1468400765377584
+    vds: 0.013040498935888323
+    vth: null
+    vdsat: -0.44684007653775837
+    conducting: true
+    region: triode_or_unknown
+  M4:
+    id: 9.726704013763122e-05
+    gm: 0.0006291437933002935
+    vgs: 1.0092044785166157
+    vds: 0.8679399081282524
+    vth: null
+    vdsat: -0.3092044785166156
+    conducting: true
+    region: saturation
+  M5:
+    id: 9.746345347747173e-05
+    gm: 0.0006304142356823971
+    vgs: 1.0092044785166157
+    vds: 0.9706585353129773
+    vth: null
+    vdsat: -0.3092044785166156
+    conducting: true
+    region: saturation
+  M2:
+    id: 0.00010097026801297716
+    gm: 0.0006419318350417448
+    vgs: 1.0145825190288966
+    vds: 1.0145825190288966
+    vth: null
+    vdsat: -0.31458251902889656
+    conducting: true
+    region: saturation
+  M3:
+    id: 1.1486972389411482e-05
+    gm: 2.689671131566822e-05
+    vgs: 1.1337995776018701
+    vds: 0.013444740436925784
+    vth: null
+    vdsat: -0.43379957760187005
+    conducting: true
+    region: triode_or_unknown
+  M6:
+    id: 9.726703960271572e-05
+    gm: 0.00028332736793060693
+    vgs: 1.1139349435075645
+    vds: 0.14126457038836326
+    vth: null
+    vdsat: -0.41393494350756443
+    conducting: true
+    region: triode_or_unknown
+  M7:
+    id: 9.746345342324764e-05
+    gm: 0.0006263389611468207
+    vgs: 1.0112163163228396
+    vds: 0.3137952845224108
+    vth: null
+    vdsat: -0.3112163163228395
+    conducting: true
+    region: saturation
+  M14:
+    id: 5.743504884231462e-06
+    gm: 0.00015625438107037332
+    vgs: 0.7735147606271862
+    vds: 3.1370774172764304
+    vth: null
+    vdsat: -0.0735147606271861
+    conducting: true
+    region: saturation
+  M13:
+    id: 5.743470644309822e-06
+    gm: 0.0001562534495675139
+    vgs: 0.7735147606271862
+    vds: 3.136760643185265
+    vth: null
+    vdsat: -0.0735147606271861
+    conducting: true
+    region: saturation
+  M18:
+    id: 9.318326108945838e-05
+    gm: 0.0006134918816072058
+    vgs: 1.003779926354368
+    vds: 0.488184733736313
+    vth: null
+    vdsat: -0.303779926354368
+    conducting: true
+    region: saturation
+  M19:
+    id: 0.00020175310693710914
+    gm: 0.0009085586106873778
+    vgs: 1.1441168731783575
+    vds: 1.1441168731783575
+    vth: null
+    vdsat: -0.44411687317835746
+    conducting: true
+    region: saturation
+  M20:
+    id: 0.00020175310564064173
+    gm: 0.0009085586103428533
+    vgs: 1.1441168730113986
+    vds: 1.1441168730113986
+    vth: null
+    vdsat: -0.44411687301139857
+    conducting: true
+    region: saturation
+  M23:
+    id: 0.00020368945558150132
+    gm: 0.0009116883881240539
+    vgs: 1.1468400765377584
+    vds: 1.007532448077955
+    vth: null
+    vdsat: -0.44684007653775837
+    conducting: true
+    region: saturation
+  M26:
+    id: 0.0003623674683371114
+    gm: 0.0012400208638804202
+    vgs: 1.284453819835388
+    vds: 3.04186668801623
+    vth: null
+    vdsat: -0.584453819835388
+    conducting: true
+    region: saturation
+bjt_operating_points: {}
+key_bias_points:
+  metric_kind: voltage
+  nodes_or_branches:
+  - VOUT1
+  value: 0.2581333119837703
+warning_or_failure_reason: null
+final_functional_status: PASS
+topology_limitation: false
+pdk_eligibility: ELIGIBLE

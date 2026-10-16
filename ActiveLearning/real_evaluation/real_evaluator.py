@@ -1,4 +1,4 @@
-"""Orchestrate real evaluation of one selected Current Mirror candidate."""
+"""Orchestrate real evaluation of one selected Active Learning candidate."""
 
 from ActiveLearning.InitializeD0.evaluator import evaluate_current_mirror
 from ActiveLearning.InitializeD0.validation import (
@@ -10,15 +10,60 @@ from ActiveLearning.InitializeD0.validation import (
 __all__ = ["evaluate_selected_candidate"]
 
 
+def _evaluate_structured_runtime(candidate, runtime, target_specs):
+    """Use a runtime's structured evaluator/validator contract when available."""
+
+    if runtime is None:
+        return None
+    evaluator = runtime.create_evaluator()
+    functional_validator = runtime.create_functional_validator()
+    if not (
+        hasattr(evaluator, "evaluate")
+        and hasattr(functional_validator, "validate")
+    ):
+        return None
+
+    params = candidate["params"]
+    evaluation = evaluator.evaluate(params)
+    validation = functional_validator.validate(
+        params,
+        evaluation,
+        target_specs=target_specs,
+    )
+    status = dict(validation["status"])
+    status["functional_feasible"] = status.get("functional_valid")
+    return {
+        "sample_id": candidate["candidate_id"],
+        "source": "active_learning_query",
+        "params": params,
+        "normalized_params": candidate.get("normalized_params"),
+        "metrics": dict(validation.get("metrics") or {}),
+        "functional_metrics": dict(validation.get("functional_metrics") or {}),
+        "functional_checks": dict(validation.get("functional_checks") or {}),
+        "failure_reasons": list(validation.get("failure_reasons") or []),
+        "diagnostics": dict(validation.get("diagnostics") or {}),
+        "status": status,
+    }
+
+
 def evaluate_selected_candidate(
     candidate,
     adapter,
     target_specs,
     *,
+    runtime=None,
     run_functional=False,
     functional_config=None,
 ):
     """Return one measured record ready for the caller to add to Dt."""
+    structured_record = _evaluate_structured_runtime(
+        candidate,
+        runtime,
+        target_specs,
+    )
+    if structured_record is not None:
+        return structured_record
+
     params = candidate["params"]
     record = {
         "sample_id": candidate["candidate_id"],

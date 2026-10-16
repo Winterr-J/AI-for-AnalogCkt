@@ -33,8 +33,26 @@ def expand_candidates(
     seed: int = 42,
     historical_records=None,
     return_diagnostics: bool = False,
+    mode: str = "v1",
+    v2_config: Mapping[str, Any] | None = None,
 ):
     """Sample, validate, and MMR-select candidates around ``x_seed``."""
+
+    if mode == "v2":
+        from .v2 import expand_candidates_v2
+
+        return expand_candidates_v2(
+            x_seed,
+            parameter_template,
+            k=k,
+            mmr_lambda=mmr_lambda,
+            seed=seed,
+            historical_records=historical_records,
+            return_diagnostics=return_diagnostics,
+            config=v2_config,
+        )
+    if mode != "v1":
+        raise ValueError(f"Unsupported data expansion mode: {mode}")
 
     parameter_order = list(parameter_template["optimization_space"]["variables"])
     normalized_seed = normalize_parameters(x_seed, parameter_template)

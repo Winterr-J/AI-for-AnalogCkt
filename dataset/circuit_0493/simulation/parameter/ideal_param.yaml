@@ -1,0 +1,202 @@
+circuit:
+  id: circuit_0493
+  original_id: 630
+  original_type: operational amplifiers
+  topology_name: Complementary-input compensated CMOS operational amplifier (AnalogGenie
+    630)
+  original_category: operational amplifiers
+  actual_circuit_type: complementary-input CMOS operational amplifier
+models:
+  nmos:
+    name: NMOS_IDEAL
+    level: 1
+    VTO: 0.7
+    KP_uA_per_V2: 200.0
+    LAMBDA: 0.02
+  pmos:
+    name: PMOS_IDEAL
+    level: 1
+    VTO: -0.7
+    KP_uA_per_V2: 100.0
+    LAMBDA: 0.02
+devices:
+  MOS:
+    M11:
+      model: NMOS_IDEAL
+      W_um: 10.0
+      L_um: 1.0
+      m: 1
+    M12:
+      model: NMOS_IDEAL
+      W_um: 10.0
+      L_um: 1.0
+      m: 1
+    M10:
+      model: NMOS_IDEAL
+      W_um: 10.0
+      L_um: 1.0
+      m: 1
+    M9:
+      model: NMOS_IDEAL
+      W_um: 10.0
+      L_um: 1.0
+      m: 1
+    M15:
+      model: NMOS_IDEAL
+      W_um: 10.0
+      L_um: 1.0
+      m: 1
+    M16:
+      model: NMOS_IDEAL
+      W_um: 10.0
+      L_um: 1.0
+      m: 1
+    M8:
+      model: NMOS_IDEAL
+      W_um: 10.0
+      L_um: 1.0
+      m: 1
+    M17:
+      model: NMOS_IDEAL
+      W_um: 10.0
+      L_um: 1.0
+      m: 1
+    M22:
+      model: NMOS_IDEAL
+      W_um: 10.0
+      L_um: 1.0
+      m: 1
+    M24:
+      model: NMOS_IDEAL
+      W_um: 10.0
+      L_um: 1.0
+      m: 1
+    M25:
+      model: NMOS_IDEAL
+      W_um: 10.0
+      L_um: 1.0
+      m: 1
+    M27:
+      model: NMOS_IDEAL
+      W_um: 10.0
+      L_um: 1.0
+      m: 1
+    M21:
+      model: NMOS_IDEAL
+      W_um: 10.0
+      L_um: 1.0
+      m: 1
+    M0:
+      model: PMOS_IDEAL
+      W_um: 20.0
+      L_um: 1.0
+      m: 1
+    M1:
+      model: PMOS_IDEAL
+      W_um: 20.0
+      L_um: 1.0
+      m: 1
+    M4:
+      model: PMOS_IDEAL
+      W_um: 20.0
+      L_um: 1.0
+      m: 1
+    M5:
+      model: PMOS_IDEAL
+      W_um: 20.0
+      L_um: 1.0
+      m: 1
+    M2:
+      model: PMOS_IDEAL
+      W_um: 20.0
+      L_um: 1.0
+      m: 1
+    M3:
+      model: PMOS_IDEAL
+      W_um: 20.0
+      L_um: 1.0
+      m: 1
+    M6:
+      model: PMOS_IDEAL
+      W_um: 20.0
+      L_um: 1.0
+      m: 1
+    M7:
+      model: PMOS_IDEAL
+      W_um: 20.0
+      L_um: 1.0
+      m: 1
+    M14:
+      model: PMOS_IDEAL
+      W_um: 20.0
+      L_um: 1.0
+      m: 1
+    M13:
+      model: PMOS_IDEAL
+      W_um: 20.0
+      L_um: 1.0
+      m: 1
+    M18:
+      model: PMOS_IDEAL
+      W_um: 20.0
+      L_um: 1.0
+      m: 1
+    M19:
+      model: PMOS_IDEAL
+      W_um: 20.0
+      L_um: 1.0
+      m: 1
+    M20:
+      model: PMOS_IDEAL
+      W_um: 20.0
+      L_um: 1.0
+      m: 1
+    M23:
+      model: PMOS_IDEAL
+      W_um: 20.0
+      L_um: 1.0
+      m: 1
+    M26:
+      model: PMOS_IDEAL
+      W_um: 20.0
+      L_um: 1.0
+      m: 1
+  R:
+    R0:
+      model: ideal_resistor
+      R_ohm: 10000.0
+  C:
+    C0:
+      model: ideal_capacitor
+      C_f: 1.0e-12
+    C1:
+      model: ideal_capacitor
+      C_f: 1.0e-12
+operating_parameters: &id001
+  VDD: 3.3
+  VIN1: 2.5
+  VIN2: 2.5
+  IB1: -0.0001
+  VSS: 0.0
+pnp_devices: null
+adjusted_from_global_default:
+- 'VIN1: 1.2 -> 2.5'
+- 'VIN2: 1.2 -> 2.5'
+search_policy: global ideal defaults, then limited operating-parameter sweep; first
+  functional point; no performance optimization
+functional_assessment:
+  required_analyses:
+  - op
+  - dc
+  - ac
+  - tran
+  overall: PASS
+  reasons: null
+functional_audit:
+  final_functional_status: PASS
+  best_working_point: *id001
+  remaining_issue: null
+  topology_limitation: false
+  pdk_eligibility: ELIGIBLE
+  validation_policy: cell/core validated by its own function; non-core analyses do
+    not cause functional failure

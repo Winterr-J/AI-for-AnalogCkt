@@ -1,0 +1,62 @@
+schema_version: performance_template_v1
+performance_template:
+  circuit_type: opamp
+  template_version: v1
+  active_metrics:
+    - low_frequency_open_loop_gain_db
+    - unity_gain_frequency_hz
+    - phase_margin_deg
+  metrics:
+    low_frequency_open_loop_gain_db:
+      name: low_frequency_open_loop_gain_db
+      enabled_in_v1: true
+      description: >-
+        Low-frequency magnitude of the formal open-loop gain extracted from
+        the validated return ratio.
+      unit: dB
+      direction: maximize
+      preference: higher_is_better
+      required_analysis:
+        - OP
+        - AC
+      calculation:
+        type: derived
+        expression: "20 * log10(abs(Aol_low_frequency))"
+      validity_requirements:
+        - formal return ratio is valid
+        - low-frequency gain plateau is available
+    unity_gain_frequency_hz:
+      name: unity_gain_frequency_hz
+      enabled_in_v1: true
+      description: >-
+        Frequency of the first valid descending 0-dB crossing of the formal
+        open-loop gain.
+      unit: Hz
+      direction: maximize
+      preference: higher_is_better
+      required_analysis:
+        - AC
+      calculation:
+        type: derived
+        expression: "first_descending_crossing(abs(Aol), 1)"
+      validity_requirements:
+        - formal return ratio is valid
+        - at least one descending unity crossing is available
+    phase_margin_deg:
+      name: phase_margin_deg
+      enabled_in_v1: true
+      description: >-
+        Formal loop-gain phase margin evaluated at the selected descending
+        unity-gain crossing.
+      unit: degree
+      direction: maximize
+      preference: higher_is_better
+      target_role: lower_bound_stability_constraint
+      required_analysis:
+        - AC
+      calculation:
+        type: derived
+        expression: "180 + phase(Aol_at_selected_unity_crossing)"
+      validity_requirements:
+        - a selected descending unity crossing is available
+        - interpolated loop-gain phase is finite

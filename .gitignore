@@ -1,17 +1,119 @@
-# Ignore everything by default
+# Deployment allowlist. Do not stage the entire working tree.
 /*
-
-# Keep gitignore itself
 !/.gitignore
+!/requirements-server.txt
 
-# Track ActiveLearning only
+# Active Learning runtime, templates, and the two initial circuit examples.
 !/ActiveLearning/
 !/ActiveLearning/**
+/ActiveLearning/runs/
+/ActiveLearning/results/
+/ActiveLearning/analysis/
+/ActiveLearning/*profiling*.py
+!/ActiveLearning/profiling.py
+!/ActiveLearning/focused_profiling.py
+!/ActiveLearning/profiling_local_sampler.py
+/ActiveLearning/pm_boundary_scan.py
+/ActiveLearning/target_analysis.py
+/ActiveLearning/InitializeD0/examples/*
+!/ActiveLearning/InitializeD0/examples/CurrentMirror/
+!/ActiveLearning/InitializeD0/examples/OpAmp/
+/ActiveLearning/InitializeD0/examples/CurrentMirror/*
+!/ActiveLearning/InitializeD0/examples/CurrentMirror/circuit_0469/
+/ActiveLearning/InitializeD0/examples/OpAmp/*
+!/ActiveLearning/InitializeD0/examples/OpAmp/circuit_0493/
+/ActiveLearning/InitializeD0/examples/OpAmp/circuit_0493/active_learning_config_al_validation.yaml
+/ActiveLearning/**/active_learning_output/
+/ActiveLearning/**/simulation/results/
+/ActiveLearning/**/simulation/parameter/gf180*.yaml
+/ActiveLearning/**/parameters/gf180_design_space.yaml
 
-# Still ignore Python/cache/secrets inside ActiveLearning
-ActiveLearning/**/__pycache__/
-ActiveLearning/**/*.pyc
-ActiveLearning/**/.pytest_cache/
-ActiveLearning/**/.mypy_cache/
-ActiveLearning/**/.env
-ActiveLearning/**/*.key
+# Stage A/B Ideal runtime Python. Exclude evaluation, gold, tests, and PDK work.
+!/param_extraction/
+/param_extraction/*
+!/param_extraction/stage_a/
+!/param_extraction/stage_b/
+/param_extraction/stage_a/**
+!/param_extraction/stage_a/**/
+!/param_extraction/stage_a/**/*.py
+/param_extraction/stage_a/evaluation/
+/param_extraction/stage_a/extension/
+/param_extraction/stage_a/gold/
+/param_extraction/stage_a/tests/
+/param_extraction/stage_a/validity/development_report.py
+/param_extraction/stage_b/**
+!/param_extraction/stage_b/**/
+!/param_extraction/stage_b/**/*.py
+/param_extraction/stage_b/extension/
+/param_extraction/stage_b/providers/gf180/
+/param_extraction/stage_b/tests/
+/param_extraction/stage_b/validation/gf180*.py
+
+# Shared Ideal simulator dependencies and offline tests.
+!/conversion/
+!/simulation_metrics/
+!/tests/
+!/run/
+/run/*
+!/run/__init__.py
+!/run/single_stage_amplifier/
+/run/single_stage_amplifier/*
+!/run/single_stage_amplifier/__init__.py
+!/run/single_stage_amplifier/run_ideal_dataset_simulations.py
+
+# Only the two circuit input sets required by initial deployment.
+!/dataset/
+/dataset/*
+!/dataset/circuit_0469/
+!/dataset/circuit_0493/
+/dataset/circuit_0469/*
+!/dataset/circuit_0469/topology/
+!/dataset/circuit_0469/simulation/
+/dataset/circuit_0469/topology/*
+!/dataset/circuit_0469/topology/circuit_0469.py
+/dataset/circuit_0469/simulation/*
+!/dataset/circuit_0469/simulation/parameter/
+/dataset/circuit_0469/simulation/parameter/*
+!/dataset/circuit_0469/simulation/parameter/ideal_param.yaml
+/dataset/circuit_0493/*
+!/dataset/circuit_0493/topology/
+!/dataset/circuit_0493/simulation/
+/dataset/circuit_0493/topology/*
+!/dataset/circuit_0493/topology/circuit_0493.py
+/dataset/circuit_0493/simulation/*
+!/dataset/circuit_0493/simulation/parameter/
+!/dataset/circuit_0493/simulation/results/
+/dataset/circuit_0493/simulation/parameter/*
+!/dataset/circuit_0493/simulation/parameter/ideal_param.yaml
+/dataset/circuit_0493/simulation/results/*
+!/dataset/circuit_0493/simulation/results/ideal/
+/dataset/circuit_0493/simulation/results/ideal/*
+!/dataset/circuit_0493/simulation/results/ideal/op_results.yaml
+
+# Generated data: only frozen D0 JSONL inputs are exceptions.
+**/*.csv
+**/*.jsonl
+**/*.log
+**/*.tmp
+**/*.bak
+!ActiveLearning/InitializeD0/examples/CurrentMirror/circuit_0469/d0/d0_v3_seed42.jsonl
+!ActiveLearning/InitializeD0/examples/OpAmp/circuit_0493/d0/d0_v4_seed42.jsonl
+
+# Local tooling and credentials, at any depth.
+**/__pycache__/
+**/*.py[cod]
+**/.pytest_cache/
+**/.mypy_cache/
+**/.ruff_cache/
+**/.venv/
+**/venv/
+**/.idea/
+**/.vscode/
+**/.env
+**/.env.*
+**/*.key
+**/*.pem
+**/*.p12
+**/*.pfx
+**/id_rsa*
+**/id_ed25519*

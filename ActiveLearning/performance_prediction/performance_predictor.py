@@ -14,7 +14,10 @@ __all__ = ["predict_candidate_performance"]
 
 _PROMPT_DIR = Path(__file__).parent / "prompts"
 _GENERIC_PROMPT_PATH = _PROMPT_DIR / "generic_performance_prediction_v1.txt"
-_CIRCUIT_TEMPLATE_FILES = {"currentmirror": "current_mirror_v1.txt"}
+_CIRCUIT_TEMPLATE_FILES = {
+    "currentmirror": "current_mirror_v1.txt",
+    "opamp": "opamp_v1.txt",
+}
 _MAX_ROUND_ATTEMPTS = 3
 
 
@@ -234,6 +237,8 @@ def _parse_predictions(raw_response, candidate_ids, metric_names):
             raise ValueError(f"duplicate candidate_id: {candidate_id}")
 
         metrics = item["predicted_metrics"]
+        if set(metrics) != set(metric_names):
+            raise ValueError(f"wrong metric keys for {candidate_id}")
         if not all(
             name in metrics
             and isinstance(metrics[name], (int, float))

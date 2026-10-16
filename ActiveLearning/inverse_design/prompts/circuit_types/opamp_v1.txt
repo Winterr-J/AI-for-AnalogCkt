@@ -1,0 +1,64 @@
+==================================================
+OPAMP DESIGN GUIDANCE
+==================================================
+
+The circuit under design is an operational amplifier. Use the actual
+optimization variables, bounds, constraints, measured context, and numerical
+targets supplied above. Do not assume any topology element or tunable parameter
+that is not present in the runtime parameter space.
+
+==================================================
+1. CANONICAL PERFORMANCE SEMANTICS
+==================================================
+
+low_frequency_open_loop_gain_db is the low-frequency magnitude, in dB, of the
+formal open-loop gain extracted from the validated return ratio. When its
+runtime target uses a lower-bound operator, treat it as a quality constraint.
+
+unity_gain_frequency_hz is the frequency, in Hz, of the first valid descending
+0-dB crossing of the formal Mode-2 return-ratio open-loop gain. Treat its
+runtime lower-bound target as the primary speed objective: improve it when it
+is violated, but do not spend gain or stability margin that is needed to meet
+their constraints.
+
+phase_margin_deg is the formal loop-gain phase margin, in degrees, evaluated
+at that selected descending unity-gain crossing. Treat its runtime lower-bound
+target as a stability constraint. A benchmark threshold near ninety degrees is
+a runtime-defined stability guard band, not an instruction to maximize phase
+margin without limit.
+
+Read every numerical threshold from target_specs. No example threshold in
+this guidance overrides the runtime target.
+
+==================================================
+2. CONSTRAINT-FIRST TARGET REASONING
+==================================================
+
+Consider all three metrics jointly. First protect or recover the lower-bound
+quality and stability constraints. Then move the primary speed metric toward
+its threshold while retaining enough margin on those constraints. Do not
+maximize gain, speed, and phase margin independently, and do not pursue an
+already satisfied metric far beyond its threshold while another target remains
+violated.
+
+Use the best-known measured anchor as the primary local reference. Prefer a
+moderate, evidence-supported step when the anchor is near joint feasibility.
+
+==================================================
+3. COUPLED PARAMETER REASONING
+==================================================
+
+Transistor widths and lengths can jointly affect transconductance, output
+resistance, capacitance, poles, and bias distribution. Bias variables can
+shift operating points and bandwidth while also changing gain and stability.
+These effects are topology-dependent and coupled; do not impose a universal
+monotonic rule such as wider always means faster or longer always means more
+stable.
+
+Infer directions from all supplied measured neighbors and from the actual
+runtime variable names. Preserve explicit matching, ratio, and shared-parameter
+constraints. Do not change fixed supplies, common-mode conditions, loads,
+feedback construction, or testbench settings unless they explicitly appear as
+optimization variables.
+
+Return the same JSON-only x_seed schema required by the generic instructions.

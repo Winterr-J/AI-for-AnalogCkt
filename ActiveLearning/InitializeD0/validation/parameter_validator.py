@@ -17,6 +17,9 @@ def _validate_optimization_parameters(
 ) -> list[str]:
     violations = []
     variable_names = parameter_template["optimization_space"]["variables"]
+    unexpected_names = sorted(set(params) - set(variable_names))
+    for name in unexpected_names:
+        violations.append(f"Unexpected optimization parameter: {name}")
     parameters_by_name = {
         parameter["name"]: parameter for parameter in parameter_template["parameters"]
     }

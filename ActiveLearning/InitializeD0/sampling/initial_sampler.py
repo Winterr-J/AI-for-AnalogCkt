@@ -41,6 +41,24 @@ def _extract_space(parameter_template: Mapping[str, Any]) -> list[dict[str, Any]
     return space
 
 
+def _starting_params(
+    space: list[dict[str, Any]], center_params: Mapping[str, Any] | None,
+) -> dict[str, float]:
+    if center_params is None:
+        return {item["name"]: item["nominal"] for item in space}
+    names = {item["name"] for item in space}
+    if set(center_params) != names:
+        raise ValueError("initial center must contain exactly the optimization parameters")
+    result = {item["name"]: float(center_params[item["name"]]) for item in space}
+    if any(
+        not np.isfinite(result[item["name"]])
+        or not item["lower"] <= result[item["name"]] <= item["upper"]
+        for item in space
+    ):
+        raise ValueError("initial center is outside the admissible parameter space")
+    return result
+
+
 def normalize_parameters(
     params: Mapping[str, Any],
     parameter_template: Mapping[str, Any],
@@ -140,6 +158,7 @@ def generate_v1_global_samples(
     parameter_template: Mapping[str, Any],
     n_samples: int = 20,
     seed: int = 42,
+    center_params: Mapping[str, Any] | None = None,
 ) -> list[dict[str, Any]]:
     """Generate one nominal anchor followed by global uniform samples."""
 
@@ -147,9 +166,7 @@ def generate_v1_global_samples(
         raise ValueError("n_samples must be at least 1")
 
     space = _extract_space(parameter_template)
-    anchor_params = {
-        parameter["name"]: parameter["nominal"] for parameter in space
-    }
+    anchor_params = _starting_params(space, center_params)
     samples = [
         {
             "sample_id": "d0_v1_000",
@@ -189,6 +206,7 @@ def generate_v2_local_global_samples(
     n_global: int = 9,
     local_radius: float = 0.05,
     seed: int = 42,
+    center_params: Mapping[str, Any] | None = None,
 ) -> list[dict[str, Any]]:
     """Generate one anchor, then local and global normalized-space samples."""
 
@@ -198,9 +216,7 @@ def generate_v2_local_global_samples(
         raise ValueError("local_radius must satisfy 0 < local_radius <= 1")
 
     space = _extract_space(parameter_template)
-    anchor_params = {
-        parameter["name"]: parameter["nominal"] for parameter in space
-    }
+    anchor_params = _starting_params(space, center_params)
     anchor_normalized = normalize_parameters(anchor_params, parameter_template)
     samples = [
         {
@@ -336,6 +352,7 @@ def generate_v3_physical_local_global_samples(
     n_global: int = 9,
     local_factor: float = 1.25,
     seed: int = 42,
+    center_params: Mapping[str, Any] | None = None,
 ) -> list[dict[str, Any]]:
     """Generate one nominal anchor, physical-local samples, and global samples."""
 
@@ -345,13 +362,11 @@ def generate_v3_physical_local_global_samples(
         raise ValueError("local_factor must be finite and greater than 1")
 
     space = _extract_space(parameter_template)
-    anchor_params = {
-        parameter["name"]: parameter["nominal"] for parameter in space
-    }
+    anchor_params = _starting_params(space, center_params)
     samples = [
         {
             "sample_id": "d0_v3_000",
-            "sampling_source": "nominal",
+            "sampling_source": "anchor" if center_params is not None else "nominal",
             "params": anchor_params,
             "normalized_params": normalize_parameters(
                 anchor_params,
@@ -362,7 +377,9 @@ def generate_v3_physical_local_global_samples(
 
     rng = np.random.default_rng(seed)
     for _ in range(n_local):
-        params = _sample_physical_local_params(space, local_factor, rng)
+        params = _sample_physical_local_params(
+            space, local_factor, rng, center_params=anchor_params
+        )
         index = len(samples)
         samples.append(
             {
@@ -391,6 +408,98 @@ def generate_v3_physical_local_global_samples(
                     normalized_params,
                     parameter_template,
                 ),
+                "normalized_params": normalized_params,
+            }
+        )
+    return samples
+
+
+def generate_v4_norm_bounded_local_global_samples(
+    parameter_template: Mapping[str, Any],
+    *,
+    local_radius: float,
+    n_local: int = 10,
+    n_global: int = 9,
+    seed: int = 42,
+    max_rejection_attempts: int = 256,
+    center_params: Mapping[str, Any] | None = None,
+) -> list[dict[str, Any]]:
+    """V3 composition with bounded full-vector log-aware local geometry.
+
+    The local transform and boundary policy are the same low-level helpers
+    used by focused profiling, but no profiling samples/artifacts are read.
+    Global generation deliberately retains the V3 linear-normalized path.
+    """
+
+    if n_local < 0 or n_global < 0:
+        raise ValueError("n_local and n_global must be non-negative")
+    if not np.isfinite(local_radius) or not 0.0 < local_radius <= 1.0:
+        raise ValueError("local_radius must satisfy 0 < local_radius <= 1")
+
+    from ActiveLearning.focused_profiling import _physical_to_unit
+    from ActiveLearning.profiling import _unit_to_physical
+    from ActiveLearning.profiling_local_sampler import sample_local_norm_bounded
+
+    space = _extract_space(parameter_template)
+    definitions = {
+        item["name"]: item for item in parameter_template["parameters"]
+    }
+    transformed_space = []
+    for item in space:
+        definition = definitions[item["name"]]
+        admissible = definition["admissible_range"]
+        transformed_space.append(
+            {**item, "scale": admissible.get("scale"),
+             "transform": admissible.get("transform"),
+             "fixed_sign": admissible.get("fixed_sign")}
+        )
+    nominal = _starting_params(transformed_space, center_params)
+    center = np.asarray(
+        [_physical_to_unit(nominal[item["name"]], item) for item in transformed_space],
+        dtype=float,
+    )
+    samples = [
+        {
+            "sample_id": "d0_v4_000",
+            "sampling_source": "anchor" if center_params is not None else "nominal",
+            "params": nominal,
+            "normalized_params": normalize_parameters(nominal, parameter_template),
+        }
+    ]
+    rng = np.random.default_rng(seed)
+    vectors, metadata = sample_local_norm_bounded(
+        center, local_radius, n_local, rng,
+        max_rejection_attempts=max_rejection_attempts,
+        include_sample_details=True,
+    )
+    for vector, details in zip(vectors, metadata["sample_details"]):
+        params = {
+            item["name"]: _unit_to_physical(float(value), item)
+            for item, value in zip(transformed_space, vector)
+        }
+        samples.append(
+            {
+                "sample_id": f"d0_v4_{len(samples):03d}",
+                "sampling_source": "local",
+                "params": params,
+                "normalized_params": normalize_parameters(params, parameter_template),
+                "requested_radius": float(local_radius),
+                "rho": details["rho"],
+                "actual_normalized_l2_distance": details[
+                    "actual_normalized_l2_distance"
+                ],
+                "boundary_fallback": details["boundary_fallback"],
+            }
+        )
+
+    for normalized_params in sample_global_normalized(
+        parameter_template, n_global, rng
+    ):
+        samples.append(
+            {
+                "sample_id": f"d0_v4_{len(samples):03d}",
+                "sampling_source": "global",
+                "params": denormalize_parameters(normalized_params, parameter_template),
                 "normalized_params": normalized_params,
             }
         )
