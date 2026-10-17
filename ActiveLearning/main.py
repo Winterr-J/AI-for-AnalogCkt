@@ -2,6 +2,7 @@
 
 import argparse
 from copy import deepcopy
+import hashlib
 import json
 from pathlib import Path, PureWindowsPath
 
@@ -229,8 +230,17 @@ def run_configured_active_learning(
     config_path=None,
     llm_client=None,
     runtime_config=None,
+    runs_root=None,
+    run_context_callback=None,
+    require_existing_d0=False,
+    expected_config_sha256=None,
+    expected_d0_sha256=None,
 ):
     """Auto-configure one circuit and delegate to the unchanged AL loop."""
+    if expected_config_sha256 is not None:
+        if config_path is None or not Path(config_path).is_file() or hashlib.sha256(
+                Path(config_path).read_bytes()).hexdigest() != expected_config_sha256:
+            raise AutoConfigError("frozen AL config fingerprint mismatch")
     runtime = runtime_config or build_active_learning_circuit_config(
         circuit_type,
         circuit_id,
@@ -245,6 +255,8 @@ def run_configured_active_learning(
     parameter_template = runtime.param_template
     performance_template = _load_yaml(paths["performance_template"])
     if not d0_path.is_file():
+        if require_existing_d0 or expected_d0_sha256 is not None:
+            raise AutoConfigError("batch AL requires the existing frozen D0")
         if ((config.get("data") or {}).get("initialize_if_missing") is True
                 and (config.get("data") or {}).get("d0_mode") != "reuse"):
             initialize_configured_d0(runtime, config, target_specs, d0_path)
@@ -253,6 +265,9 @@ def run_configured_active_learning(
                 f"AutoConfig succeeded for {circuit_type}/{circuit_id}, but D0 is not "
                 f"available: {d0_path}"
             )
+    if expected_d0_sha256 is not None and hashlib.sha256(
+            d0_path.read_bytes()).hexdigest() != expected_d0_sha256:
+        raise AutoConfigError("frozen D0 fingerprint mismatch")
     _check_independent_d0(config, d0_path)
     records = _load_jsonl(d0_path)
     circuit_info = dict(parameter_template["circuit"])
@@ -278,13 +293,16 @@ def run_configured_active_learning(
         **VALIDITY_V1_DEFAULTS,
         **(config.get("validity") or {}),
     }
+    selected_runs_root = _RUNS_ROOT if runs_root is None else Path(runs_root)
     run_context = create_run_directory(
-        _RUNS_ROOT,
+        selected_runs_root,
         circuit_type,
         circuit_id,
         effective_settings["acquisition_mode"],
         data_expansion_mode=data_expansion_config["mode"],
     )
+    if run_context_callback is not None:
+        run_context_callback(run_context)
     effective_config = deepcopy(config)
     effective_config.setdefault(
         "target_source",
@@ -329,7 +347,7 @@ def run_configured_active_learning(
         validity_config=validity_settings,
     )
     write_completed_run(
-        _RUNS_ROOT,
+        selected_runs_root,
         run_context,
         result,
         circuit_type=circuit_type,

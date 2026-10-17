@@ -13,7 +13,7 @@ import time
 from pathlib import Path
 
 from .runner import UnverifiedOrphanError
-from .storage import atomic_json, sha256_file
+from .storage import atomic_json, read_json, sha256_file
 
 
 def production_invocation_contract(job: dict, attempt_dir: Path) -> dict:
@@ -185,3 +185,140 @@ def run_offline_fake_child(job: dict, attempt_dir: Path, *, scenario: str,
             "meets_spec": result["meets_spec"],
             "stop_reason": result["stop_reason"],
             "iterations_completed": result["iterations_completed"]}
+
+
+def run_real_al_child(
+    manifest: dict,
+    job: dict,
+    attempt_dir: Path,
+    authorization: dict,
+    *,
+    offline_scenario: str | None = None,
+    production_enabled: bool = False,
+) -> dict:
+    """Launch the fixed authorized AL child; never accepts an arbitrary command."""
+    if manifest.get("schema_version") != "batch_runner_v2b2a_candidate_v1":
+        raise ValueError("real AL requires a B2A candidate manifest")
+    attempt_dir = Path(attempt_dir).resolve(strict=True)
+    attempt_id = attempt_dir.name
+    if not attempt_id.isalnum() or len(attempt_id) != 32:
+        raise ValueError("expected a V2-generated attempt identity")
+    if authorization.get("execution_scope") == "production":
+        if offline_scenario is not None:
+            raise ValueError("production authorization cannot run an offline fixture")
+        if production_enabled is not True:
+            raise PermissionError("production execution is not enabled")
+    elif authorization.get("execution_scope") == "offline_integration":
+        if offline_scenario is None:
+            raise ValueError("offline-integration authorization requires a fixed fixture")
+    else:
+        raise ValueError("unsupported authorization execution scope")
+
+    invocation = {
+        "schema_version": "batch_runner_v2b2a_invocation_v1",
+        "batch_id": manifest["batch_id"], "job_id": job["job_id"],
+        "attempt_id": attempt_id, "manifest_path": manifest["manifest_path"],
+        "manifest_sha256": manifest["manifest_sha256"],
+        "authorization_id": authorization["authorization_id"],
+        "authorization_sha256": authorization["authorization_sha256"],
+        "attempt_directory": str(attempt_dir),
+        "offline_scenario": offline_scenario,
+    }
+    invocation_path = attempt_dir / "real_al_invocation.json"
+    atomic_json(invocation_path, invocation)
+    atomic_json(attempt_dir / "child_spawn_intent.json", {
+        "batch_id": manifest["batch_id"], "job_id": job["job_id"],
+        "attempt_id": attempt_id, "authorization_id": authorization["authorization_id"],
+        "authorization_sha256": authorization["authorization_sha256"],
+    })
+    command = [
+        sys.executable, "-m", "ActiveLearning.batch_runner_v2.real_al_child",
+        "--invocation", str(invocation_path),
+        "--authorization", authorization["authorization_path"],
+        "--authorization-sha256", authorization["authorization_sha256"],
+    ]
+    environment = os.environ.copy()
+    if production_enabled:
+        environment["BATCH_RUNNER_V2_PRODUCTION_AUTHORIZATION_SHA256"] = \
+            authorization["authorization_sha256"]
+    else:
+        environment.pop("BATCH_RUNNER_V2_PRODUCTION_AUTHORIZATION_SHA256", None)
+    try:
+        process = subprocess.Popen(
+            command, stdin=subprocess.DEVNULL, stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL, cwd=manifest["code_root"], env=environment,
+            start_new_session=os.name == "posix",
+        )
+    except OSError as error:
+        raise UnverifiedOrphanError("real AL child spawn failed; process state unverified") from error
+    try:
+        code = process.wait(timeout=manifest["resource_limits"]["worker_timeout_seconds"])
+    except subprocess.TimeoutExpired as error:
+        if not _stop_child(process):
+            raise UnverifiedOrphanError("real AL child exit could not be confirmed") from error
+        atomic_json(attempt_dir / "child_reaped.json", {
+            "attempt_id": attempt_id, "exit_confirmed": True, "timeout": True,
+        })
+        raise RuntimeError("real AL child timeout; stopped attempt is not replayable") from error
+    except OSError as error:
+        if not _stop_child(process):
+            raise UnverifiedOrphanError("real AL child wait failed and exit is unverified") from error
+        atomic_json(attempt_dir / "child_reaped.json", {
+            "attempt_id": attempt_id, "exit_confirmed": True, "wait_error": True,
+        })
+        raise RuntimeError("real AL child wait failed; attempt is uncertain") from error
+    if os.name == "posix" and _group_alive(process.pid):
+        if not _stop_child(process):
+            raise UnverifiedOrphanError("real AL descendant process group may still be running")
+        atomic_json(attempt_dir / "child_reaped.json", {
+            "attempt_id": attempt_id, "exit_confirmed": True,
+            "descendants_stopped": True,
+        })
+        raise RuntimeError("real AL descendants remained after parent exit; attempt uncertain")
+    atomic_json(attempt_dir / "child_reaped.json", {
+        "attempt_id": attempt_id, "exit_confirmed": True, "exit_code": code,
+    })
+
+    result_path = attempt_dir / "worker_result.json"
+    try:
+        if result_path.is_symlink() or not result_path.resolve(strict=True).is_relative_to(attempt_dir):
+            raise ValueError("worker result escapes attempt")
+        result = read_json(result_path)
+    except (OSError, ValueError, json.JSONDecodeError) as error:
+        raise RuntimeError("real AL child has no trustworthy completion result") from error
+    for name, expected in {
+        "batch_id": manifest["batch_id"], "job_id": job["job_id"],
+        "attempt_id": attempt_id, "manifest_sha256": manifest["manifest_sha256"],
+        "authorization_sha256": authorization["authorization_sha256"],
+    }.items():
+        if result.get(name) != expected:
+            raise RuntimeError(f"real AL child result identity mismatch: {name}")
+    if code == 2 and result.get("state") in {"FAILED_TERMINAL", "BLOCKED"}:
+        return {"state": result["state"],
+                "error_code": str(result.get("error_code") or "REAL_AL_TERMINAL")}
+    if code != 0 or result.get("state") != "COMPLETED":
+        raise RuntimeError(f"real AL child exited without verified completion: {code}")
+    if result.get("al_completed") is not True \
+            or type(result.get("simulation_valid")) is not bool \
+            or type(result.get("meets_spec")) is not bool \
+            or result.get("stop_reason") not in {
+                "meets_spec", "max_iterations", "initial_d0_meets_spec"
+            } \
+            or type(result.get("iterations_completed")) is not int \
+            or result["iterations_completed"] < 0 \
+            or result["iterations_completed"] > job["max_iterations"] \
+            or not isinstance(result.get("final_metrics"), dict):
+        raise RuntimeError("real AL child completion evidence is invalid")
+    al_path = Path(result["result_path"])
+    if al_path.is_symlink() or not al_path.resolve(strict=True).is_relative_to(attempt_dir) \
+            or sha256_file(al_path) != result.get("al_result_sha256"):
+        raise RuntimeError("real AL result artifact is invalid")
+    return {
+        "run_id": result["run_id"], "result_path": str(al_path),
+        "al_result_sha256": result["al_result_sha256"],
+        "simulation_valid": result["simulation_valid"],
+        "meets_spec": result["meets_spec"], "stop_reason": result["stop_reason"],
+        "iterations_completed": result["iterations_completed"],
+        "final_metrics": result["final_metrics"],
+        "d0_record_count": result.get("d0_record_count"),
+    }

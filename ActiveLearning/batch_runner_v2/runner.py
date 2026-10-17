@@ -1,4 +1,4 @@
-"""Sequential offline mock scheduler. This module cannot execute real AL."""
+"""Sequential V2 scheduler with mock and explicitly authorized worker paths."""
 
 from __future__ import annotations
 
@@ -18,8 +18,12 @@ class UnverifiedOrphanError(RuntimeError):
 def plan_batch(manifest_path: str | Path) -> dict:
     """Pure read-only preflight; no AL, SPICE, D0, or LLM calls."""
     manifest = load_manifest(manifest_path)
-    return {"batch_id": manifest["batch_id"], "status": "READY_FOR_OFFLINE_MOCK",
+    status = ("READY_FOR_AUTHORIZATION"
+              if manifest["schema_version"] == "batch_runner_v2b2a_candidate_v1"
+              else "READY_FOR_OFFLINE_MOCK")
+    return {"batch_id": manifest["batch_id"], "status": status,
             "manifest_sha256": manifest["manifest_sha256"],
+            "source_revision": manifest.get("source_revision"),
             "jobs": [{"job_id": job["job_id"], "circuit_type": job["circuit_type"],
                       "circuit_id": job["circuit_id"], "configuration_id": job["configuration_id"]}
                      for job in manifest["jobs"]],
@@ -43,10 +47,20 @@ def _save(directory: Path, state: dict) -> None:
     atomic_json(directory / "status.json", state)
 
 
-def _initial_state(manifest: dict) -> dict:
+def _initial_state(
+    manifest: dict, *, offline_only: bool,
+    authorization: dict | None = None,
+) -> dict:
     return {"batch_id": manifest["batch_id"],
             "manifest_sha256": manifest["manifest_sha256"],
-            "offline_only": True,
+            "offline_only": offline_only,
+            "execution_scope": ("offline_mock" if authorization is None
+                                else authorization["execution_scope"]),
+            "authorization_id": (None if authorization is None
+                                 else authorization["authorization_id"]),
+            "authorization_sha256": (None if authorization is None
+                                     else authorization["authorization_sha256"]),
+            "source_revision": manifest.get("source_revision"),
             "jobs": {job["job_id"]: {
                 "state": "PENDING", "attempts": [], "circuit_type": job["circuit_type"],
                 "circuit_id": job["circuit_id"], "configuration_id": job["configuration_id"],
@@ -87,18 +101,11 @@ def _verify_completion(directory: Path, job_id: str, row: dict) -> bool:
             and result.get("meets_spec") == row.get("meets_spec"))
 
 
-def run_mock_batch(
-    manifest_path: str | Path, output_root: str | Path,
-    worker: Callable[[dict, Path], dict],
+def _run_batch(
+    manifest: dict, output_root: str | Path,
+    worker: Callable[[dict, Path], dict], *, offline_only: bool,
+    authorization: dict | None = None,
 ) -> dict:
-    """Execute only an explicitly injected *mock* worker.
-
-    No built-in real worker or execute flag exists. The supplied worker must be
-    controlled by the caller; production use is outside this milestone.
-    """
-    if not callable(worker):
-        raise TypeError("an injected mock worker is required")
-    manifest = load_manifest(manifest_path)
     directory = _batch_dir(output_root, manifest["batch_id"])
     if directory.is_symlink():
         raise ValueError("batch directory must not be a symbolic link")
@@ -108,14 +115,19 @@ def run_mock_batch(
         if status_path.exists():
             state = read_json(status_path)
             if state.get("manifest_sha256") != manifest["manifest_sha256"] or \
-                    state.get("offline_only") is not True:
-                raise ValueError("batch identity changed or is not offline-only")
+                    state.get("offline_only") is not offline_only:
+                raise ValueError("batch identity or execution scope changed")
+            expected_authorization = (None if authorization is None
+                                      else authorization["authorization_sha256"])
+            if state.get("authorization_sha256") != expected_authorization:
+                raise ValueError("batch authorization changed")
             if set(state.get("jobs", {})) != {job["job_id"] for job in manifest["jobs"]}:
                 raise ValueError("persisted job set differs from manifest")
         else:
             if any(child.name != ".runner.lock" for child in directory.iterdir()):
                 raise ValueError("refusing to adopt an existing non-V2 batch directory")
-            state = _initial_state(manifest)
+            state = _initial_state(
+                manifest, offline_only=offline_only, authorization=authorization)
             atomic_json(directory / "manifest.json", manifest)
             _save(directory, state)
         if state.get("orphan_unverified"):
@@ -196,6 +208,14 @@ def run_mock_batch(
                 _save(directory, state)
                 _event(directory, job_id, "FAILED_TERMINAL", row["error_code"])
                 continue
+            if isinstance(outcome, dict) and outcome.get("state") == "BLOCKED":
+                row["state"] = "BLOCKED"
+                row["pipeline_success"] = False
+                row["meets_spec"] = None
+                row["error_code"] = str(outcome.get("error_code") or "REAL_AL_BLOCKED")
+                _save(directory, state)
+                _event(directory, job_id, "BLOCKED", row["error_code"])
+                continue
             if not isinstance(outcome, dict) or outcome.get("stop_reason") not in {
                 "meets_spec", "max_iterations", "initial_d0_meets_spec"
             } or type(outcome.get("meets_spec")) is not bool:
@@ -212,6 +232,8 @@ def run_mock_batch(
                           "simulation_valid": outcome.get("simulation_valid"),
                           "stop_reason": outcome["stop_reason"],
                           "iterations_completed": outcome.get("iterations_completed"),
+                          "final_metrics": outcome.get("final_metrics"),
+                          "d0_record_count": outcome.get("d0_record_count"),
                           "result_path": outcome.get("result_path"),
                           "al_result_sha256": outcome.get("al_result_sha256")}
                 result_path = attempt_dir / "result.json"
@@ -222,6 +244,8 @@ def run_mock_batch(
                 row["meets_spec"] = outcome["meets_spec"]
                 row["simulation_valid"] = outcome.get("simulation_valid")
                 row["stop_reason"] = outcome["stop_reason"]
+                row["final_metrics"] = outcome.get("final_metrics")
+                row["d0_record_count"] = outcome.get("d0_record_count")
                 _save(directory, state)
                 _event(directory, job_id, "COMPLETED", attempt_id)
             except Exception:
@@ -229,6 +253,71 @@ def run_mock_batch(
         summary = report_batch(manifest["batch_id"], output_root)
         atomic_json(directory / "summary.json", summary)
         return summary
+
+
+def run_mock_batch(
+    manifest_path: str | Path, output_root: str | Path,
+    worker: Callable[[dict, Path], dict],
+) -> dict:
+    """Execute only an explicitly injected mock worker."""
+    if not callable(worker):
+        raise TypeError("an injected mock worker is required")
+    manifest = load_manifest(manifest_path)
+    return _run_batch(manifest, output_root, worker, offline_only=True)
+
+
+def run_authorized_batch(
+    manifest_path: str | Path,
+    output_root: str | Path,
+    authorization_path: str | Path,
+    expected_authorization_sha256: str,
+    *,
+    enable_production: bool = False,
+    offline_scenarios: dict[str, str] | None = None,
+) -> dict:
+    """Run only a B2A batch whose exact approval digest was pinned externally.
+
+    This function is deliberately absent from the CLI. Offline integration
+    approvals can run only built-in fixtures. Production additionally requires
+    a production-scoped approval and the explicit in-process enable flag.
+    """
+    from .al_process import run_real_al_child
+    from .authorization import (
+        ProductionExecutionDisabledError, claim_authorization,
+        validate_authorization, verify_published_source_closure,
+    )
+
+    manifest = load_manifest(manifest_path)
+    authorization = validate_authorization(
+        manifest, authorization_path, expected_authorization_sha256, output_root)
+    if authorization["execution_scope"] == "production":
+        if enable_production is not True:
+            raise ProductionExecutionDisabledError(
+                "production execution requires a separate explicit enable decision")
+        if offline_scenarios is not None:
+            raise ValueError("production execution cannot accept offline scenarios")
+        verify_published_source_closure(manifest)
+    else:
+        if enable_production:
+            raise ValueError("offline authorization cannot enable production")
+        if not isinstance(offline_scenarios, dict) or \
+                set(offline_scenarios) != {job["job_id"] for job in manifest["jobs"]}:
+            raise ValueError("offline integration requires one fixed scenario per job")
+    authorization["authorization_claim_path"] = str(claim_authorization(authorization))
+
+    def authorized_worker(job: dict, attempt: Path) -> dict:
+        scenario = (None if authorization["execution_scope"] == "production"
+                    else offline_scenarios[job["job_id"]])
+        return run_real_al_child(
+            manifest, job, attempt, authorization,
+            offline_scenario=scenario, production_enabled=enable_production,
+        )
+
+    return _run_batch(
+        manifest, output_root, authorized_worker,
+        offline_only=authorization["execution_scope"] != "production",
+        authorization=authorization,
+    )
 
 
 def status_batch(batch_id: str, output_root: str | Path) -> dict:
@@ -257,7 +346,9 @@ def report_batch(batch_id: str, output_root: str | Path) -> dict:
                                              if type(item.get("total_tokens")) is int),
                 "request_seconds": sum(float(item.get("latency_seconds") or 0) for item in own_finished),
                 "usage_unknown": unknown}
-    return {"batch_id": batch_id, "offline_only": True,
+    return {"batch_id": batch_id, "offline_only": state.get("offline_only", True),
+            "execution_scope": state.get("execution_scope", "offline_mock"),
+            "authorization_id": state.get("authorization_id"),
             "completed": sum(row["state"] == "COMPLETED" for row in rows.values()),
             "performance_success": sum(row.get("meets_spec") is True for row in rows.values()),
             "failed_terminal": sum(row["state"] == "FAILED_TERMINAL" for row in rows.values()),
@@ -276,5 +367,7 @@ def report_batch(batch_id: str, output_root: str | Path) -> dict:
                           "total_tokens": None if usage_unknown else sum(item["total_tokens"] for item in reported)},
             "jobs": {key: {"state": row["state"], "pipeline_success": row["pipeline_success"],
                            "meets_spec": row["meets_spec"], "attempts": len(row["attempts"]),
+                           "final_metrics": row.get("final_metrics"),
+                           "d0_record_count": row.get("d0_record_count"),
                            "api_usage": per_job_usage(key)}
                      for key, row in rows.items()}}
