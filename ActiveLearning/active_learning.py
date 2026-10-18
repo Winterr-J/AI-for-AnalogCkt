@@ -61,7 +61,12 @@ def _recompute_initial_meets_spec(records, target_specs):
             simulation_valid = record.get("simulation_valid")
 
         metrics = record.get("metrics")
-        if simulation_valid is True and isinstance(metrics, Mapping):
+        # A measured performance pair cannot certify a D0 record whose
+        # reference-tracking stimulus could not legally be applied.
+        bounds_limited = "reference_tracking_not_evaluable_due_to_bounds" in (
+            record.get("failure_reasons") or ()
+        )
+        if not bounds_limited and simulation_valid is True and isinstance(metrics, Mapping):
             meets_spec = check_meets_spec(metrics, target_specs)["meets_spec"]
         else:
             meets_spec = None

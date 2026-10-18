@@ -338,6 +338,44 @@ def _finalize_tracking_result(
     }
 
 
+def _reference_scale_outside_admissible(
+    params: Mapping[str, Any], adapter: Any, scale: float,
+) -> dict[str, Any] | None:
+    """Identify only a range violation caused by a current-source test scale.
+
+    Do not classify binding/build failures, missing parameter metadata, or an
+    invalid original candidate as a perturbation-domain limitation.
+    """
+
+    if getattr(adapter, "reference_excitation_quantity", None) != "current":
+        return None
+    definitions = getattr(adapter, "runtime_parameters", None)
+    if definitions is None or not hasattr(adapter, "scale_reference"):
+        return None
+    ranges = {item.name: (float(item.lower), float(item.upper)) for item in definitions}
+    if set(params) != set(ranges):
+        return None
+    if any(not math.isfinite(float(params[name])) or not low <= float(params[name]) <= high
+           for name, (low, high) in ranges.items()):
+        return None
+    scaled = adapter.scale_reference(params, scale)
+    if not isinstance(scaled, Mapping) or set(scaled) != set(params):
+        return None
+    changed = [name for name in params if scaled[name] != params[name]]
+    if not changed:
+        return None
+    outside = []
+    for name in changed:
+        value = float(scaled[name])
+        low, high = ranges[name]
+        if not math.isfinite(value):
+            return None
+        if not low <= value <= high:
+            outside.append({"parameter": name, "requested_value": value,
+                            "admissible_range": [low, high]})
+    return {"scale": float(scale), "outside": outside} if outside else None
+
+
 def _run_reference_tracking_test(
     params: Mapping[str, Any],
     adapter: Any,
@@ -350,6 +388,22 @@ def _run_reference_tracking_test(
     errors = []
     measurements = []
     for scale in reference_scales:
+        bounds_exclusion = _reference_scale_outside_admissible(params, adapter, scale)
+        if bounds_exclusion is not None:
+            result = _finalize_tracking_result(
+                measurements, errors, tolerance, operating_region_valid=False,
+                operating_region_reason=f"scale {scale:g}: requested reference stimulus is outside admissible bounds",
+            )
+            # Partial points are evidence, not a completed tracking test.
+            result.update({
+                "passed": False, "quality_smoke_passed": False,
+                "max_tracking_error": None, "responsive": False,
+                "reference_stimulus_applied": False,
+                "reference_response_valid": False,
+                "reference_responsive": False, "output_responsive": False,
+                "bounds_exclusion": bounds_exclusion,
+            })
+            return result
         requested_reference = None
         requested_excitation = None
         applied_excitation = None
@@ -688,7 +742,10 @@ def check_current_mirror_functionality(
         tracking_data_valid = False
         failure_reasons.append("reference_response_data_invalid")
 
-    if tracking_data_valid:
+    if tracking.get("bounds_exclusion") is not None:
+        tracking_evaluable = False
+        failure_reasons.append("reference_tracking_not_evaluable_due_to_bounds")
+    elif tracking_data_valid:
         if not tracking["reference_stimulus_applied"]:
             failure_reasons.append("reference_stimulus_not_applied")
         elif not tracking["operating_region_valid"]:

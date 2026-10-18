@@ -351,6 +351,9 @@ def build_runtime_d0(
         if prepared_samples is not None:
             record["functional_evaluation_status"] = functional_result["functional_status"]
             record["failure_reasons"] = list(functional_result["failure_reasons"])
+            if "reference_tracking_not_evaluable_due_to_bounds" in record["failure_reasons"]:
+                record["reference_tracking"] = dict(functional_result["reference_tracking"])
+                record["status"]["meets_spec"] = None
         record["functional_metrics"] = {
             "compliance_relative_variation": functional_result["compliance"][
                 "relative_variation"

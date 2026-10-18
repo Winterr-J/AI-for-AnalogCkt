@@ -406,7 +406,38 @@ def _worker(request_path: Path) -> int:
             status = record["status"]
             if status["parameter_valid"] and status["simulation_valid"] is not True:
                 raise BoundedD0Error("simulation invalid: infrastructure/physics ambiguity")
-            if status["parameter_valid"] and record.get("functional_evaluation_status") == "not_evaluable":
+            bounds_limited = "reference_tracking_not_evaluable_due_to_bounds" in record.get("failure_reasons", [])
+            if bounds_limited:
+                from ActiveLearning.InitializeD0.validation.current_mirror_functional_validator import (
+                    _reference_scale_outside_admissible,
+                )
+                tracking = record.get("reference_tracking") or {}
+                exclusion = tracking.get("bounds_exclusion") or {}
+                completed_scales = tracking.get("measurements")
+                primary_scales = (tracking.get("perturbation_policy") or {}).get("primary_scales")
+                if (record.get("functional_evaluation_status") != "not_evaluable"
+                        or status.get("parameter_valid") is not True
+                        or status.get("simulation_valid") is not True
+                        or status.get("functional_valid") is not False
+                        or status.get("functional_status") != "invalid"
+                        or status.get("functional_feasible") is not False
+                        or status.get("meets_spec") is not None
+                        or record.get("params") != sample["params"]
+                        or not isinstance(completed_scales, list)
+                        or not 0 <= len(completed_scales) < 3
+                        or primary_scales != [0.8, 1.0, 1.2]
+                        or any(not isinstance(item, dict)
+                               or item.get("scale") != primary_scales[index]
+                               for index, item in enumerate(completed_scales))
+                        or exclusion.get("scale") != primary_scales[len(completed_scales)]
+                        or not exclusion.get("outside")):
+                    raise BoundedD0Error("malformed bounds-limited reference tracking evidence")
+                expected_exclusion = _reference_scale_outside_admissible(
+                    sample["params"], runtime.adapter, exclusion["scale"],
+                )
+                if expected_exclusion != exclusion:
+                    raise BoundedD0Error("bounds-limited reference tracking does not match candidate")
+            elif status["parameter_valid"] and record.get("functional_evaluation_status") == "not_evaluable":
                 raise BoundedD0Error("functional evaluation is not reliable")
             ambiguous = {"simulation_setup_failed", "nominal_current_data_invalid",
                          "compliance_data_invalid", "reference_response_data_invalid",
@@ -419,9 +450,10 @@ def _worker(request_path: Path) -> int:
             raise BoundedD0Error("SPICE analysis failure or unknown outcome")
         if request["mode"] == "preflight" and (counts["op_attempts"], counts["dc_attempts"]) != (1, 1):
             raise BoundedD0Error("nominal preflight did not execute exactly one OP and DC")
-        if (request["mode"] == "d0" and record["status"]["parameter_valid"]
-                and (counts["op_attempts"], counts["dc_attempts"]) != (6, 2)):
-            raise BoundedD0Error("valid D0 candidate did not execute exactly six OP and two DC")
+        if request["mode"] == "d0" and record["status"]["parameter_valid"]:
+            expected_op = 3 + len(completed_scales) if bounds_limited else 6
+            if (counts["op_attempts"], counts["dc_attempts"]) != (expected_op, 2):
+                raise BoundedD0Error("valid D0 candidate has unexpected OP/DC analysis counts")
         if counts["attempts"] > request["max_attempts"]:
             raise BoundedD0Error("candidate analysis budget exceeded")
         _verify_assets(request["asset_sha256"])
