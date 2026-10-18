@@ -244,6 +244,7 @@ def build_runtime_d0(
     local_radius: float | None = None,
     local_factor: float = 1.25,
     initial_anchor: Mapping[str, Any] | None = None,
+    prepared_samples: Sequence[Mapping[str, Any]] | None = None,
 ) -> list[dict[str, Any]]:
     """Build D0 through one AutoConfig runtime's evaluator and validator."""
 
@@ -261,18 +262,21 @@ def build_runtime_d0(
                 "initial_anchor params are invalid: "
                 + "; ".join(anchor_validation["violations"])
             )
-    samples = _generate_samples(
-        parameter_template,
-        sampling_mode=sampling_mode,
-        seed=seed,
-        n_samples=n_samples,
-        n_local=n_local,
-        n_global=n_global,
-        local_radius=local_radius,
-        local_factor=local_factor,
-        center_params=center_params,
+    samples = (
+        _generate_samples(
+            parameter_template,
+            sampling_mode=sampling_mode,
+            seed=seed,
+            n_samples=n_samples,
+            n_local=n_local,
+            n_global=n_global,
+            local_radius=local_radius,
+            local_factor=local_factor,
+            center_params=center_params,
+        )
+        if prepared_samples is None else [dict(sample) for sample in prepared_samples]
     )
-    if samples:
+    if samples and prepared_samples is None:
         samples[0] = {
             **samples[0],
             "sampling_source": "anchor" if initial_anchor is not None else "nominal",
@@ -344,6 +348,9 @@ def build_runtime_d0(
                 "meets_spec": check_meets_spec(metrics, target_specs)["meets_spec"],
             }
         )
+        if prepared_samples is not None:
+            record["functional_evaluation_status"] = functional_result["functional_status"]
+            record["failure_reasons"] = list(functional_result["failure_reasons"])
         record["functional_metrics"] = {
             "compliance_relative_variation": functional_result["compliance"][
                 "relative_variation"
