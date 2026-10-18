@@ -1,0 +1,16 @@
+{
+  "job_id": "cm0469_independent_d0_v2",
+  "circuit_type": "CurrentMirror",
+  "circuit_id": "circuit_0469",
+  "configuration_id": "sha256-eba11c5a828e5551",
+  "config_path": "ActiveLearning/batch_inputs/CurrentMirror/circuit_0469/independent_d0_v2_93a6a79bac93/active_learning_config.yaml",
+  "config_sha256": "eba11c5a828e5551cb7e5adf6d2cce41ec973c6bd3b0ada8ac8181a8aabb7dba",
+  "d0_path": "ActiveLearning/batch_inputs/CurrentMirror/circuit_0469/independent_d0_v2_93a6a79bac93/d0/d0_v1_seed42.jsonl",
+  "d0_sha256": "b765746d38b5bc2adc9ecaf1b76b63a9e57de64d1c8b2fb4d914097fe3e85da3",
+  "source_path": "dataset/circuit_0469/topology/circuit_0469.py",
+  "source_sha256": "e6862629fe5ff8cf9207af697bf6e9a12d69c7ecb436917710bcf5b72c388fb1",
+  "target_spec_sha256": "1ef24de5f1c8272fb93579ceb2f6340abde7f41fc61902ce613f81035d3a7a15",
+  "max_iterations": 5,
+  "seed": 42,
+  "execution_mode": "al_only"
+}
