@@ -15,6 +15,7 @@ except ImportError:  # The bundled offline test runtime has no PyYAML.
 from .storage import sha256_file
 
 _LABEL = re.compile(r"[A-Za-z0-9_-]+\Z")
+_MODEL = re.compile(r"[A-Za-z0-9_-]+(?:\.[A-Za-z0-9_-]+)*\Z")
 _HASH = re.compile(r"[0-9a-f]{64}\Z")
 _REVISION = re.compile(r"[0-9a-f]{40,64}\Z")
 _V2A_JOB_KEYS = {
@@ -48,6 +49,12 @@ _REQUIRED_REAL_AL_CLOSURE = {
 def _label(value: object, name: str) -> str:
     if not isinstance(value, str) or not _LABEL.fullmatch(value):
         raise ValueError(f"{name} must be a safe nonempty label")
+    return value
+
+
+def _model(value: object) -> str:
+    if not isinstance(value, str) or not _MODEL.fullmatch(value):
+        raise ValueError("model must be a safe nonempty model ID")
     return value
 
 
@@ -166,6 +173,8 @@ def load_manifest(path: str | Path) -> dict:
     elif version == "batch_runner_v2b2a_candidate_v1":
         expected_manifest_keys = _B2A_MANIFEST_KEYS
         expected_job_keys = _B2A_JOB_KEYS
+        if "repository_root" in payload:
+            expected_manifest_keys = expected_manifest_keys | {"repository_root"}
     else:
         raise ValueError("unsupported V2-A manifest version")
     if set(payload) != expected_manifest_keys:
@@ -173,8 +182,8 @@ def load_manifest(path: str | Path) -> dict:
     _label(payload["batch_id"], "batch_id")
     if payload["provider"] != "gemini":
         raise ValueError("V2-A recovery adapter supports only mocked Gemini")
-    for name in ("model", "credential_scope"):
-        _label(payload[name], name)
+    _model(payload["model"])
+    _label(payload["credential_scope"], "credential_scope")
     limits = payload["resource_limits"]
     expected_limits = ({"max_physical_attempts"} if version == "batch_runner_v2a_offline_v1"
                        else {"max_physical_attempts", "worker_timeout_seconds"})
@@ -200,10 +209,24 @@ def load_manifest(path: str | Path) -> dict:
         if not isinstance(payload["source_revision"], str) or not \
                 _REVISION.fullmatch(payload["source_revision"]):
             raise ValueError("source_revision must be a full hexadecimal revision")
+        if "repository_root" in payload:
+            explicit_root = payload["repository_root"]
+            if (not isinstance(explicit_root, str)
+                    or not Path(explicit_root).is_absolute()
+                    or Path(path).is_symlink()
+                    or explicit_root != str(code_root)):
+                raise ValueError("external manifest repository_root must be the executing release root")
+            from .authorization import current_source_revision
+            if current_source_revision(code_root) != payload["source_revision"]:
+                raise ValueError("external manifest source revision differs from release HEAD")
+            root = code_root
         _verify_source_closure(payload, code_root)
     result = {**payload, "repository_root": str(root),
               "code_root": str(code_root), "manifest_path": str(source),
               "manifest_sha256": sha256_file(source)}
+    if version == "batch_runner_v2b2a_candidate_v1" and "repository_root" in payload:
+        from .authorization import verify_published_source_closure
+        verify_published_source_closure(result)
     for job in jobs:
         if not isinstance(job, dict) or set(job) != expected_job_keys:
             raise ValueError("invalid job fields")
