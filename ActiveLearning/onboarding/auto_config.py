@@ -729,6 +729,7 @@ def _runtime_parameters(
     search_space: Any,
     circuit_ir: Any,
     source_elements: Mapping[str, str],
+    device_elements: Mapping[str, str] | None = None,
 ) -> tuple[RuntimeParameter, ...]:
     targets = {item.parameter_id: item for item in circuit_ir.physical_targets}
     result = []
@@ -765,7 +766,7 @@ def _runtime_parameters(
             if target.source_kind == "source_interface":
                 element_name = source_elements.get(target.parameter_id)
             else:
-                element_name = target.device_id
+                element_name = (device_elements or {}).get(target.device_id, target.device_id)
             if not element_name:
                 unresolved.append(
                     f"{variable.variable_id}: no executable instance for {parameter_id}"
@@ -1584,7 +1585,20 @@ def _build_opamp_circuit_config(
         )
         for source in circuit_ir.sources
     }
-    runtime_parameters = _runtime_parameters(search_space, circuit_ir, source_elements)
+    device_elements = {}
+    for target in circuit_ir.physical_targets:
+        device_id = target.device_id
+        if target.source_kind == "source_interface" or not device_id:
+            continue
+        if device_id not in device_elements:
+            device_elements[device_id] = _resolve_element_name(
+                nominal_circuit,
+                (device_id, device_id[:1] + device_id),
+                f"Stage A device {device_id}",
+            )
+    runtime_parameters = _runtime_parameters(
+        search_space, circuit_ir, source_elements, device_elements
+    )
     rows_by_id = {row.parameter_id: row for row in stage_a_rows}
 
     op_payload = _load_yaml(op_result_path) if op_result_path.is_file() else None

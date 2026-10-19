@@ -1,0 +1,149 @@
+active_learning:
+  max_iterations: 5
+data:
+  d0_path: d0/d0_v4_seed42.jsonl
+  initialize_if_missing: true
+  sampling_mode: v4
+  seed: 42
+  n_samples: 20
+  n_local: 10
+  n_global: 9
+  d0_mode: independent
+  d0_path_relative_to: config
+  initial_anchor:
+    source: profiling
+    sample_id: anchor_nominal
+    params:
+      L_MM0: 1.0e-06
+      L_MM0_dup2: 1.0e-06
+      L_MM1: 1.0e-06
+      L_MM10: 1.0e-06
+      L_MM13: 1.0e-06
+      L_MM14: 1.0e-06
+      L_MM15: 1.0e-06
+      L_MM1_dup2: 1.0e-06
+      L_MM2: 1.0e-06
+      L_MM2_dup2: 1.0e-06
+      L_MM3: 1.0e-06
+      L_MM3_dup2: 1.0e-06
+      L_MM4: 1.0e-06
+      L_MM5: 1.0e-06
+      L_MM6: 1.0e-06
+      L_MM7: 1.0e-06
+      L_MM8: 1.0e-06
+      L_MM9: 1.0e-06
+      RR0: 10000.0
+      VB1: 1.65
+      VB2: 1.65
+      VB3: 1.65
+      W_MM0: 9.999999999999999e-06
+      W_MM0_dup2: 9.999999999999999e-06
+      W_MM1: 1.9999999999999998e-05
+      W_MM10: 9.999999999999999e-06
+      W_MM13: 9.999999999999999e-06
+      W_MM14: 1.9999999999999998e-05
+      W_MM15: 9.999999999999999e-06
+      W_MM1_dup2: 1.9999999999999998e-05
+      W_MM2: 1.9999999999999998e-05
+      W_MM2_dup2: 9.999999999999999e-06
+      W_MM3: 9.999999999999999e-06
+      W_MM3_dup2: 1.9999999999999998e-05
+      W_MM4: 9.999999999999999e-06
+      W_MM5: 1.9999999999999998e-05
+      W_MM6: 1.9999999999999998e-05
+      W_MM7: 9.999999999999999e-06
+      W_MM8: 9.999999999999999e-06
+      W_MM9: 9.999999999999999e-06
+  local_radius: 0.02
+target_specs:
+  low_frequency_open_loop_gain_db:
+    operator: '>='
+    value: 32.11000786394676
+  unity_gain_frequency_hz:
+    operator: '>='
+    value: 31394764.50269261
+  phase_margin_deg:
+    operator: '>='
+    value: 91.4215003453532
+target_source: auto_generated
+performance_target_selected: true
+benchmark_version: auto_target_v1_OpAmp_circuit_1628_4vfa_nvc
+target_provenance:
+  source: automatic_profiling_llm_v1
+  purpose: experimental_benchmark_not_user_specification
+  profiling_backend: spice
+  circuit_type: OpAmp
+  circuit_id: circuit_1628
+  anchor:
+    sample_id: anchor_nominal
+    params:
+      L_MM0: 1.0e-06
+      L_MM0_dup2: 1.0e-06
+      L_MM1: 1.0e-06
+      L_MM10: 1.0e-06
+      L_MM13: 1.0e-06
+      L_MM14: 1.0e-06
+      L_MM15: 1.0e-06
+      L_MM1_dup2: 1.0e-06
+      L_MM2: 1.0e-06
+      L_MM2_dup2: 1.0e-06
+      L_MM3: 1.0e-06
+      L_MM3_dup2: 1.0e-06
+      L_MM4: 1.0e-06
+      L_MM5: 1.0e-06
+      L_MM6: 1.0e-06
+      L_MM7: 1.0e-06
+      L_MM8: 1.0e-06
+      L_MM9: 1.0e-06
+      RR0: 10000.0
+      VB1: 1.65
+      VB2: 1.65
+      VB3: 1.65
+      W_MM0: 9.999999999999999e-06
+      W_MM0_dup2: 9.999999999999999e-06
+      W_MM1: 1.9999999999999998e-05
+      W_MM10: 9.999999999999999e-06
+      W_MM13: 9.999999999999999e-06
+      W_MM14: 1.9999999999999998e-05
+      W_MM15: 9.999999999999999e-06
+      W_MM1_dup2: 1.9999999999999998e-05
+      W_MM2: 1.9999999999999998e-05
+      W_MM2_dup2: 9.999999999999999e-06
+      W_MM3: 9.999999999999999e-06
+      W_MM3_dup2: 1.9999999999999998e-05
+      W_MM4: 9.999999999999999e-06
+      W_MM5: 1.9999999999999998e-05
+      W_MM6: 1.9999999999999998e-05
+      W_MM7: 9.999999999999999e-06
+      W_MM8: 9.999999999999999e-06
+      W_MM9: 9.999999999999999e-06
+    metrics:
+      low_frequency_open_loop_gain_db: 30.909210217788676
+      unity_gain_frequency_hz: 30584763.162904304
+      phase_margin_deg: 91.63265906874693
+  profiling_artifact: profiling.json
+  target_recommendation: target_generation.json
+  generated_config: active_learning_config.yaml
+  d0_mode: independent
+  d0_anchor_source: profiling
+  d0_anchor_sample_id: anchor_nominal
+  d0_seed: 42
+  joint_supporting_sample_ids:
+  - profile_local_0_0005
+  llm_declared_supporting_sample_ids:
+  - profile_local_0_0005
+  reason: "Target specifications are jointly satisfied by the observed sample profile_local_0_0005,\
+    \ where low_frequency_open_loop_gain_db (32.11 dB) and unity_gain_frequency_hz\
+    \ (31.39 MHz) strictly improve upon the anchor nominal values while maintaining\
+    \ a valid phase margin (91.42\xB0). The anchor fails this joint target since its\
+    \ gain (30.91 dB) and unity-gain frequency (30.58 MHz) are strictly lower than\
+    \ the specified thresholds."
+  confidence: 1.0
+  provider: gemini
+  model: gemini-3.5-flash-lite
+  llm_backend: provider_api
+  target_generation_attempts: 1
+  seed: 42
+  simulator_environment:
+    platform: Linux-6.8.0-138-generic-x86_64-with-glibc2.39
+    python: 3.12.3

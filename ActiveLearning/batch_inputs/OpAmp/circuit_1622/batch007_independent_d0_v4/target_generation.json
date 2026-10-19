@@ -1,0 +1,65 @@
+{
+  "status": "TARGET_VALIDATED",
+  "proposal": {
+    "target_specs": {
+      "low_frequency_open_loop_gain_db": {
+        "operator": ">=",
+        "value": 6.405326242598856,
+        "unit": "dB"
+      },
+      "unity_gain_frequency_hz": {
+        "operator": ">=",
+        "value": 2394093.335206317,
+        "unit": "Hz"
+      },
+      "phase_margin_deg": {
+        "operator": ">=",
+        "value": 118.58232816624846,
+        "unit": "degree"
+      }
+    },
+    "reason": "The selected target specs correspond to the observed functional sample 'profile_local_0_0004', which jointly improves low-frequency open-loop gain and unity gain frequency while maintaining a valid phase margin. The anchor sample fails this joint threshold because its open-loop gain (4.30 dB) and unity gain frequency (1.66 MHz) are strictly lower than the target values.",
+    "supporting_sample_ids": [
+      "profile_local_0_0004"
+    ],
+    "confidence": 1.0
+  },
+  "validation": {
+    "valid": true,
+    "errors": [],
+    "target_specs": {
+      "low_frequency_open_loop_gain_db": {
+        "operator": ">=",
+        "value": 6.405326242598856
+      },
+      "unity_gain_frequency_hz": {
+        "operator": ">=",
+        "value": 2394093.335206317
+      },
+      "phase_margin_deg": {
+        "operator": ">=",
+        "value": 118.58232816624846
+      }
+    },
+    "joint_supporting_sample_ids": [
+      "profile_local_0_0004"
+    ]
+  },
+  "attempts": 1,
+  "correction_attempts": 0,
+  "usage": [
+    {
+      "stage": "auto_target",
+      "round": 1,
+      "provider": "gemini",
+      "model": "gemini-3.5-flash-lite",
+      "input_tokens": 1594,
+      "output_tokens": 308,
+      "total_tokens": 1902
+    }
+  ],
+  "elapsed_seconds": 2.0369642889127135,
+  "provider": "gemini",
+  "model": "gemini-3.5-flash-lite",
+  "llm_backend": "provider_api"
+}

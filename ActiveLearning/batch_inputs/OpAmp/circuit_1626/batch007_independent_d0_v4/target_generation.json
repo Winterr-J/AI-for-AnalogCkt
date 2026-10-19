@@ -1,0 +1,65 @@
+{
+  "status": "TARGET_VALIDATED",
+  "proposal": {
+    "target_specs": {
+      "low_frequency_open_loop_gain_db": {
+        "operator": ">=",
+        "value": 30.79062954428027,
+        "unit": "dB"
+      },
+      "unity_gain_frequency_hz": {
+        "operator": ">=",
+        "value": 56606656.342485964,
+        "unit": "Hz"
+      },
+      "phase_margin_deg": {
+        "operator": ">=",
+        "value": 91.65471600076927,
+        "unit": "degree"
+      }
+    },
+    "reason": "The selected target specifications are derived from the observed functional sample 'profile_local_0_0008', which achieves a high low-frequency open-loop gain of ~30.79 dB, a unity-gain frequency of ~56.61 MHz, and a phase margin of ~91.65 degrees. The anchor sample achieves a slightly higher gain (31.71 dB) but has a lower phase margin (91.49 degrees), meaning the anchor fails the strict joint threshold set by this target. Thus, these targets are jointly feasible based on actual simulation data while remaining non-trivial relative to the anchor.",
+    "supporting_sample_ids": [
+      "profile_local_0_0008"
+    ],
+    "confidence": 1.0
+  },
+  "validation": {
+    "valid": true,
+    "errors": [],
+    "target_specs": {
+      "low_frequency_open_loop_gain_db": {
+        "operator": ">=",
+        "value": 30.79062954428027
+      },
+      "unity_gain_frequency_hz": {
+        "operator": ">=",
+        "value": 56606656.342485964
+      },
+      "phase_margin_deg": {
+        "operator": ">=",
+        "value": 91.65471600076927
+      }
+    },
+    "joint_supporting_sample_ids": [
+      "profile_local_0_0008"
+    ]
+  },
+  "attempts": 1,
+  "correction_attempts": 0,
+  "usage": [
+    {
+      "stage": "auto_target",
+      "round": 1,
+      "provider": "gemini",
+      "model": "gemini-3.5-flash-lite",
+      "input_tokens": 1914,
+      "output_tokens": 361,
+      "total_tokens": 2275
+    }
+  ],
+  "elapsed_seconds": 2.4380059329560027,
+  "provider": "gemini",
+  "model": "gemini-3.5-flash-lite",
+  "llm_backend": "provider_api"
+}

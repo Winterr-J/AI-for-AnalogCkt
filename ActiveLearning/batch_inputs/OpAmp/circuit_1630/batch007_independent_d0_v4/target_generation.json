@@ -1,0 +1,74 @@
+{
+  "status": "TARGET_VALIDATED",
+  "proposal": {
+    "target_specs": {
+      "low_frequency_open_loop_gain_db": {
+        "operator": ">=",
+        "value": 27.7,
+        "unit": "dB"
+      },
+      "unity_gain_frequency_hz": {
+        "operator": ">=",
+        "value": 57000000.0,
+        "unit": "Hz"
+      },
+      "phase_margin_deg": {
+        "operator": ">=",
+        "value": 92.34,
+        "unit": "degree"
+      }
+    },
+    "reason": "The selected target specifications are jointly satisfied by an observed sample in the profiling data (specifically profile_local_0_0004), ensuring feasibility. They push beyond the anchor's low-frequency open-loop gain while maintaining high bandwidth and phase margin, and the anchor fails at least one of these tightened requirements.",
+    "supporting_sample_ids": [
+      "profile_local_0_0004"
+    ],
+    "confidence": 1.0
+  },
+  "validation": {
+    "valid": true,
+    "errors": [],
+    "target_specs": {
+      "low_frequency_open_loop_gain_db": {
+        "operator": ">=",
+        "value": 27.7
+      },
+      "unity_gain_frequency_hz": {
+        "operator": ">=",
+        "value": 57000000.0
+      },
+      "phase_margin_deg": {
+        "operator": ">=",
+        "value": 92.34
+      }
+    },
+    "joint_supporting_sample_ids": [
+      "profile_local_0_0004"
+    ]
+  },
+  "attempts": 2,
+  "correction_attempts": 1,
+  "usage": [
+    {
+      "stage": "auto_target",
+      "round": 1,
+      "provider": "gemini",
+      "model": "gemini-3.5-flash-lite",
+      "input_tokens": 2251,
+      "output_tokens": 396,
+      "total_tokens": 2647
+    },
+    {
+      "stage": "auto_target",
+      "round": 2,
+      "provider": "gemini",
+      "model": "gemini-3.5-flash-lite",
+      "input_tokens": 2257,
+      "output_tokens": 258,
+      "total_tokens": 2515
+    }
+  ],
+  "elapsed_seconds": 4.4360548469703645,
+  "provider": "gemini",
+  "model": "gemini-3.5-flash-lite",
+  "llm_backend": "provider_api"
+}

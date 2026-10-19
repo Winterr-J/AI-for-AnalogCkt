@@ -1,0 +1,147 @@
+active_learning:
+  max_iterations: 5
+data:
+  d0_path: d0/d0_v4_seed42.jsonl
+  initialize_if_missing: true
+  sampling_mode: v4
+  seed: 42
+  n_samples: 20
+  n_local: 10
+  n_global: 9
+  d0_mode: independent
+  d0_path_relative_to: config
+  initial_anchor:
+    source: profiling
+    sample_id: anchor_local_0000
+    params:
+      L_MM0: 2.8133387244079595e-07
+      L_MM1: 2.754950040179274e-07
+      L_MM10: 2.8329648884269044e-07
+      L_MM11: 2.841377392457426e-07
+      L_MM12: 2.716081190732473e-07
+      L_MM13: 2.743707144572355e-07
+      L_MM13_dup2: 2.805588384278427e-07
+      L_MM14: 2.7862236277819716e-07
+      L_MM14_dup2: 2.799266386355383e-07
+      L_MM15: 2.7629941264093283e-07
+      L_MM2: 2.838668048192585e-07
+      L_MM2_dup2: 2.834173178244447e-07
+      L_MM3: 2.8028850585413977e-07
+      L_MM4: 2.8496621154404594e-07
+      L_MM5: 2.8204908362947875e-07
+      L_MM6: 2.762724871212899e-07
+      L_MM7: 2.816149813431538e-07
+      L_MM8: 2.7584369796385364e-07
+      L_MM9: 2.8386260918881973e-07
+      VB1: 1.6497210082741025
+      VB2: 1.6489669678761962
+      W_MM0: 9.89436078735583e-06
+      W_MM1: 2.038500610703765e-05
+      W_MM10: 1.9951855668057455e-05
+      W_MM11: 1.9866837015402863e-05
+      W_MM12: 1.9890460077525273e-05
+      W_MM13: 1.0083367170965596e-05
+      W_MM13_dup2: 1.0057159211410244e-05
+      W_MM14: 1.0064579461224547e-05
+      W_MM14_dup2: 2.0134838472137625e-05
+      W_MM15: 1.033966317236151e-05
+      W_MM2: 1.9873627925780326e-05
+      W_MM2_dup2: 1.984085273196138e-05
+      W_MM3: 9.873881999050826e-06
+      W_MM4: 1.0096534177356687e-05
+      W_MM5: 2.035527895819065e-05
+      W_MM6: 1.9964487941433664e-05
+      W_MM7: 9.869819791130601e-06
+      W_MM8: 9.872233051417216e-06
+      W_MM9: 2.0203972470081268e-05
+  local_radius: 0.02
+target_specs:
+  low_frequency_open_loop_gain_db:
+    operator: '>='
+    value: 11.0
+  unity_gain_frequency_hz:
+    operator: '>='
+    value: 90000000.0
+  phase_margin_deg:
+    operator: '>='
+    value: 104.0
+target_source: auto_generated
+performance_target_selected: true
+benchmark_version: auto_target_v1_OpAmp_circuit_1621_d3u3lucz
+target_provenance:
+  source: automatic_profiling_llm_v1
+  purpose: experimental_benchmark_not_user_specification
+  profiling_backend: spice
+  circuit_type: OpAmp
+  circuit_id: circuit_1621
+  anchor:
+    sample_id: anchor_local_0000
+    params:
+      L_MM0: 2.8133387244079595e-07
+      L_MM1: 2.754950040179274e-07
+      L_MM10: 2.8329648884269044e-07
+      L_MM11: 2.841377392457426e-07
+      L_MM12: 2.716081190732473e-07
+      L_MM13: 2.743707144572355e-07
+      L_MM13_dup2: 2.805588384278427e-07
+      L_MM14: 2.7862236277819716e-07
+      L_MM14_dup2: 2.799266386355383e-07
+      L_MM15: 2.7629941264093283e-07
+      L_MM2: 2.838668048192585e-07
+      L_MM2_dup2: 2.834173178244447e-07
+      L_MM3: 2.8028850585413977e-07
+      L_MM4: 2.8496621154404594e-07
+      L_MM5: 2.8204908362947875e-07
+      L_MM6: 2.762724871212899e-07
+      L_MM7: 2.816149813431538e-07
+      L_MM8: 2.7584369796385364e-07
+      L_MM9: 2.8386260918881973e-07
+      VB1: 1.6497210082741025
+      VB2: 1.6489669678761962
+      W_MM0: 9.89436078735583e-06
+      W_MM1: 2.038500610703765e-05
+      W_MM10: 1.9951855668057455e-05
+      W_MM11: 1.9866837015402863e-05
+      W_MM12: 1.9890460077525273e-05
+      W_MM13: 1.0083367170965596e-05
+      W_MM13_dup2: 1.0057159211410244e-05
+      W_MM14: 1.0064579461224547e-05
+      W_MM14_dup2: 2.0134838472137625e-05
+      W_MM15: 1.033966317236151e-05
+      W_MM2: 1.9873627925780326e-05
+      W_MM2_dup2: 1.984085273196138e-05
+      W_MM3: 9.873881999050826e-06
+      W_MM4: 1.0096534177356687e-05
+      W_MM5: 2.035527895819065e-05
+      W_MM6: 1.9964487941433664e-05
+      W_MM7: 9.869819791130601e-06
+      W_MM8: 9.872233051417216e-06
+      W_MM9: 2.0203972470081268e-05
+    metrics:
+      low_frequency_open_loop_gain_db: 10.639043692951217
+      unity_gain_frequency_hz: 90201828.55003633
+      phase_margin_deg: 107.08980185011498
+  profiling_artifact: profiling.json
+  target_recommendation: target_generation.json
+  generated_config: active_learning_config.yaml
+  d0_mode: independent
+  d0_anchor_source: profiling
+  d0_anchor_sample_id: anchor_local_0000
+  d0_seed: 42
+  joint_supporting_sample_ids:
+  - profile_local_0_0008
+  llm_declared_supporting_sample_ids:
+  - profile_local_0_0008
+  reason: The anchor has low_frequency_open_loop_gain_db = 10.64 dB, which fails the
+    target threshold of >= 11.0 dB. Sample profile_local_0_0008 jointly achieves low_frequency_open_loop_gain_db
+    = 11.77 dB, unity_gain_frequency_hz = 91.52 MHz, and phase_margin_deg = 104.95
+    degrees, satisfying all proposed criteria.
+  confidence: 1.0
+  provider: gemini
+  model: gemini-3.5-flash-lite
+  llm_backend: provider_api
+  target_generation_attempts: 1
+  seed: 42
+  simulator_environment:
+    platform: Linux-6.8.0-138-generic-x86_64-with-glibc2.39
+    python: 3.12.3

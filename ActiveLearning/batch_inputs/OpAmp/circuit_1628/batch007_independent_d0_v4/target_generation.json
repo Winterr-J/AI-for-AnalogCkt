@@ -1,0 +1,65 @@
+{
+  "status": "TARGET_VALIDATED",
+  "proposal": {
+    "target_specs": {
+      "low_frequency_open_loop_gain_db": {
+        "operator": ">=",
+        "value": 32.11000786394676,
+        "unit": "dB"
+      },
+      "unity_gain_frequency_hz": {
+        "operator": ">=",
+        "value": 31394764.50269261,
+        "unit": "Hz"
+      },
+      "phase_margin_deg": {
+        "operator": ">=",
+        "value": 91.4215003453532,
+        "unit": "degree"
+      }
+    },
+    "reason": "Target specifications are jointly satisfied by the observed sample profile_local_0_0005, where low_frequency_open_loop_gain_db (32.11 dB) and unity_gain_frequency_hz (31.39 MHz) strictly improve upon the anchor nominal values while maintaining a valid phase margin (91.42°). The anchor fails this joint target since its gain (30.91 dB) and unity-gain frequency (30.58 MHz) are strictly lower than the specified thresholds.",
+    "supporting_sample_ids": [
+      "profile_local_0_0005"
+    ],
+    "confidence": 1.0
+  },
+  "validation": {
+    "valid": true,
+    "errors": [],
+    "target_specs": {
+      "low_frequency_open_loop_gain_db": {
+        "operator": ">=",
+        "value": 32.11000786394676
+      },
+      "unity_gain_frequency_hz": {
+        "operator": ">=",
+        "value": 31394764.50269261
+      },
+      "phase_margin_deg": {
+        "operator": ">=",
+        "value": 91.4215003453532
+      }
+    },
+    "joint_supporting_sample_ids": [
+      "profile_local_0_0005"
+    ]
+  },
+  "attempts": 1,
+  "correction_attempts": 0,
+  "usage": [
+    {
+      "stage": "auto_target",
+      "round": 1,
+      "provider": "gemini",
+      "model": "gemini-3.5-flash-lite",
+      "input_tokens": 1590,
+      "output_tokens": 339,
+      "total_tokens": 1929
+    }
+  ],
+  "elapsed_seconds": 2.0834245609585196,
+  "provider": "gemini",
+  "model": "gemini-3.5-flash-lite",
+  "llm_backend": "provider_api"
+}

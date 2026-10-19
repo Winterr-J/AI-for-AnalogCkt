@@ -1,0 +1,136 @@
+active_learning:
+  max_iterations: 5
+data:
+  d0_path: d0/d0_v4_seed42.jsonl
+  initialize_if_missing: true
+  sampling_mode: v4
+  seed: 42
+  n_samples: 20
+  n_local: 10
+  n_global: 9
+  d0_mode: independent
+  d0_path_relative_to: config
+  initial_anchor:
+    source: profiling
+    sample_id: anchor_local_0001
+    params:
+      L_MM0: 1.011727847263573e-06
+      L_MM1: 1.0215998001012463e-06
+      L_MM10: 9.978454620292266e-07
+      L_MM13: 9.842228244673748e-07
+      L_MM14: 9.84514896811971e-07
+      L_MM15: 1.0123909298040181e-06
+      L_MM2: 1.0141681683779295e-06
+      L_MM2_dup2: 1.0103341655416446e-06
+      L_MM3: 9.874818654403208e-07
+      L_MM4: 1.0044041515419177e-06
+      L_MM5: 1.002211136366735e-06
+      L_MM6: 1.004148041624028e-06
+      L_MM7: 1.0166316917948595e-06
+      L_MM8: 1.004241312813117e-06
+      L_MM9: 1.0129337894757898e-06
+      RR0: 10012.799935804987
+      VB1: 1.6519607999033725
+      VB2: 1.6542813795886169
+      W_MM0: 9.727950320522474e-06
+      W_MM1: 1.9879347024587428e-05
+      W_MM10: 9.911360373248189e-06
+      W_MM13: 9.879797834861902e-06
+      W_MM14: 1.989610978515704e-05
+      W_MM15: 1.0287012660912684e-05
+      W_MM2: 1.9674892479195868e-05
+      W_MM2_dup2: 2.0369942293217684e-05
+      W_MM3: 9.686476875224888e-06
+      W_MM4: 9.936811539740056e-06
+      W_MM5: 2.0061708656396927e-05
+      W_MM6: 2.022316285498725e-05
+      W_MM7: 1.0135535289673014e-05
+      W_MM8: 1.015130248562872e-05
+      W_MM9: 9.934208712344586e-06
+  local_radius: 0.02
+target_specs:
+  low_frequency_open_loop_gain_db:
+    operator: '>='
+    value: 30.79062954428027
+  unity_gain_frequency_hz:
+    operator: '>='
+    value: 56606656.342485964
+  phase_margin_deg:
+    operator: '>='
+    value: 91.65471600076927
+target_source: auto_generated
+performance_target_selected: true
+benchmark_version: auto_target_v1_OpAmp_circuit_1626_ypdg91kb
+target_provenance:
+  source: automatic_profiling_llm_v1
+  purpose: experimental_benchmark_not_user_specification
+  profiling_backend: spice
+  circuit_type: OpAmp
+  circuit_id: circuit_1626
+  anchor:
+    sample_id: anchor_local_0001
+    params:
+      L_MM0: 1.011727847263573e-06
+      L_MM1: 1.0215998001012463e-06
+      L_MM10: 9.978454620292266e-07
+      L_MM13: 9.842228244673748e-07
+      L_MM14: 9.84514896811971e-07
+      L_MM15: 1.0123909298040181e-06
+      L_MM2: 1.0141681683779295e-06
+      L_MM2_dup2: 1.0103341655416446e-06
+      L_MM3: 9.874818654403208e-07
+      L_MM4: 1.0044041515419177e-06
+      L_MM5: 1.002211136366735e-06
+      L_MM6: 1.004148041624028e-06
+      L_MM7: 1.0166316917948595e-06
+      L_MM8: 1.004241312813117e-06
+      L_MM9: 1.0129337894757898e-06
+      RR0: 10012.799935804987
+      VB1: 1.6519607999033725
+      VB2: 1.6542813795886169
+      W_MM0: 9.727950320522474e-06
+      W_MM1: 1.9879347024587428e-05
+      W_MM10: 9.911360373248189e-06
+      W_MM13: 9.879797834861902e-06
+      W_MM14: 1.989610978515704e-05
+      W_MM15: 1.0287012660912684e-05
+      W_MM2: 1.9674892479195868e-05
+      W_MM2_dup2: 2.0369942293217684e-05
+      W_MM3: 9.686476875224888e-06
+      W_MM4: 9.936811539740056e-06
+      W_MM5: 2.0061708656396927e-05
+      W_MM6: 2.022316285498725e-05
+      W_MM7: 1.0135535289673014e-05
+      W_MM8: 1.015130248562872e-05
+      W_MM9: 9.934208712344586e-06
+    metrics:
+      low_frequency_open_loop_gain_db: 31.713795359103862
+      unity_gain_frequency_hz: 56665108.55749042
+      phase_margin_deg: 91.48786401836038
+  profiling_artifact: profiling.json
+  target_recommendation: target_generation.json
+  generated_config: active_learning_config.yaml
+  d0_mode: independent
+  d0_anchor_source: profiling
+  d0_anchor_sample_id: anchor_local_0001
+  d0_seed: 42
+  joint_supporting_sample_ids:
+  - profile_local_0_0008
+  llm_declared_supporting_sample_ids:
+  - profile_local_0_0008
+  reason: The selected target specifications are derived from the observed functional
+    sample 'profile_local_0_0008', which achieves a high low-frequency open-loop gain
+    of ~30.79 dB, a unity-gain frequency of ~56.61 MHz, and a phase margin of ~91.65
+    degrees. The anchor sample achieves a slightly higher gain (31.71 dB) but has
+    a lower phase margin (91.49 degrees), meaning the anchor fails the strict joint
+    threshold set by this target. Thus, these targets are jointly feasible based on
+    actual simulation data while remaining non-trivial relative to the anchor.
+  confidence: 1.0
+  provider: gemini
+  model: gemini-3.5-flash-lite
+  llm_backend: provider_api
+  target_generation_attempts: 1
+  seed: 42
+  simulator_environment:
+    platform: Linux-6.8.0-138-generic-x86_64-with-glibc2.39
+    python: 3.12.3
