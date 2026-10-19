@@ -1,0 +1,24 @@
+{
+  "d0_mode": "independent",
+  "target_source": "auto_generated",
+  "anchor_source": "profiling",
+  "anchor_sample_id": "anchor_local_0002",
+  "seed": 42,
+  "sampling": {
+    "sampling_mode": "v4",
+    "seed": 42,
+    "n_samples": 20,
+    "n_local": 10,
+    "n_global": 9,
+    "local_radius": 0.02,
+    "local_factor": 1.25
+  },
+  "records": 20,
+  "logical_candidate_evaluations": 20,
+  "elapsed_seconds": 1.2132280869409442,
+  "generated_config": "../active_learning_config.yaml",
+  "artifacts": {
+    "jsonl": "d0_v4_seed42.jsonl",
+    "csv": "d0_v4_seed42.csv"
+  }
+}
