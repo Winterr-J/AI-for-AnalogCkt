@@ -102,15 +102,15 @@ class A2Tests(unittest.TestCase):
                 output = self.root / scenario
                 report = run_mock_batch(self.manifest, output,
                                         self.worker({"job_0": scenario, "job_1": "success"}))
-                self.assertEqual((report["interrupted_uncertain"], report["completed"]), (1, 1))
+                self.assertEqual((report["interrupted_uncertain"], report["completed"]), (1, 0))
                 before = status_batch("offline_a2", output)["jobs"]["job_0"]["attempts"]
                 run_mock_batch(self.manifest, output, lambda *_: self.fail("replayed"))
                 self.assertEqual(before, status_batch("offline_a2", output)["jobs"]["job_0"]["attempts"])
 
-    def test_confirmed_timeout_is_uncertain_but_next_job_runs(self):
+    def test_confirmed_timeout_is_uncertain_and_stops_batch(self):
         report = run_mock_batch(self.manifest, self.output,
                                 self.worker({"job_0": "sleep", "job_1": "success"}))
-        self.assertEqual((report["interrupted_uncertain"], report["completed"]), (1, 1))
+        self.assertEqual((report["interrupted_uncertain"], report["completed"]), (1, 0))
 
     def test_unverified_orphan_stops_batch_and_restart(self):
         with patch("ActiveLearning.batch_runner_v2.al_process._stop_child", return_value=False):

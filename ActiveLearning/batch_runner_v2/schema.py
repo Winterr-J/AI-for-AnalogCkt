@@ -157,6 +157,9 @@ def _verify_source_closure(payload: dict, code_root: Path) -> None:
     if not _REQUIRED_REAL_AL_CLOSURE.issubset(closure):
         missing = sorted(_REQUIRED_REAL_AL_CLOSURE - set(closure))
         raise ValueError(f"B2A source closure is incomplete: {', '.join(missing)}")
+    if payload.get("retry_policy", {}).get("rate_limit_mode") == "job_deadline" and (
+            "ActiveLearning/batch_runner_v2/time_recovery.py" not in closure):
+        raise ValueError("time-driven source closure is incomplete")
     for name, digest in closure.items():
         _asset(code_root, name, digest)
 
@@ -187,18 +190,51 @@ def load_manifest(path: str | Path) -> dict:
     limits = payload["resource_limits"]
     expected_limits = ({"max_physical_attempts"} if version == "batch_runner_v2a_offline_v1"
                        else {"max_physical_attempts", "worker_timeout_seconds"})
-    if not isinstance(limits, dict) or set(limits) != expected_limits:
+    if not isinstance(limits, dict) or not expected_limits.issubset(limits) or (
+            set(limits) - expected_limits - (
+                {"per_job_physical_attempt_cap"} if version == "batch_runner_v2b2a_candidate_v1"
+                else set())):
         raise ValueError("invalid enforceable V2 resource limits")
     _positive(limits["max_physical_attempts"], "max_physical_attempts")
     if "worker_timeout_seconds" in limits:
         _positive(limits["worker_timeout_seconds"], "worker_timeout_seconds")
+    if "per_job_physical_attempt_cap" in limits:
+        _positive(limits["per_job_physical_attempt_cap"], "per_job_physical_attempt_cap")
+        if limits["per_job_physical_attempt_cap"] > limits["max_physical_attempts"]:
+            raise ValueError("per-job physical cap exceeds batch cap")
     retry = payload["retry_policy"]
-    if not isinstance(retry, dict) or set(retry) != {
-        "request_timeout_seconds", "max_attempts", "max_elapsed_seconds"
-    }:
+    base_retry = {"request_timeout_seconds", "max_attempts", "max_elapsed_seconds"}
+    extra_retry = {"rate_limit_mode", "rate_limit_initial_backoff_seconds",
+                   "rate_limit_max_backoff_seconds"}
+    if not isinstance(retry, dict) or not base_retry.issubset(retry) or (
+            set(retry) - base_retry - (
+                extra_retry if version == "batch_runner_v2b2a_candidate_v1" else set())):
         raise ValueError("invalid retry policy")
-    for name in retry:
+    for name in base_retry:
         _positive(retry[name], name)
+    if "rate_limit_mode" in retry and retry["rate_limit_mode"] != "job_deadline":
+        raise ValueError("unsupported rate-limit recovery mode")
+    if set(retry) & (extra_retry - {"rate_limit_mode"}):
+        if retry.get("rate_limit_mode") != "job_deadline":
+            raise ValueError("rate-limit backoff requires job_deadline mode")
+        for name in extra_retry - {"rate_limit_mode"}:
+            if name in retry:
+                _positive(retry[name], name)
+    if ("per_job_physical_attempt_cap" in limits
+            and retry.get("rate_limit_mode") != "job_deadline"):
+        raise ValueError("per-job physical cap requires job_deadline mode")
+    if retry.get("rate_limit_mode") == "job_deadline":
+        if "per_job_physical_attempt_cap" not in limits:
+            raise ValueError("job_deadline mode requires a per-job physical cap")
+        if (retry["request_timeout_seconds"] > 120
+                or retry["max_attempts"] > 5
+                or retry["max_elapsed_seconds"] > 1800
+                or limits["worker_timeout_seconds"] > 4800):
+            raise ValueError("job_deadline mode exceeds approved first-version time bounds")
+        initial = retry.get("rate_limit_initial_backoff_seconds", 30)
+        maximum = retry.get("rate_limit_max_backoff_seconds", 300)
+        if not (1 <= initial <= maximum <= 300):
+            raise ValueError("rate-limit backoff must be within 1..300 seconds")
     jobs = payload["jobs"]
     if not isinstance(jobs, list) or not jobs:
         raise ValueError("batch needs at least one job")

@@ -5,6 +5,7 @@ from __future__ import annotations
 import argparse
 import json
 import os
+import time
 from pathlib import Path
 
 from .authorization import (
@@ -12,8 +13,8 @@ from .authorization import (
     verify_published_source_closure,
 )
 from .gemini_recovery import (
-    GeminiRecovery, PhysicalAttemptLimitError, ProviderQuotaError,
-    ProviderTerminalError,
+    GeminiRecovery, JobDeadlineExpired, JobPhysicalAttemptLimitError,
+    PhysicalAttemptLimitError, ProviderQuotaError, ProviderTerminalError,
 )
 from .llm_bridge import GeminiALClient, build_gemini_chat_transport
 from .schema import _load_config, load_manifest, verify_job
@@ -26,13 +27,19 @@ _INVOCATION_KEYS = {
     "authorization_sha256", "attempt_directory", "offline_scenario",
 }
 _OFFLINE_SCENARIOS = {
-    "success", "429_success", "auth_terminal", "terminal", "uncertain",
+    "success", "429_success", "429_deadline", "job_budget",
+    "auth_terminal", "terminal", "uncertain",
 }
 
 
 class _OfflineRateLimit(Exception):
     status_code = 429
     headers = {"Retry-After": "0.01"}
+
+
+class _OfflineLongRateLimit(Exception):
+    status_code = 429
+    headers = {"Retry-After": "6000"}
 
 
 class _OfflineAuthenticationFailure(Exception):
@@ -45,8 +52,14 @@ def _read_invocation(path: str | Path) -> tuple[dict, Path]:
         raise ValueError("invocation must not be a symbolic link")
     invocation_path = invocation_path.resolve(strict=True)
     invocation = json.loads(invocation_path.read_text(encoding="utf-8"))
-    if not isinstance(invocation, dict) or set(invocation) != _INVOCATION_KEYS:
+    if not isinstance(invocation, dict) or frozenset(invocation) not in {
+            frozenset(_INVOCATION_KEYS),
+            frozenset(_INVOCATION_KEYS | {"job_deadline_monotonic"})}:
         raise ValueError("invalid real-AL invocation fields")
+    if "job_deadline_monotonic" in invocation and (
+            type(invocation["job_deadline_monotonic"]) not in {int, float}
+            or invocation["job_deadline_monotonic"] <= 0):
+        raise ValueError("invalid job deadline")
     if invocation["schema_version"] != "batch_runner_v2b2a_invocation_v1":
         raise ValueError("unsupported real-AL invocation schema")
     attempt = Path(invocation["attempt_directory"])
@@ -114,10 +127,28 @@ def _validate_scheduler_state(
     if not isinstance(row, dict) or row.get("state") != "RUNNING" or not row.get("attempts") \
             or row["attempts"][-1].get("attempt_id") != invocation["attempt_id"]:
         raise PermissionError("attempt is not the scheduler's active RUNNING attempt")
+    enabled = manifest["retry_policy"].get("rate_limit_mode") == "job_deadline"
+    if enabled != ("job_deadline_monotonic" in invocation) or (
+            enabled and row["attempts"][-1].get("job_deadline_monotonic")
+            != invocation["job_deadline_monotonic"]):
+        raise PermissionError("job deadline is not bound to the active scheduler attempt")
 
 
-def _recovery(manifest: dict, job: dict, attempt: Path) -> GeminiRecovery:
+def _recovery(manifest: dict, job: dict, attempt: Path,
+              job_deadline_monotonic=None) -> GeminiRecovery:
     retry = manifest["retry_policy"]
+    options = {}
+    if retry.get("rate_limit_mode") == "job_deadline":
+        options = {
+            "rate_limit_mode": "job_deadline",
+            "job_deadline_monotonic": job_deadline_monotonic,
+            "per_job_physical_attempt_cap": manifest["resource_limits"][
+                "per_job_physical_attempt_cap"],
+            "rate_limit_initial_backoff_seconds": retry.get(
+                "rate_limit_initial_backoff_seconds", 30),
+            "rate_limit_max_backoff_seconds": retry.get(
+                "rate_limit_max_backoff_seconds", 300),
+        }
     return GeminiRecovery(
         attempt.parents[3], provider=manifest["provider"], model=manifest["model"],
         credential_scope=manifest["credential_scope"],
@@ -126,6 +157,7 @@ def _recovery(manifest: dict, job: dict, attempt: Path) -> GeminiRecovery:
         max_attempts=retry["max_attempts"],
         max_elapsed=retry["max_elapsed_seconds"],
         job_id=job["job_id"], attempt_id=attempt.name,
+        **options,
     )
 
 
@@ -165,6 +197,10 @@ def _offline_fixture(
         physical_calls += 1
         if scenario == "429_success" and physical_calls == 1:
             raise _OfflineRateLimit()
+        if scenario == "429_deadline":
+            raise _OfflineLongRateLimit()
+        if scenario == "job_budget":
+            raise _OfflineRateLimit()
         if scenario == "auth_terminal":
             raise _OfflineAuthenticationFailure()
         return {"choices": [{"message": {"content": "offline-seed"}}],
@@ -172,8 +208,23 @@ def _offline_fixture(
                           "total_tokens": 3}}
 
     usage = []
-    client = GeminiALClient(_recovery(manifest, job, attempt), send, manifest["model"])
-    selected_seed = client("OFFLINE_B2A_FIXED_PROMPT", usage_log=usage)
+    client = GeminiALClient(
+        _recovery(manifest, job, attempt, invocation.get("job_deadline_monotonic")),
+        send, manifest["model"])
+    try:
+        selected_seed = client("OFFLINE_B2A_FIXED_PROMPT", usage_log=usage)
+    except (JobDeadlineExpired, JobPhysicalAttemptLimitError) as error:
+        journal = attempt.parents[3] / "api_usage.jsonl"
+        return {
+            **identity,
+            "state": ("SKIPPED_JOB_TIMEOUT" if isinstance(error, JobDeadlineExpired)
+                      else "SKIPPED_JOB_BUDGET"),
+            "safe_point": ("rate_limit_wait" if isinstance(error, JobDeadlineExpired)
+                           else "per_job_cap"),
+            "job_deadline_monotonic": invocation.get("job_deadline_monotonic"),
+            "journal_sha256": sha256_file(journal),
+            "al_completed": False, "meets_spec": None,
+        }
     # Fake SPICE is intentionally fixed and local. It records selected metrics;
     # it does not reproduce or replace the optimization algorithm.
     target_specs = config["target_specs"]
@@ -217,7 +268,8 @@ def _production_run(
     if Path(resolved["topology"]).resolve(strict=True) != source_path:
         raise ValueError("manifest source is not the topology used by the AL runtime")
 
-    recovery = _recovery(manifest, job, attempt)
+    deadline = invocation.get("job_deadline_monotonic")
+    recovery = _recovery(manifest, job, attempt, deadline)
     transport = build_gemini_chat_transport(model=manifest["model"])
     llm_client = GeminiALClient(recovery, transport, manifest["model"])
     run_context = {}
@@ -228,6 +280,10 @@ def _production_run(
             "run_directory": str(Path(value["run_directory"]).resolve()),
         })
 
+    def deadline_check():
+        if deadline is not None and time.monotonic() >= deadline:
+            raise RuntimeError("AL job deadline reached outside safe 429 wait")
+
     os.environ["AL_LLM_PROVIDER"] = "gemini"
     result = al_main.run_configured_active_learning(
         job["circuit_type"], job["circuit_id"], config_path=config_path,
@@ -235,6 +291,7 @@ def _production_run(
         run_context_callback=capture_context, require_existing_d0=True,
         expected_config_sha256=job["config_sha256"],
         expected_d0_sha256=job["d0_sha256"],
+        deadline_check=deadline_check if deadline is not None else None,
     )
     if not run_context:
         raise RuntimeError("AL runtime did not report its run identity")
@@ -295,7 +352,22 @@ def execute_invocation(
         if approval["execution_scope"] != "production":
             raise PermissionError("production child requires production authorization")
         verify_published_source_closure(manifest)
-        result = _production_run(invocation, manifest, job, approval, attempt)
+        try:
+            result = _production_run(invocation, manifest, job, approval, attempt)
+        except (JobDeadlineExpired, JobPhysicalAttemptLimitError) as error:
+            if _asset_snapshot(manifest, job) != before:
+                raise RuntimeError("authorized source or input asset changed during execution")
+            journal = attempt.parents[3] / "api_usage.jsonl"
+            result = {
+                **_identity(invocation, manifest, job, approval),
+                "state": ("SKIPPED_JOB_TIMEOUT" if isinstance(error, JobDeadlineExpired)
+                          else "SKIPPED_JOB_BUDGET"),
+                "safe_point": ("rate_limit_wait" if isinstance(error, JobDeadlineExpired)
+                               else "per_job_cap"),
+                "job_deadline_monotonic": invocation.get("job_deadline_monotonic"),
+                "journal_sha256": sha256_file(journal),
+                "al_completed": False, "meets_spec": None,
+            }
     if _asset_snapshot(manifest, job) != before:
         raise RuntimeError("authorized source or input asset changed during execution")
     atomic_json(attempt / "worker_result.json", result)
@@ -331,6 +403,21 @@ def main(argv=None) -> int:
             "authorization_sha256": invocation["authorization_sha256"],
         })
         return 2
+    except Exception as error:
+        # This is diagnostic evidence only, never a completion or replay permit.
+        # Do not persist exception text, prompt, response, environment, or key.
+        try:
+            invocation, attempt = _read_invocation(args.invocation)
+            atomic_json(attempt / "worker_diagnostic.json", {
+                "attempt_id": invocation["attempt_id"],
+                "stage": "execute_invocation",
+                "error_type": type(error).__name__,
+            })
+        except (OSError, ValueError, KeyError):
+            pass
+        raise
+    if result.get("state") in {"SKIPPED_JOB_TIMEOUT", "SKIPPED_JOB_BUDGET"}:
+        return 3
     return 2 if result.get("state") == "FAILED_TERMINAL" else 0
 
 

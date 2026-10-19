@@ -187,6 +187,52 @@ def run_offline_fake_child(job: dict, attempt_dir: Path, *, scenario: str,
             "iterations_completed": result["iterations_completed"]}
 
 
+def _verified_safe_stop(manifest: dict, job: dict, attempt_dir: Path,
+                        invocation: dict, result: dict) -> dict:
+    """Accept only a closed request ledger and a normally reaped safe-point child."""
+    from .storage import read_jsonl_strict
+
+    state = result.get("state")
+    point = result.get("safe_point")
+    if (state, point) not in {
+            ("SKIPPED_JOB_TIMEOUT", "rate_limit_wait"),
+            ("SKIPPED_JOB_BUDGET", "per_job_cap")}:
+        raise RuntimeError("unverified safe-stop classification")
+    if result.get("job_deadline_monotonic") != invocation.get("job_deadline_monotonic"):
+        raise RuntimeError("safe-stop deadline identity mismatch")
+    journal = attempt_dir.parents[3] / "api_usage.jsonl"
+    if not journal.is_file() or sha256_file(journal) != result.get("journal_sha256"):
+        raise RuntimeError("safe-stop journal checkpoint mismatch")
+    rows = read_jsonl_strict(journal)
+    started = [row for row in rows if row.get("event") == "attempt_started"]
+    finished = [row for row in rows if row.get("event") == "attempt_finished"]
+    key = lambda row: (row.get("job_id"), row.get("attempt_id"),
+                       row.get("logical_id"), row.get("attempt"))
+    if sorted(map(key, started), key=str) != sorted(map(key, finished), key=str):
+        raise RuntimeError("safe-stop has an unresolved physical request")
+    if len(started) > manifest["resource_limits"]["max_physical_attempts"]:
+        raise RuntimeError("safe-stop exceeds batch request cap")
+    own = [row for row in finished if row.get("job_id") == job["job_id"]
+           and row.get("attempt_id") == attempt_dir.name]
+    if state == "SKIPPED_JOB_TIMEOUT":
+        ended = [row for row in rows if row.get("event") == "logical_finished"
+                 and row.get("job_id") == job["job_id"]
+                 and row.get("attempt_id") == attempt_dir.name]
+        if not own or own[-1].get("outcome") != "rate_limit" or not ended or (
+                ended[-1].get("status") != "job_deadline"):
+            raise RuntimeError("safe timeout lacks a confirmed 429 waiting point")
+    else:
+        cap = manifest["resource_limits"].get("per_job_physical_attempt_cap")
+        used = sum(row.get("job_id") == job["job_id"] for row in started)
+        ended = [row for row in rows if row.get("event") == "logical_finished"
+                 and row.get("job_id") == job["job_id"]
+                 and row.get("attempt_id") == attempt_dir.name]
+        if (cap is None or used < cap or not ended
+                or ended[-1].get("status") != "job_budget"):
+            raise RuntimeError("safe budget stop did not reach the approved job cap")
+    return {"state": state, "worker_result_sha256": sha256_file(attempt_dir / "worker_result.json")}
+
+
 def run_real_al_child(
     manifest: dict,
     job: dict,
@@ -224,6 +270,15 @@ def run_real_al_child(
         "attempt_directory": str(attempt_dir),
         "offline_scenario": offline_scenario,
     }
+    if manifest["retry_policy"].get("rate_limit_mode") == "job_deadline":
+        scheduler = read_json(attempt_dir.parents[3] / "status.json")
+        current = scheduler["jobs"][job["job_id"]]
+        if current["state"] != "RUNNING" or current["attempts"][-1]["attempt_id"] != attempt_id:
+            raise RuntimeError("job deadline has no active scheduler identity")
+        deadline = current["attempts"][-1].get("job_deadline_monotonic")
+        if type(deadline) not in {int, float} or deadline <= time.monotonic():
+            raise RuntimeError("job deadline is missing or already expired")
+        invocation["job_deadline_monotonic"] = deadline
     invocation_path = attempt_dir / "real_al_invocation.json"
     atomic_json(invocation_path, invocation)
     atomic_json(attempt_dir / "child_spawn_intent.json", {
@@ -252,7 +307,10 @@ def run_real_al_child(
     except OSError as error:
         raise UnverifiedOrphanError("real AL child spawn failed; process state unverified") from error
     try:
-        code = process.wait(timeout=manifest["resource_limits"]["worker_timeout_seconds"])
+        timeout = manifest["resource_limits"]["worker_timeout_seconds"]
+        if "job_deadline_monotonic" in invocation:
+            timeout = max(0.001, invocation["job_deadline_monotonic"] - time.monotonic() + 1)
+        code = process.wait(timeout=timeout)
     except subprocess.TimeoutExpired as error:
         if not _stop_child(process):
             raise UnverifiedOrphanError("real AL child exit could not be confirmed") from error
@@ -293,6 +351,12 @@ def run_real_al_child(
     }.items():
         if result.get(name) != expected:
             raise RuntimeError(f"real AL child result identity mismatch: {name}")
+    if code == 3 and result.get("state") in {
+            "SKIPPED_JOB_TIMEOUT", "SKIPPED_JOB_BUDGET"}:
+        return _verified_safe_stop(manifest, job, attempt_dir, invocation, result)
+    if code == 0 and "job_deadline_monotonic" in invocation and (
+            time.monotonic() > invocation["job_deadline_monotonic"]):
+        raise RuntimeError("AL completed after the job deadline")
     if code == 2 and result.get("state") in {"FAILED_TERMINAL", "BLOCKED"}:
         return {"state": result["state"],
                 "error_code": str(result.get("error_code") or "REAL_AL_TERMINAL")}

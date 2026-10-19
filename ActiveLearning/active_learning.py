@@ -143,6 +143,7 @@ def run_active_learning(
     run_id=None,
     llm_client=None,
     validity_config=None,
+    deadline_check=None,
 ):
     """Run the V1 loop and return records, logs, timing, and token usage."""
     run_start = time.perf_counter()
@@ -200,6 +201,8 @@ def run_active_learning(
         }
 
     for iteration_index in range(max_iterations):
+        if deadline_check is not None:
+            deadline_check()
         iteration = iteration_index + 1
         history_size_before_iteration = len(records)
         validity_memory_size_before_iteration = (
@@ -346,6 +349,8 @@ def run_active_learning(
             "candidate_id": f"iter_{iteration:03d}_{x_next['candidate_id']}",
             "normalized_params": selected["normalized_params"],
         }
+        if deadline_check is not None:
+            deadline_check()
         start = time.perf_counter()
         evaluation_options = {"run_functional": False}
         if runtime is not None:

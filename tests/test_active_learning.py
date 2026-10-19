@@ -80,7 +80,7 @@ def _record(iteration, *, simulation_valid=True, meets_spec=False):
 
 
 def _run_with_mocks(real_results, *, max_iterations, output_dir=None, run_id=None,
-                    data_expansion_config=None):
+                    data_expansion_config=None, deadline_check=None):
     events = []
     inverse_lengths = []
 
@@ -134,6 +134,7 @@ def _run_with_mocks(real_results, *, max_iterations, output_dir=None, run_id=Non
             run_id=run_id,
             data_expansion_config=data_expansion_config,
             llm_client=_CLIENT,
+            deadline_check=deadline_check,
         )
     mocks = (
         inverse_mock,
@@ -146,6 +147,23 @@ def _run_with_mocks(real_results, *, max_iterations, output_dir=None, run_id=Non
 
 
 class ActiveLearningTests(unittest.TestCase):
+    def test_optional_deadline_guard_blocks_new_iteration_and_spice(self):
+        def expired_at_start():
+            raise RuntimeError("synthetic job deadline")
+
+        with self.assertRaisesRegex(RuntimeError, "synthetic job deadline"):
+            _run_with_mocks([], max_iterations=1, deadline_check=expired_at_start)
+
+        checks = 0
+        def expired_before_spice():
+            nonlocal checks
+            checks += 1
+            if checks == 2:
+                raise RuntimeError("synthetic job deadline")
+
+        with self.assertRaisesRegex(RuntimeError, "synthetic job deadline"):
+            _run_with_mocks([], max_iterations=1, deadline_check=expired_before_spice)
+        self.assertEqual(checks, 2)
     def test_v2_mode_and_candidate_geometry_metadata_reach_iteration_log(self):
         candidate = {
             **_candidate(),

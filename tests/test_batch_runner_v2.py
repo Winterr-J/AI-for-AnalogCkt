@@ -107,7 +107,7 @@ class BatchRunnerV2Tests(unittest.TestCase):
         self.assertEqual(result["completed"], 3)
         self.assertEqual(before["jobs"], status_batch("offline_batch_1", self.output)["jobs"])
 
-    def test_mid_iteration_crash_is_uncertain_then_other_jobs_continue(self):
+    def test_mid_iteration_crash_is_uncertain_and_stops_batch(self):
         def crashing(job, attempt):
             if job["job_id"] == "job_1":
                 (attempt / "partial_iteration.jsonl").write_text("{", encoding="utf-8")
@@ -120,7 +120,8 @@ class BatchRunnerV2Tests(unittest.TestCase):
         called = []
         result = run_mock_batch(self.manifest, self.output,
                                 lambda job, attempt: (called.append(job["job_id"]), self.success(job, attempt))[1])
-        self.assertEqual(called, ["job_2"])
+        self.assertEqual(called, [])
+        self.assertEqual(result["jobs"]["job_2"]["state"], "PENDING")
         self.assertEqual(result["interrupted_uncertain"], 1)
         row = status_batch("offline_batch_1", self.output)["jobs"]["job_1"]
         self.assertEqual(len(row["attempts"]), 1)
@@ -228,7 +229,9 @@ class BatchRunnerV2Tests(unittest.TestCase):
         calls = []
         run_mock_batch(self.manifest, self.output,
                        lambda job, attempt: (calls.append(job["job_id"]), self.success(job, attempt))[1])
-        self.assertEqual(calls, ["job_1", "job_2"])
+        self.assertEqual(calls, [])
+        self.assertEqual(status_batch("offline_batch_1", self.output)["jobs"]["job_1"]["state"],
+                         "PENDING")
 
     def test_mock_worker_and_recovery_share_batch_attempt_ledger(self):
         from ActiveLearning.batch_runner_v2.gemini_recovery import GeminiRecovery
@@ -272,7 +275,9 @@ class BatchRunnerV2Tests(unittest.TestCase):
         report = run_mock_batch(self.manifest, self.output, worker)
         self.assertEqual(calls, ["job_0"])
         self.assertEqual(report["interrupted_uncertain"], 1)
-        self.assertEqual(report["blocked"], 2)
+        self.assertEqual(report["blocked"], 0)
+        self.assertEqual(report["jobs"]["job_1"]["state"], "PENDING")
+        self.assertEqual(report["jobs"]["job_2"]["state"], "PENDING")
 
 
 if __name__ == "__main__":

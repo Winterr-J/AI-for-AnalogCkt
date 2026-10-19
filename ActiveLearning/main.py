@@ -235,6 +235,7 @@ def run_configured_active_learning(
     require_existing_d0=False,
     expected_config_sha256=None,
     expected_d0_sha256=None,
+    deadline_check=None,
 ):
     """Auto-configure one circuit and delegate to the unchanged AL loop."""
     if expected_config_sha256 is not None:
@@ -345,6 +346,7 @@ def run_configured_active_learning(
         run_id=run_context["run_id"],
         llm_client=llm_client,
         validity_config=validity_settings,
+        deadline_check=deadline_check,
     )
     write_completed_run(
         selected_runs_root,

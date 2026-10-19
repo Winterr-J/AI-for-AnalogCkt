@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import time
 import uuid
 from pathlib import Path
 from typing import Callable
@@ -101,6 +102,34 @@ def _verify_completion(directory: Path, job_id: str, row: dict) -> bool:
             and result.get("meets_spec") == row.get("meets_spec"))
 
 
+def _verify_safe_skip(directory: Path, job_id: str, row: dict) -> bool:
+    if row.get("state") not in {"SKIPPED_JOB_TIMEOUT", "SKIPPED_JOB_BUDGET"} or (
+            not row.get("attempts")):
+        return False
+    attempt = row["attempts"][-1]
+    attempt_dir = directory / "jobs" / job_id / "attempts" / attempt["attempt_id"]
+    result_path = attempt_dir / "worker_result.json"
+    reaped_path = attempt_dir / "child_reaped.json"
+    try:
+        if (not result_path.is_file()
+                or sha256_file(result_path) != attempt.get("worker_result_sha256")):
+            return False
+        result = read_json(result_path)
+        reaped = read_json(reaped_path)
+    except (OSError, ValueError, json.JSONDecodeError):
+        return False
+    return (result.get("state") == row["state"]
+            and result.get("batch_id") == directory.name
+            and result.get("job_id") == job_id
+            and result.get("attempt_id") == attempt["attempt_id"]
+            and result.get("safe_point") == (
+                "rate_limit_wait" if row["state"] == "SKIPPED_JOB_TIMEOUT"
+                else "per_job_cap")
+            and reaped.get("attempt_id") == attempt["attempt_id"]
+            and reaped.get("exit_confirmed") is True
+            and reaped.get("exit_code") == 3)
+
+
 def _run_batch(
     manifest: dict, output_root: str | Path,
     worker: Callable[[dict, Path], dict], *, offline_only: bool,
@@ -153,7 +182,15 @@ def _run_batch(
                     state["orphan_unverified"] = True
                 _save(directory, state)
                 _event(directory, job_id, "INTERRUPTED_UNCERTAIN", row["error_code"])
-                if state.get("orphan_unverified"):
+                break
+            if row["state"] == "INTERRUPTED_UNCERTAIN":
+                break
+            if row["state"] in {"SKIPPED_JOB_TIMEOUT", "SKIPPED_JOB_BUDGET"}:
+                if not _verify_safe_skip(directory, job_id, row):
+                    row["state"] = "INTERRUPTED_UNCERTAIN"
+                    row["error_code"] = "SAFE_STOP_ARTIFACT_INVALID"
+                    _save(directory, state)
+                    _event(directory, job_id, "INTERRUPTED_UNCERTAIN", row["error_code"])
                     break
                 continue
             if row["state"] != "PENDING":
@@ -182,6 +219,11 @@ def _run_batch(
             row["attempts"].append({"attempt_id": attempt_id,
                                     "attempt_directory": str(attempt_dir)})
             row["state"] = "RUNNING"
+            if manifest["retry_policy"].get("rate_limit_mode") == "job_deadline":
+                started = time.monotonic()
+                row["attempts"][-1]["job_started_monotonic"] = started
+                row["attempts"][-1]["job_deadline_monotonic"] = (
+                    started + manifest["resource_limits"]["worker_timeout_seconds"])
             _save(directory, state)
             _event(directory, job_id, "RUNNING", attempt_id)
             try:
@@ -199,6 +241,17 @@ def _run_batch(
                 row["error_code"] = type(error).__name__
                 _save(directory, state)
                 _event(directory, job_id, "INTERRUPTED_UNCERTAIN", row["error_code"])
+                break
+            if isinstance(outcome, dict) and outcome.get("state") in {
+                    "SKIPPED_JOB_TIMEOUT", "SKIPPED_JOB_BUDGET"}:
+                row["state"] = outcome["state"]
+                row["pipeline_success"] = False
+                row["meets_spec"] = None
+                row["stop_reason"] = ("job_deadline" if outcome["state"] == "SKIPPED_JOB_TIMEOUT"
+                                      else "per_job_physical_attempt_cap")
+                row["attempts"][-1]["worker_result_sha256"] = outcome["worker_result_sha256"]
+                _save(directory, state)
+                _event(directory, job_id, outcome["state"], row["stop_reason"])
                 continue
             if isinstance(outcome, dict) and outcome.get("state") == "FAILED_TERMINAL":
                 row["state"] = "FAILED_TERMINAL"
@@ -223,7 +276,7 @@ def _run_batch(
                 row["error_code"] = "INVALID_WORKER_RESULT"
                 _save(directory, state)
                 _event(directory, job_id, "INTERRUPTED_UNCERTAIN", row["error_code"])
-                continue
+                break
             # After the mock worker returns, any persistence failure must leave
             # RUNNING for uncertain restart reconciliation, not claim completion.
             try:
@@ -335,17 +388,22 @@ def report_batch(batch_id: str, output_root: str | Path) -> dict:
     logical_finished = [item for item in ledger if item.get("event") == "logical_finished"]
     reported = [item for item in finished if type(item.get("total_tokens")) is int]
     usage_unknown = (len(started) != len(finished)
-                     or any(item.get("usage_unknown") is True for item in finished))
+                     or any(item.get("usage_unknown") is True for item in finished)
+                     or any(row["state"] == "INTERRUPTED_UNCERTAIN" for row in rows.values()))
     def per_job_usage(job_id: str) -> dict:
         own_started = [item for item in started if item.get("job_id") == job_id]
         own_finished = [item for item in finished if item.get("job_id") == job_id]
         unknown = (len(own_started) != len(own_finished)
-                   or any(item.get("usage_unknown") is True for item in own_finished))
+                   or any(item.get("usage_unknown") is True for item in own_finished)
+                   or rows[job_id]["state"] == "INTERRUPTED_UNCERTAIN")
         return {"physical_attempts": len(own_started),
                 "reported_total_tokens": sum(item["total_tokens"] for item in own_finished
                                              if type(item.get("total_tokens")) is int),
                 "request_seconds": sum(float(item.get("latency_seconds") or 0) for item in own_finished),
-                "usage_unknown": unknown}
+                "usage_unknown": unknown,
+                "total_tokens": None if unknown else sum(
+                    item["total_tokens"] for item in own_finished
+                    if type(item.get("total_tokens")) is int)}
     return {"batch_id": batch_id, "offline_only": state.get("offline_only", True),
             "execution_scope": state.get("execution_scope", "offline_mock"),
             "authorization_id": state.get("authorization_id"),
@@ -354,6 +412,8 @@ def report_batch(batch_id: str, output_root: str | Path) -> dict:
             "failed_terminal": sum(row["state"] == "FAILED_TERMINAL" for row in rows.values()),
             "blocked": sum(row["state"] == "BLOCKED" for row in rows.values()),
             "interrupted_uncertain": sum(row["state"] == "INTERRUPTED_UNCERTAIN" for row in rows.values()),
+            "skipped_job_timeout": sum(row["state"] == "SKIPPED_JOB_TIMEOUT" for row in rows.values()),
+            "skipped_job_budget": sum(row["state"] == "SKIPPED_JOB_BUDGET" for row in rows.values()),
             "api_usage": {"logical_requests": len(logical),
                           "physical_attempts": len(started),
                           "successful_responses": sum(item.get("outcome") == "success" for item in finished),

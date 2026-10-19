@@ -32,6 +32,14 @@ class PhysicalAttemptLimitError(RuntimeError):
     pass
 
 
+class JobPhysicalAttemptLimitError(RuntimeError):
+    """The current job exhausted its own physical request allowance."""
+
+
+class JobDeadlineExpired(RuntimeError):
+    """A confirmed 429 wait has no room for another physical request."""
+
+
 def _get(value: Any, name: str, default=None):
     return value.get(name, default) if isinstance(value, dict) else getattr(value, name, default)
 
@@ -65,17 +73,18 @@ def _retry_after(error: Exception, now: datetime) -> float | None:
     return seconds if math.isfinite(seconds) and seconds > 0 else None
 
 
-def _failure_kind(error: Exception) -> str:
+def _failure_kind(error: Exception, *, strict_hard_quota: bool = False) -> str:
     status = _get(error, "status_code")
     detail = _get(_get(error, "body"), "error") or _get(error, "body")
     code = str(_get(detail, "code", _get(error, "code", "")) or "").casefold()
     message = str(_get(detail, "message", "") or "").casefold()
     quota_ids = " ".join(str(_get(row, "quotaId", "")) for row in _get(detail, "details", []) or []).casefold()
     if status == 429:
-        if any(word in f"{code} {message} {quota_ids}" for word in (
+        hard_terms = (
             "perday", "per_day", "daily quota", "per day", "billing_hard_limit",
-            "insufficient_quota", "quota_exhausted"
-        )):
+            "insufficient_quota"
+        ) + (() if strict_hard_quota else ("quota_exhausted",))
+        if any(word in f"{code} {message} {quota_ids}" for word in hard_terms):
             return "quota"
         return "rate_limit"
     if status in {401, 403, 400, 404, 422}:
@@ -119,6 +128,11 @@ class GeminiRecovery:
         sleep: Callable[[float], None] = time.sleep,
         wall_time: Callable[[], datetime] = lambda: datetime.now(timezone.utc),
         jitter: Callable[[], float] = random.random,
+        rate_limit_mode: str = "legacy",
+        job_deadline_monotonic: float | None = None,
+        per_job_physical_attempt_cap: int | None = None,
+        rate_limit_initial_backoff_seconds: float = 30,
+        rate_limit_max_backoff_seconds: float = 300,
     ):
         if provider != "gemini" or not model or not credential_scope:
             raise ValueError("a named Gemini provider scope is required")
@@ -127,6 +141,18 @@ class GeminiRecovery:
                 or any(type(v) not in {int, float} or not math.isfinite(v) or v <= 0
                        for v in (request_timeout, max_elapsed))):
             raise ValueError("retry limits must be positive")
+        if rate_limit_mode not in {"legacy", "job_deadline"}:
+            raise ValueError("unsupported rate-limit mode")
+        if rate_limit_mode == "job_deadline":
+            if (job_id is None or attempt_id is None
+                    or type(job_deadline_monotonic) not in {int, float}
+                    or not math.isfinite(job_deadline_monotonic)
+                    or type(per_job_physical_attempt_cap) is not int
+                    or per_job_physical_attempt_cap < 1
+                    or per_job_physical_attempt_cap > max_physical_attempts
+                    or not (1 <= rate_limit_initial_backoff_seconds
+                            <= rate_limit_max_backoff_seconds <= 300)):
+                raise ValueError("job deadline recovery requires bounded job identity and limits")
         self.root = Path(root)
         self.root.mkdir(parents=True, exist_ok=True)
         self.scope = f"{provider}/{model}/{credential_scope}"
@@ -135,6 +161,11 @@ class GeminiRecovery:
         self.timeout = float(request_timeout)
         self.max_attempts = int(max_attempts)
         self.max_elapsed = float(max_elapsed)
+        self.rate_limit_mode = rate_limit_mode
+        self.job_deadline = job_deadline_monotonic
+        self.job_cap = per_job_physical_attempt_cap
+        self.rate_limit_initial_backoff = rate_limit_initial_backoff_seconds
+        self.rate_limit_max_backoff = rate_limit_max_backoff_seconds
         self.clock, self.sleep, self.wall_time, self.jitter = clock, sleep, wall_time, jitter
         self.journal = self.root / "api_usage.jsonl"
         self.cooldown = self.root / "cooldown.json"
@@ -159,10 +190,19 @@ class GeminiRecovery:
                     raise ProviderQuotaError("provider quota previously exhausted")
                 raise PhysicalAttemptLimitError("provider scope is blocked")
         rows = read_jsonl_strict(self.journal)
-        started = sum(row.get("event") == "attempt_started" for row in rows)
+        started_rows = [row for row in rows if row.get("event") == "attempt_started"]
+        finished_rows = [row for row in rows if row.get("event") == "attempt_finished"]
+        key = lambda row: (row.get("job_id"), row.get("attempt_id"),
+                           row.get("logical_id"), row.get("attempt"))
+        if sorted(map(key, started_rows), key=str) != sorted(map(key, finished_rows), key=str):
+            raise RuntimeError("physical request journal has an unclosed attempt")
+        started = len(started_rows)
         if started >= self.cap:
             atomic_json(self.provider_block, {"scope": self.scope, "reason": "attempt_cap"})
             raise PhysicalAttemptLimitError("physical attempt cap reached")
+        if self.job_cap is not None and sum(
+                row.get("job_id") == self.job_id for row in started_rows) >= self.job_cap:
+            raise JobPhysicalAttemptLimitError("per-job physical attempt cap reached")
 
     def _cooldown_wait(self, deadline: float) -> None:
         if not self.cooldown.exists():
@@ -181,6 +221,9 @@ class GeminiRecovery:
                           "source": "shared_cooldown"})
 
     def call(self, payload: Any, send: Callable[[Any, float], Any]) -> Any:
+        if self.rate_limit_mode == "job_deadline":
+            from .time_recovery import call_with_job_deadline
+            return call_with_job_deadline(self, payload, send)
         logical_id = uuid.uuid4().hex
         request_hash = hashlib.sha256(repr(payload).encode("utf-8")).hexdigest()
         start, attempts = self.clock(), 0

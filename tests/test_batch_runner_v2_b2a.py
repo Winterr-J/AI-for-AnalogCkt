@@ -198,7 +198,7 @@ class B2AIntegrationTests(unittest.TestCase):
         states = status_batch("b2a_offline", self.output)["jobs"]
         self.assertEqual(states["job_2"]["state"], "COMPLETED")
 
-    def test_uncertain_child_is_not_replayed_and_unrelated_job_continues(self):
+    def test_uncertain_child_stops_batch_and_is_not_replayed(self):
         self.jobs = self.jobs[:2]
         self._write_manifest()
         self.authorization_sha = self._write_authorization("offline_integration")
@@ -206,13 +206,15 @@ class B2AIntegrationTests(unittest.TestCase):
         report = run_authorized_batch(
             self.manifest_path, self.output, self.authorization_path,
             self.authorization_sha, offline_scenarios=scenarios)
-        self.assertEqual((report["interrupted_uncertain"], report["completed"]), (1, 1))
+        self.assertEqual((report["interrupted_uncertain"], report["completed"]), (1, 0))
+        self.assertEqual(report["jobs"]["job_1"]["state"], "PENDING")
+        self.assertTrue(report["api_usage"]["usage_unknown"])
         with patch("ActiveLearning.batch_runner_v2.al_process.run_real_al_child",
                    side_effect=AssertionError("uncertain attempt replayed")):
             restarted = run_authorized_batch(
                 self.manifest_path, self.output, self.authorization_path,
                 self.authorization_sha, offline_scenarios=scenarios)
-        self.assertEqual((restarted["interrupted_uncertain"], restarted["completed"]), (1, 1))
+        self.assertEqual((restarted["interrupted_uncertain"], restarted["completed"]), (1, 0))
 
     def test_missing_or_changed_asset_fails_before_worker_or_output(self):
         (self.root / self.jobs[0]["d0_path"]).write_text("tampered\n", encoding="utf-8")
@@ -299,6 +301,71 @@ class B2AIntegrationTests(unittest.TestCase):
         self.assertEqual(captured["expected_config_sha256"], job["config_sha256"])
         self.assertEqual(captured["expected_d0_sha256"], job["d0_sha256"])
         self.assertTrue(Path(captured["runs_root"]).resolve().is_relative_to(attempt))
+
+
+    def test_optin_offline_child_proves_safe_429_deadline(self):
+        self.jobs = self.jobs[:1]
+        self._write_manifest()
+        payload = json.loads(self.manifest_path.read_text(encoding="utf-8"))
+        payload["resource_limits"]["per_job_physical_attempt_cap"] = 3
+        payload["retry_policy"]["rate_limit_mode"] = "job_deadline"
+        payload["retry_policy"]["max_attempts"] = 5
+        name = "ActiveLearning/batch_runner_v2/time_recovery.py"
+        payload["source_closure"][name] = sha256_file(self.code_root / name)
+        atomic_json(self.manifest_path, payload)
+        self.authorization_sha = self._write_authorization("offline_integration")
+        report = run_authorized_batch(
+            self.manifest_path, self.output, self.authorization_path,
+            self.authorization_sha, offline_scenarios={"job_0": "429_deadline"})
+        self.assertEqual(report["skipped_job_timeout"], 1)
+        self.assertEqual(report["completed"], 0)
+        self.assertEqual(report["api_usage"]["physical_attempts"], 1)
+        self.assertIsNone(report["jobs"]["job_0"]["meets_spec"])
+        state = status_batch("b2a_offline", self.output)["jobs"]["job_0"]
+        attempt = Path(state["attempts"][0]["attempt_directory"])
+        self.assertTrue((attempt / "child_reaped.json").is_file())
+        self.assertEqual(json.loads((attempt / "worker_result.json").read_text())["safe_point"],
+                         "rate_limit_wait")
+
+
+    def test_optin_offline_child_proves_per_job_cap_stop(self):
+        self.jobs = self.jobs[:1]
+        self._write_manifest()
+        payload = json.loads(self.manifest_path.read_text(encoding="utf-8"))
+        payload["resource_limits"]["per_job_physical_attempt_cap"] = 1
+        payload["retry_policy"]["rate_limit_mode"] = "job_deadline"
+        payload["retry_policy"]["max_attempts"] = 5
+        name = "ActiveLearning/batch_runner_v2/time_recovery.py"
+        payload["source_closure"][name] = sha256_file(self.code_root / name)
+        atomic_json(self.manifest_path, payload)
+        self.authorization_sha = self._write_authorization("offline_integration")
+        report = run_authorized_batch(
+            self.manifest_path, self.output, self.authorization_path,
+            self.authorization_sha, offline_scenarios={"job_0": "job_budget"})
+        self.assertEqual(report["skipped_job_budget"], 1)
+        self.assertEqual(report["api_usage"]["physical_attempts"], 1)
+
+    def test_optin_schema_requires_closure_and_bounded_time(self):
+        self.jobs = self.jobs[:1]
+        self._write_manifest()
+        payload = json.loads(self.manifest_path.read_text(encoding="utf-8"))
+        payload["resource_limits"]["per_job_physical_attempt_cap"] = 3
+        atomic_json(self.manifest_path, payload)
+        with self.assertRaisesRegex(ValueError, "per-job physical cap requires"):
+            load_manifest(self.manifest_path)
+        payload["retry_policy"]["rate_limit_mode"] = "job_deadline"
+        payload["retry_policy"]["max_attempts"] = 5
+        atomic_json(self.manifest_path, payload)
+        with self.assertRaisesRegex(ValueError, "time-driven source closure"):
+            load_manifest(self.manifest_path)
+        name = "ActiveLearning/batch_runner_v2/time_recovery.py"
+        payload["source_closure"][name] = sha256_file(self.code_root / name)
+        atomic_json(self.manifest_path, payload)
+        self.assertEqual(load_manifest(self.manifest_path)["retry_policy"]["max_attempts"], 5)
+        payload["resource_limits"]["worker_timeout_seconds"] = 4801
+        atomic_json(self.manifest_path, payload)
+        with self.assertRaisesRegex(ValueError, "first-version time bounds"):
+            load_manifest(self.manifest_path)
 
 
 if __name__ == "__main__":
