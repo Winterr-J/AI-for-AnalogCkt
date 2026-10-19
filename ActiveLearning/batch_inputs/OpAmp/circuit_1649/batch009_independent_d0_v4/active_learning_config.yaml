@@ -1,0 +1,116 @@
+active_learning:
+  max_iterations: 5
+data:
+  d0_path: d0/d0_v4_seed42.jsonl
+  initialize_if_missing: true
+  sampling_mode: v4
+  seed: 42
+  n_samples: 20
+  n_local: 10
+  n_global: 9
+  d0_mode: independent
+  d0_path_relative_to: config
+  initial_anchor:
+    source: profiling
+    sample_id: anchor_nominal
+    params:
+      L_MM0: 1.0e-06
+      L_MM1: 1.0e-06
+      L_MM10: 1.0e-06
+      L_MM2: 1.0e-06
+      L_MM2_dup2: 1.0e-06
+      L_MM3: 1.0e-06
+      L_MM4: 1.0e-06
+      L_MM5: 1.0e-06
+      L_MM6: 1.0e-06
+      L_MM7: 1.0e-06
+      L_MM8: 1.0e-06
+      L_MM8_dup2: 1.0e-06
+      W_MM0: 9.999999999999999e-06
+      W_MM1: 1.9999999999999998e-05
+      W_MM10: 1.9999999999999998e-05
+      W_MM2: 1.9999999999999998e-05
+      W_MM2_dup2: 1.9999999999999998e-05
+      W_MM3: 9.999999999999999e-06
+      W_MM4: 9.999999999999999e-06
+      W_MM5: 1.9999999999999998e-05
+      W_MM6: 1.9999999999999998e-05
+      W_MM7: 9.999999999999999e-06
+      W_MM8: 9.999999999999999e-06
+      W_MM8_dup2: 9.999999999999999e-06
+  local_radius: 0.02
+target_specs:
+  low_frequency_open_loop_gain_db:
+    operator: '>='
+    value: 45.45
+  unity_gain_frequency_hz:
+    operator: '>='
+    value: 91598813.0
+  phase_margin_deg:
+    operator: '>='
+    value: 90.306
+target_source: auto_generated
+performance_target_selected: true
+benchmark_version: auto_target_v1_OpAmp_circuit_1649_dcoiiwit
+target_provenance:
+  source: automatic_profiling_llm_v1
+  purpose: experimental_benchmark_not_user_specification
+  profiling_backend: spice
+  circuit_type: OpAmp
+  circuit_id: circuit_1649
+  anchor:
+    sample_id: anchor_nominal
+    params:
+      L_MM0: 1.0e-06
+      L_MM1: 1.0e-06
+      L_MM10: 1.0e-06
+      L_MM2: 1.0e-06
+      L_MM2_dup2: 1.0e-06
+      L_MM3: 1.0e-06
+      L_MM4: 1.0e-06
+      L_MM5: 1.0e-06
+      L_MM6: 1.0e-06
+      L_MM7: 1.0e-06
+      L_MM8: 1.0e-06
+      L_MM8_dup2: 1.0e-06
+      W_MM0: 9.999999999999999e-06
+      W_MM1: 1.9999999999999998e-05
+      W_MM10: 1.9999999999999998e-05
+      W_MM2: 1.9999999999999998e-05
+      W_MM2_dup2: 1.9999999999999998e-05
+      W_MM3: 9.999999999999999e-06
+      W_MM4: 9.999999999999999e-06
+      W_MM5: 1.9999999999999998e-05
+      W_MM6: 1.9999999999999998e-05
+      W_MM7: 9.999999999999999e-06
+      W_MM8: 9.999999999999999e-06
+      W_MM8_dup2: 9.999999999999999e-06
+    metrics:
+      low_frequency_open_loop_gain_db: 45.3889161584011
+      unity_gain_frequency_hz: 92847601.02745046
+      phase_margin_deg: 90.30819671659754
+  profiling_artifact: profiling.json
+  target_recommendation: target_generation.json
+  generated_config: active_learning_config.yaml
+  d0_mode: independent
+  d0_anchor_source: profiling
+  d0_anchor_sample_id: anchor_nominal
+  d0_seed: 42
+  joint_supporting_sample_ids:
+  - profile_local_0_0010
+  llm_declared_supporting_sample_ids:
+  - profile_local_0_0010
+  reason: Sample profile_local_0_0010 jointly achieves low_frequency_open_loop_gain_db
+    = 45.4516 dB, unity_gain_frequency_hz = 91.598 MHz, and phase_margin_deg = 90.306
+    degrees. The anchor achieves a gain of ~45.389 dB, so setting the gain target
+    to >= 45.45 dB successfully requires improvement over the anchor while remaining
+    experimentally observed.
+  confidence: 1.0
+  provider: gemini
+  model: gemini-3.5-flash-lite
+  llm_backend: provider_api
+  target_generation_attempts: 1
+  seed: 42
+  simulator_environment:
+    platform: Linux-6.8.0-138-generic-x86_64-with-glibc2.39
+    python: 3.12.3

@@ -1,0 +1,26 @@
+{
+  "artifacts": {
+    "OpAmp_circuit_1649_dcoiiwit/active_learning_config.yaml": "5aefb1e8fd2a47683bfe1e5af5971f739b29bdb19f86fe03482765c0cfdeff40",
+    "OpAmp_circuit_1649_dcoiiwit/d0/d0_v4_seed42.csv": "e554bb88d0dbdb21e7612eba396878b64082e7acadaeda8b0fe2f270fb6d0134",
+    "OpAmp_circuit_1649_dcoiiwit/d0/d0_v4_seed42.jsonl": "4b6906deb152cafc93374eb6386204135584d1517dcf3eb9a96dbf7a427875f4",
+    "OpAmp_circuit_1649_dcoiiwit/d0/d0_v4_seed42_initialization.json": "96e32014c634554364c107d2c9fafc020c2a6fd8fec3a10a3be30d09fafe0c97"
+  },
+  "circuit_id": "circuit_1649",
+  "functional_valid_count": 13,
+  "local_radius": 0.02,
+  "records": 20,
+  "sampling_mode": "v4",
+  "seed": 42,
+  "simulation_valid_count": 20,
+  "source_sha256": {
+    "metadata.txt": "a09e3e9361e49719b646470fae9787ff97ae512e4f1626d81fad364200c40013",
+    "parameters/ideal_design_space.yaml": "8066d446f4ae67aa0e60d7ee8b759fc079b115a637b908acb271318f0ed4e982",
+    "parameters/operating_space.yaml": "ad72454d46fa51f461a67f9e5149a85002bb62d5f59e7f09f717397e54f8a628",
+    "parameters/tunable_parameters.yaml": "1d742c6271d0545ed882f5d4e0b9c7ae98a4e779350c47f44f0a72c4cfc16163",
+    "simulation/parameter/ideal_param.yaml": "8bf87332a5cd4541e2b3666ba3b1a8683e9b707f213b7391a58d39058bb5a5e0",
+    "simulation/results/ideal/op_results.yaml": "7c385612dcfd3f7fed17da2d0118c8a414ee2da5e7d270be698c8198618d582e",
+    "topology/circuit_1649.cir": "6ef9b74d51e36ac228db144f1bf44c735d95bf6e88ee00bbfc5135a4f24f0399",
+    "topology/circuit_1649.py": "8a8db1506446ea019fd7d65f63ea20dba6a95d38516e155e2bbd12249f2f5f3e"
+  },
+  "status": "PREPARATION_READY"
+}

@@ -1,0 +1,149 @@
+active_learning:
+  max_iterations: 5
+data:
+  d0_path: d0/d0_v4_seed42.jsonl
+  initialize_if_missing: true
+  sampling_mode: v4
+  seed: 42
+  n_samples: 20
+  n_local: 10
+  n_global: 9
+  d0_mode: independent
+  d0_path_relative_to: config
+  initial_anchor:
+    source: profiling
+    sample_id: anchor_local_0000
+    params:
+      L_MM0: 1.0090004005524097e-06
+      L_MM0_dup2: 9.698823507937196e-07
+      L_MM1: 1.0223121252570495e-06
+      L_MM10: 1.0280431054313665e-06
+      L_MM13: 9.442448624262815e-07
+      L_MM14: 9.624335054430111e-07
+      L_MM15: 1.0037661931356914e-06
+      L_MM1_dup2: 9.90744058897706e-07
+      L_MM2: 9.995060876935286e-07
+      L_MM2_dup2: 9.75228410671903e-07
+      L_MM3: 1.0261957345800348e-06
+      L_MM3_dup2: 1.0231343419231214e-06
+      L_MM4: 1.0019435042219315e-06
+      L_MM5: 1.0337017364546078e-06
+      L_MM6: 1.01384193343665e-06
+      L_MM7: 9.75049241785796e-07
+      L_MM8: 1.0109020340235408e-06
+      L_MM9: 9.721980590260291e-07
+      RR0: 10261.671388733315
+      VB1: 1.6494740043217795
+      VB2: 1.648052377966279
+      VB3: 1.6428260498315659
+      VB4: 1.6628801147116847
+      W_MM0: 1.9909328053364427e-05
+      W_MM0_dup2: 9.874840987198892e-06
+      W_MM1: 1.979398026324085e-05
+      W_MM10: 1.0157755748866596e-05
+      W_MM13: 1.0108037453985252e-05
+      W_MM14: 2.0244205100746294e-05
+      W_MM15: 1.0127487778438446e-05
+      W_MM1_dup2: 2.1299997337074733e-05
+      W_MM2: 1.9762411609023217e-05
+      W_MM2_dup2: 9.850504861184185e-06
+      W_MM3: 1.95271043362291e-05
+      W_MM3_dup2: 2.0365555384925003e-05
+      W_MM4: 2.0675087109598243e-05
+      W_MM5: 1.9933100143985173e-05
+      W_MM6: 1.9511960921622217e-05
+      W_MM7: 9.760478297897204e-06
+      W_MM8: 1.0193146982839037e-05
+      W_MM9: 1.022095799384723e-05
+  local_radius: 0.02
+target_specs:
+  low_frequency_open_loop_gain_db:
+    operator: '>='
+    value: 10.061272897635295
+  unity_gain_frequency_hz:
+    operator: '>='
+    value: 27509333.561134893
+  phase_margin_deg:
+    operator: '>='
+    value: 108.307658392647
+target_source: auto_generated
+performance_target_selected: true
+benchmark_version: auto_target_v1_OpAmp_circuit_1646_2ri62v5n
+target_provenance:
+  source: automatic_profiling_llm_v1
+  purpose: experimental_benchmark_not_user_specification
+  profiling_backend: spice
+  circuit_type: OpAmp
+  circuit_id: circuit_1646
+  anchor:
+    sample_id: anchor_local_0000
+    params:
+      L_MM0: 1.0090004005524097e-06
+      L_MM0_dup2: 9.698823507937196e-07
+      L_MM1: 1.0223121252570495e-06
+      L_MM10: 1.0280431054313665e-06
+      L_MM13: 9.442448624262815e-07
+      L_MM14: 9.624335054430111e-07
+      L_MM15: 1.0037661931356914e-06
+      L_MM1_dup2: 9.90744058897706e-07
+      L_MM2: 9.995060876935286e-07
+      L_MM2_dup2: 9.75228410671903e-07
+      L_MM3: 1.0261957345800348e-06
+      L_MM3_dup2: 1.0231343419231214e-06
+      L_MM4: 1.0019435042219315e-06
+      L_MM5: 1.0337017364546078e-06
+      L_MM6: 1.01384193343665e-06
+      L_MM7: 9.75049241785796e-07
+      L_MM8: 1.0109020340235408e-06
+      L_MM9: 9.721980590260291e-07
+      RR0: 10261.671388733315
+      VB1: 1.6494740043217795
+      VB2: 1.648052377966279
+      VB3: 1.6428260498315659
+      VB4: 1.6628801147116847
+      W_MM0: 1.9909328053364427e-05
+      W_MM0_dup2: 9.874840987198892e-06
+      W_MM1: 1.979398026324085e-05
+      W_MM10: 1.0157755748866596e-05
+      W_MM13: 1.0108037453985252e-05
+      W_MM14: 2.0244205100746294e-05
+      W_MM15: 1.0127487778438446e-05
+      W_MM1_dup2: 2.1299997337074733e-05
+      W_MM2: 1.9762411609023217e-05
+      W_MM2_dup2: 9.850504861184185e-06
+      W_MM3: 1.95271043362291e-05
+      W_MM3_dup2: 2.0365555384925003e-05
+      W_MM4: 2.0675087109598243e-05
+      W_MM5: 1.9933100143985173e-05
+      W_MM6: 1.9511960921622217e-05
+      W_MM7: 9.760478297897204e-06
+      W_MM8: 1.0193146982839037e-05
+      W_MM9: 1.022095799384723e-05
+    metrics:
+      low_frequency_open_loop_gain_db: 9.769831070751945
+      unity_gain_frequency_hz: 22179716.091065597
+      phase_margin_deg: 108.95256798602267
+  profiling_artifact: profiling.json
+  target_recommendation: target_generation.json
+  generated_config: active_learning_config.yaml
+  d0_mode: independent
+  d0_anchor_source: profiling
+  d0_anchor_sample_id: anchor_local_0000
+  d0_seed: 42
+  joint_supporting_sample_ids:
+  - profile_local_0_0007
+  llm_declared_supporting_sample_ids:
+  - profile_local_0_0007
+  reason: The selected target specifications correspond exactly to the jointly observed
+    metrics of sample profile_local_0_0007. In this sample, all three metrics meet
+    or exceed the thresholds simultaneously, while the anchor (anchor_local_0000)
+    fails the unity gain frequency requirement (22.18 MHz < 27.51 MHz).
+  confidence: 1.0
+  provider: gemini
+  model: gemini-3.5-flash-lite
+  llm_backend: provider_api
+  target_generation_attempts: 1
+  seed: 42
+  simulator_environment:
+    platform: Linux-6.8.0-138-generic-x86_64-with-glibc2.39
+    python: 3.12.3

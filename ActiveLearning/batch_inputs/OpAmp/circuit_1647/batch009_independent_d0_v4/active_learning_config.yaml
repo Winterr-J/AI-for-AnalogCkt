@@ -1,0 +1,131 @@
+active_learning:
+  max_iterations: 5
+data:
+  d0_path: d0/d0_v4_seed42.jsonl
+  initialize_if_missing: true
+  sampling_mode: v4
+  seed: 42
+  n_samples: 20
+  n_local: 10
+  n_global: 9
+  d0_mode: independent
+  d0_path_relative_to: config
+  initial_anchor:
+    source: profiling
+    sample_id: anchor_nominal
+    params:
+      L_MM0: 1.0e-06
+      L_MM0_dup2: 1.0e-06
+      L_MM1: 1.0e-06
+      L_MM10: 1.0e-06
+      L_MM1_dup2: 1.0e-06
+      L_MM2: 1.0e-06
+      L_MM2_dup2: 1.0e-06
+      L_MM3: 1.0e-06
+      L_MM3_dup2: 1.0e-06
+      L_MM4: 1.0e-06
+      L_MM5: 1.0e-06
+      L_MM6: 1.0e-06
+      L_MM7: 1.0e-06
+      L_MM8: 1.0e-06
+      L_MM8_dup2: 1.0e-06
+      VB1: 1.65
+      W_MM0: 9.999999999999999e-06
+      W_MM0_dup2: 9.999999999999999e-06
+      W_MM1: 1.9999999999999998e-05
+      W_MM10: 1.9999999999999998e-05
+      W_MM1_dup2: 1.9999999999999998e-05
+      W_MM2: 1.9999999999999998e-05
+      W_MM2_dup2: 9.999999999999999e-06
+      W_MM3: 9.999999999999999e-06
+      W_MM3_dup2: 1.9999999999999998e-05
+      W_MM4: 9.999999999999999e-06
+      W_MM5: 1.9999999999999998e-05
+      W_MM6: 1.9999999999999998e-05
+      W_MM7: 9.999999999999999e-06
+      W_MM8: 9.999999999999999e-06
+      W_MM8_dup2: 9.999999999999999e-06
+  local_radius: 0.02
+target_specs:
+  low_frequency_open_loop_gain_db:
+    operator: '>='
+    value: 43.25
+  unity_gain_frequency_hz:
+    operator: '>='
+    value: 117000000.0
+  phase_margin_deg:
+    operator: '>='
+    value: 90.39
+target_source: auto_generated
+performance_target_selected: true
+benchmark_version: auto_target_v1_OpAmp_circuit_1647_wjmh6gk5
+target_provenance:
+  source: automatic_profiling_llm_v1
+  purpose: experimental_benchmark_not_user_specification
+  profiling_backend: spice
+  circuit_type: OpAmp
+  circuit_id: circuit_1647
+  anchor:
+    sample_id: anchor_nominal
+    params:
+      L_MM0: 1.0e-06
+      L_MM0_dup2: 1.0e-06
+      L_MM1: 1.0e-06
+      L_MM10: 1.0e-06
+      L_MM1_dup2: 1.0e-06
+      L_MM2: 1.0e-06
+      L_MM2_dup2: 1.0e-06
+      L_MM3: 1.0e-06
+      L_MM3_dup2: 1.0e-06
+      L_MM4: 1.0e-06
+      L_MM5: 1.0e-06
+      L_MM6: 1.0e-06
+      L_MM7: 1.0e-06
+      L_MM8: 1.0e-06
+      L_MM8_dup2: 1.0e-06
+      VB1: 1.65
+      W_MM0: 9.999999999999999e-06
+      W_MM0_dup2: 9.999999999999999e-06
+      W_MM1: 1.9999999999999998e-05
+      W_MM10: 1.9999999999999998e-05
+      W_MM1_dup2: 1.9999999999999998e-05
+      W_MM2: 1.9999999999999998e-05
+      W_MM2_dup2: 9.999999999999999e-06
+      W_MM3: 9.999999999999999e-06
+      W_MM3_dup2: 1.9999999999999998e-05
+      W_MM4: 9.999999999999999e-06
+      W_MM5: 1.9999999999999998e-05
+      W_MM6: 1.9999999999999998e-05
+      W_MM7: 9.999999999999999e-06
+      W_MM8: 9.999999999999999e-06
+      W_MM8_dup2: 9.999999999999999e-06
+    metrics:
+      low_frequency_open_loop_gain_db: 43.208752575293886
+      unity_gain_frequency_hz: 118203834.45132059
+      phase_margin_deg: 90.39605102161192
+  profiling_artifact: profiling.json
+  target_recommendation: target_generation.json
+  generated_config: active_learning_config.yaml
+  d0_mode: independent
+  d0_anchor_source: profiling
+  d0_anchor_sample_id: anchor_nominal
+  d0_seed: 42
+  joint_supporting_sample_ids:
+  - profile_local_0_0003
+  llm_declared_supporting_sample_ids:
+  - profile_local_0_0003
+  reason: The anchor achieves a low-frequency open-loop gain of ~43.21 dB, a unity
+    gain frequency of ~118.20 MHz, and a phase margin of ~90.40 degrees. Sample 'profile_local_0_0003'
+    is observed with 43.2589 dB gain, 117.49 MHz unity gain frequency, and 90.3938
+    degrees phase margin, which jointly satisfies slightly higher gain while demonstrating
+    feasibility. Setting the gain target to >= 43.25 dB ensures the anchor fails while
+    this observed sample succeeds jointly with the UGF and phase margin requirements.
+  confidence: 0.95
+  provider: gemini
+  model: gemini-3.5-flash-lite
+  llm_backend: provider_api
+  target_generation_attempts: 1
+  seed: 42
+  simulator_environment:
+    platform: Linux-6.8.0-138-generic-x86_64-with-glibc2.39
+    python: 3.12.3
