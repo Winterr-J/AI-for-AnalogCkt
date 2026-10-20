@@ -131,7 +131,7 @@ class B2AIntegrationTests(unittest.TestCase):
                 atomic_json(self.manifest_path, payload)
                 loaded = load_manifest(self.manifest_path)
                 self.assertEqual(loaded["retry_policy"]["max_attempts"], attempts)
-        payload["retry_policy"]["max_attempts"] = 9
+        payload["retry_policy"]["max_attempts"] = 13
         atomic_json(self.manifest_path, payload)
         with self.assertRaisesRegex(ValueError, "approved first-version time bounds"):
             load_manifest(self.manifest_path)

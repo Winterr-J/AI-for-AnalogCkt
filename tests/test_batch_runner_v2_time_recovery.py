@@ -197,6 +197,47 @@ class TimeRecoveryTests(unittest.TestCase):
                 self.assertEqual(len(self.rows("attempt_started")) - before, failures + 2)
                 self.assertEqual(self.rows("logical_finished")[-1]["status"], "success")
 
+
+    def test_r12_recovers_after_eleven_503s(self):
+        calls = 0
+
+        def send(_payload, timeout):
+            nonlocal calls
+            calls += 1
+            self.assertLessEqual(timeout, 120)
+            if calls <= 11:
+                raise ProviderError(503)
+            return self.success()
+
+        result = self.client(max_attempts=12).call("x", send)
+        self.assertEqual(result, self.success())
+        self.assertEqual(calls, 12)
+        self.assertEqual(len(self.rows("attempt_started")), 12)
+        self.assertEqual(len(self.rows("attempt_finished")), 12)
+        self.assertEqual(
+            self.rows("logical_finished")[-1]["status"], "success"
+        )
+
+    def test_r12_twelfth_503_exhausts(self):
+        calls = 0
+
+        def send(_payload, timeout):
+            nonlocal calls
+            calls += 1
+            self.assertLessEqual(timeout, 120)
+            raise ProviderError(503)
+
+        with self.assertRaises(RetryExhaustedError):
+            self.client(max_attempts=12).call("x", send)
+
+        self.assertEqual(calls, 12)
+        self.assertEqual(len(self.rows("attempt_started")), 12)
+        self.assertEqual(len(self.rows("attempt_finished")), 12)
+        self.assertEqual(
+            self.rows("logical_finished")[-1]["status"],
+            "retry_exhausted"
+        )
+
     def test_r8_eighth_non429_failure_exhausts_without_ninth_send(self):
         sequence = [429, 503, 503, 429, 503, 503, 503, 503, 503, 503]
 
