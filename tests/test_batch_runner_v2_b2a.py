@@ -115,6 +115,27 @@ class B2AIntegrationTests(unittest.TestCase):
         self.assertEqual(plan_batch(self.manifest_path)["status"],
                          "READY_FOR_AUTHORIZATION")
 
+    def test_job_deadline_r8_schema_is_explicit_and_r5_remains_valid(self):
+        payload = json.loads(self.manifest_path.read_text(encoding="utf-8"))
+        payload["resource_limits"].update(
+            max_physical_attempts=120, per_job_physical_attempt_cap=60,
+            worker_timeout_seconds=4800)
+        payload["retry_policy"].update(
+            rate_limit_mode="job_deadline", request_timeout_seconds=120,
+            max_elapsed_seconds=1800)
+        payload["source_closure"]["ActiveLearning/batch_runner_v2/time_recovery.py"] = (
+            sha256_file(self.code_root / "ActiveLearning/batch_runner_v2/time_recovery.py"))
+        for attempts in (5, 8):
+            with self.subTest(max_attempts=attempts):
+                payload["retry_policy"]["max_attempts"] = attempts
+                atomic_json(self.manifest_path, payload)
+                loaded = load_manifest(self.manifest_path)
+                self.assertEqual(loaded["retry_policy"]["max_attempts"], attempts)
+        payload["retry_policy"]["max_attempts"] = 9
+        atomic_json(self.manifest_path, payload)
+        with self.assertRaisesRegex(ValueError, "approved first-version time bounds"):
+            load_manifest(self.manifest_path)
+
     def test_missing_or_semantically_mismatched_approval_fails_before_output(self):
         with self.assertRaises(AuthorizationError):
             run_authorized_batch(

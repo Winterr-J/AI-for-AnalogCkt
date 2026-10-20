@@ -14,6 +14,9 @@ from ActiveLearning.batch_runner_v2.gemini_recovery import (
     PhysicalAttemptLimitError, ProviderQuotaError, ProviderTerminalError,
     RetryExhaustedError,
 )
+from ActiveLearning.batch_runner_v2.llm_bridge import (
+    GeminiALClient, build_gemini_chat_transport,
+)
 from ActiveLearning.batch_runner_v2.runner import _run_batch
 from ActiveLearning.batch_runner_v2.storage import (
     append_jsonl, atomic_json, read_jsonl_strict, sha256_file,
@@ -125,6 +128,37 @@ class TimeRecoveryTests(unittest.TestCase):
             self.client(deadline=4800).call("next", lambda *_: self.fail("late send"))
         self.assertEqual(len(self.rows("attempt_started")), 1)
 
+    def test_deadline_is_rechecked_after_journal_admission(self):
+        recovery = self.client(deadline=10)
+        original = recovery._admit
+
+        def slow_admission():
+            original()
+            self.clock.now = 10
+
+        recovery._admit = slow_admission
+        with self.assertRaises(RetryExhaustedError):
+            recovery.call("x", lambda *_: self.fail("must not send after deadline"))
+        self.assertEqual(len(self.rows("attempt_started")), 0)
+
+    def test_expired_claim_after_journal_write_fails_closed_without_send(self):
+        recovery = self.client(deadline=10)
+        original = recovery._record
+
+        def slow_journal(event):
+            original(event)
+            if event["event"] == "attempt_started":
+                self.clock.now = 10
+
+        recovery._record = slow_journal
+        with self.assertRaisesRegex(RuntimeError, "after physical attempt claim"):
+            recovery.call("x", lambda *_: self.fail("must not send after deadline"))
+        self.assertEqual(len(self.rows("attempt_started")), 1)
+        self.assertEqual(len(self.rows("attempt_finished")), 0)
+        with self.assertRaisesRegex(RuntimeError, "unclosed"):
+            self.client(job="job_b", deadline=100).call(
+                "next", lambda *_: self.fail("uncertain request must block"))
+
     def test_five_non429_errors_and_mixed_errors_remain_bounded(self):
         sequence = [429, 429, 503, 429, 503, 503, 503, 503]
         calls = 0
@@ -140,6 +174,103 @@ class TimeRecoveryTests(unittest.TestCase):
         self.assertEqual(calls, 8)
         self.assertEqual(sum(row["outcome"] == "service_unavailable"
                              for row in self.rows("attempt_finished")), 5)
+
+    def test_r8_mixed_429_503_and_readtimeout_recovers_after_five_to_seven_failures(self):
+        for failures in (5, 6, 7):
+            with self.subTest(non429_failures=failures):
+                before = len(self.rows("attempt_started"))
+                sequence = [ProviderError(429, {"Retry-After": "1"})]
+                sequence += [ProviderError(503) if n % 2 == 0 else TimeoutError()
+                             for n in range(failures)]
+                sequence += [self.success()]
+
+                def send(_payload, timeout):
+                    self.assertLessEqual(timeout, 120)
+                    outcome = sequence.pop(0)
+                    if isinstance(outcome, Exception):
+                        raise outcome
+                    return outcome
+
+                self.assertEqual(self.client(job=f"r8_{failures}", cap=80, job_cap=60,
+                                             max_attempts=8).call("x", send), self.success())
+                self.assertEqual(len(sequence), 0)
+                self.assertEqual(len(self.rows("attempt_started")) - before, failures + 2)
+                self.assertEqual(self.rows("logical_finished")[-1]["status"], "success")
+
+    def test_r8_eighth_non429_failure_exhausts_without_ninth_send(self):
+        sequence = [429, 503, 503, 429, 503, 503, 503, 503, 503, 503]
+
+        def send(*_):
+            status = sequence.pop(0)
+            if status == 429:
+                raise ProviderError(status, {"Retry-After": "1"})
+            raise ProviderError(status)
+
+        with self.assertRaises(RetryExhaustedError):
+            self.client(max_attempts=8).call("x", send)
+        self.assertEqual(sequence, [])
+        self.assertEqual(len(self.rows("attempt_started")), 10)
+        self.assertEqual(len(self.rows("attempt_finished")), 10)
+        self.assertEqual(sum(row["outcome"] == "rate_limit"
+                             for row in self.rows("attempt_finished")), 2)
+        self.assertEqual(self.rows("logical_finished")[-1]["status"], "retry_exhausted")
+        self.assertTrue(all(row["usage_unknown"] and row["total_tokens"] is None
+                            for row in self.rows("attempt_finished")))
+
+    def test_non429_window_begins_per_logical_request_not_at_recovery_creation(self):
+        recovery = self.client(max_attempts=8, max_elapsed=10)
+        for instant in (0, 2000):
+            self.clock.now = instant
+            attempts = 0
+
+            def send(*_):
+                nonlocal attempts
+                attempts += 1
+                if attempts == 1:
+                    raise TimeoutError()
+                return self.success()
+
+            recovery.call("x", send)
+            self.assertEqual(attempts, 2)
+        self.assertEqual(len(self.rows("attempt_started")), 4)
+        self.assertEqual([row["status"] for row in self.rows("logical_finished")],
+                         ["success", "success"])
+
+    def test_1800_non429_window_stops_before_independent_4800_job_deadline(self):
+        self.clock.now = 100
+        calls = 0
+
+        def send(*_):
+            nonlocal calls
+            calls += 1
+            if calls == 1:
+                raise ProviderError(503)
+            self.clock.now = 1899
+            raise ProviderError(429, {"Retry-After": "2"})
+
+        with self.assertRaises(RetryExhaustedError):
+            self.client(max_attempts=8, max_elapsed=1800, deadline=4800).call("x", send)
+        self.assertEqual(calls, 2)
+        self.assertEqual(self.rows("logical_finished")[-1]["status"], "retry_exhausted")
+        self.assertEqual(len(self.rows("attempt_started")), 2)
+        self.clock.now = 2000
+        self.client(job="next", max_attempts=8, deadline=4800).call(
+            "next", lambda *_: self.success())
+        self.assertEqual(self.rows("logical_finished")[-1]["status"], "success")
+
+    def test_r8_uses_manifest_style_sixty_per_job_and_batch_caps(self):
+        for n in range(60):
+            self.client(job="a", cap=61, job_cap=60, max_attempts=8).call(
+                f"a{n}", lambda *_: self.success())
+        with self.assertRaises(JobPhysicalAttemptLimitError):
+            self.client(job="a", cap=61, job_cap=60, max_attempts=8).call(
+                "a61", lambda *_: self.fail("must not send"))
+        self.client(job="b", cap=61, job_cap=60, max_attempts=8).call(
+            "b1", lambda *_: self.success())
+        with self.assertRaises(PhysicalAttemptLimitError):
+            self.client(job="b", cap=61, job_cap=60, max_attempts=8).call(
+                "b2", lambda *_: self.fail("must not send"))
+        self.assertEqual(len(self.rows("attempt_started")), 61)
 
     def test_readtimeout_and_hard_errors(self):
         with self.assertRaises(RetryExhaustedError):
@@ -339,6 +470,93 @@ class SafeSchedulingTests(unittest.TestCase):
         with self.assertRaisesRegex(RuntimeError, "unresolved"):
             _verified_safe_stop(self.manifest, self.jobs[1], attempt,
                                 invocation, result)
+
+
+class SDKMockTransportTests(unittest.TestCase):
+    def setUp(self):
+        self.temp = tempfile.TemporaryDirectory()
+        self.addCleanup(self.temp.cleanup)
+        self.root = Path(self.temp.name)
+
+    def transport(self, handler):
+        try:
+            import openai
+            from openai import _base_client
+        except ImportError:
+            self.skipTest("OpenAI SDK is required for offline transport tests")
+
+        httpx = (
+            getattr(_base_client, "httpx2", None)
+            or getattr(_base_client, "httpx", None)
+        )
+        if httpx is None:
+            self.fail("OpenAI SDK HTTP transport binding not found")
+        from ActiveLearning.batch_runner_v2.llm_bridge import build_gemini_chat_transport
+
+        def client(*, follow_redirects):
+            self.assertFalse(follow_redirects)
+            return httpx.Client(transport=httpx.MockTransport(handler),
+                                follow_redirects=follow_redirects)
+
+        with patch.object(openai, "DefaultHttpxClient", side_effect=client):
+            return build_gemini_chat_transport(
+                model="gemini-test", api_key="OFFLINE_TEST_KEY",
+                base_url="https://offline.invalid/v1beta/openai/")
+
+    def recovery(self):
+        return GeminiRecovery(
+            self.root, provider="gemini", model="gemini-test",
+            credential_scope="offline-only", max_physical_attempts=10,
+            job_id="offline_job", attempt_id="a" * 32,
+            rate_limit_mode="job_deadline", job_deadline_monotonic=4800,
+            per_job_physical_attempt_cap=10, request_timeout=120,
+            max_attempts=8, max_elapsed=1800,
+            clock=lambda: 0.0, sleep=lambda _: None, jitter=lambda: 0.5)
+
+    def test_sdk_mock_transport_does_not_follow_redirect(self):
+        from openai import _base_client
+        httpx = getattr(_base_client, 'httpx2', None) or getattr(_base_client, 'httpx', None)
+        assert httpx is not None, 'SDK HTTP transport not found'
+        requests = []
+
+        def handler(request):
+            requests.append(str(request.url))
+            return httpx.Response(307, headers={"Location":
+                                  "https://offline.invalid/hidden_second_request"})
+
+        client = GeminiALClient(self.recovery(), self.transport(handler), "gemini-test")
+        with self.assertRaises(ProviderTerminalError):
+            client("offline prompt")
+        self.assertEqual(len(requests), 1)
+        rows = read_jsonl_strict(self.root / "api_usage.jsonl")
+        self.assertEqual(sum(row["event"] == "attempt_started" for row in rows), 1)
+        self.assertEqual(sum(row["event"] == "attempt_finished" for row in rows), 1)
+
+    def test_sdk_mock_transport_503_has_no_hidden_retry(self):
+        from openai import _base_client
+        httpx = getattr(_base_client, 'httpx2', None) or getattr(_base_client, 'httpx', None)
+        assert httpx is not None, 'SDK HTTP transport not found'
+        requests = []
+
+        def handler(request):
+            requests.append(str(request.url))
+            if len(requests) == 1:
+                return httpx.Response(503, json={"error": {"message": "temporary"}})
+            return httpx.Response(200, json={
+                "id": "offline", "object": "chat.completion", "created": 1,
+                "model": "gemini-test", "choices": [{"index": 0,
+                    "message": {"role": "assistant", "content": "recovered"},
+                    "finish_reason": "stop"}],
+                "usage": {"prompt_tokens": 2, "completion_tokens": 1,
+                          "total_tokens": 3},
+            })
+
+        client = GeminiALClient(self.recovery(), self.transport(handler), "gemini-test")
+        self.assertEqual(client("offline prompt"), "recovered")
+        self.assertEqual(len(requests), 2)
+        rows = read_jsonl_strict(self.root / "api_usage.jsonl")
+        self.assertEqual(sum(row["event"] == "attempt_started" for row in rows), 2)
+        self.assertEqual(sum(row["event"] == "attempt_finished" for row in rows), 2)
 
 
 if __name__ == "__main__":

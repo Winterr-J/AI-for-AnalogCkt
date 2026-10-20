@@ -236,7 +236,10 @@ class A2Tests(unittest.TestCase):
         create = MagicMock(return_value=response)
         constructor = MagicMock(return_value=SimpleNamespace(
             chat=SimpleNamespace(completions=SimpleNamespace(create=create))))
-        with patch.dict(sys.modules, {"openai": SimpleNamespace(OpenAI=constructor)}):
+        transport = object()
+        http_client = MagicMock(return_value=transport)
+        with patch.dict(sys.modules, {"openai": SimpleNamespace(
+                OpenAI=constructor, DefaultHttpxClient=http_client)}):
             send = build_gemini_chat_transport(
                 model="gemini-test", api_key="SECRET_KEY_CANARY",
                 base_url="https://offline.invalid/v1beta/openai/")
@@ -246,7 +249,9 @@ class A2Tests(unittest.TestCase):
         self.assertEqual(GeminiALClient(recovery, send, "gemini-test")("SECRET_PROMPT_CANARY"), "ok")
         constructor.assert_called_once_with(
             api_key="SECRET_KEY_CANARY",
-            base_url="https://offline.invalid/v1beta/openai/", max_retries=0)
+            base_url="https://offline.invalid/v1beta/openai/", max_retries=0,
+            http_client=transport)
+        http_client.assert_called_once_with(follow_redirects=False)
         self.assertEqual(create.call_args.kwargs["timeout"], 120.0)
         self.assertEqual(create.call_args.kwargs["model"], "gemini-test")
         ledger = (self.root / "transport_ledger" / "api_usage.jsonl").read_text(encoding="utf-8")
@@ -263,7 +268,8 @@ class A2Tests(unittest.TestCase):
             "usage": {"prompt_tokens": 1, "completion_tokens": 2, "total_tokens": 3}}])
         constructor = MagicMock(return_value=SimpleNamespace(
             chat=SimpleNamespace(completions=SimpleNamespace(create=create))))
-        with patch.dict(sys.modules, {"openai": SimpleNamespace(OpenAI=constructor)}):
+        with patch.dict(sys.modules, {"openai": SimpleNamespace(
+                OpenAI=constructor, DefaultHttpxClient=lambda **_: object())}):
             send = build_gemini_chat_transport(model="gemini-test", api_key="offline-key",
                     base_url="https://offline.invalid/v1beta/openai/")
         recovery = GeminiRecovery(self.root / "retry_ledger", provider="gemini",

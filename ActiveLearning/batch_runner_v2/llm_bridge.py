@@ -19,11 +19,14 @@ def build_gemini_chat_transport(*, model: str, api_key: str | None = None,
     if selected != "gemini" or chosen_model != model:
         raise ValueError("Gemini transport model mismatch")
     try:
-        from openai import OpenAI
+        from openai import DefaultHttpxClient, OpenAI
     except ImportError as error:
         raise RuntimeError("openai package is required for Gemini transport") from error
     # GeminiRecovery is the sole application-level retry controller.
-    client = OpenAI(api_key=key, base_url=url, max_retries=0)
+    # A redirect is another physical HTTP request, invisible to the recovery
+    # ledger. Do not allow the SDK transport to follow one automatically.
+    client = OpenAI(api_key=key, base_url=url, max_retries=0,
+                    http_client=DefaultHttpxClient(follow_redirects=False))
 
     def send(messages: Any, timeout_seconds: float) -> Any:
         if timeout_seconds <= 0:

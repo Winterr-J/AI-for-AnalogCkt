@@ -227,7 +227,7 @@ def load_manifest(path: str | Path) -> dict:
         if "per_job_physical_attempt_cap" not in limits:
             raise ValueError("job_deadline mode requires a per-job physical cap")
         if (retry["request_timeout_seconds"] > 120
-                or retry["max_attempts"] > 5
+                or retry["max_attempts"] > 8
                 or retry["max_elapsed_seconds"] > 1800
                 or limits["worker_timeout_seconds"] > 4800):
             raise ValueError("job_deadline mode exceeds approved first-version time bounds")

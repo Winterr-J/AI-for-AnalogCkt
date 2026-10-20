@@ -71,13 +71,23 @@ def call_with_job_deadline(recovery, payload, send):
             except PhysicalAttemptLimitError:
                 finish("batch_budget", last_failure_kind="batch_cap")
                 raise
+            # Lock acquisition and journal admission can consume deadline time.
+            # Do not claim a physical request if no time remains to send it.
+            if recovery.clock() >= deadline:
+                continue
             attempts += 1
             recovery._record({"event": "attempt_started", "logical_id": logical_id,
                               "attempt": attempts, "request_sha256": request_hash})
+        timeout_seconds = min(recovery.timeout, deadline - recovery.clock())
+        if timeout_seconds <= 0:
+            # The durable claim remains unclosed, forcing an uncertain stop.
+            # No transport call is made after the deadline.
+            raise RuntimeError("request deadline expired after physical attempt claim")
         sent_at = recovery.clock()
         try:
-            response = send(payload, min(recovery.timeout, remaining))
+            response = send(payload, timeout_seconds)
         except Exception as error:
+            failed_at = recovery.clock()
             kind = _failure_kind(error, strict_hard_quota=True)
             status = _get(error, "status_code")
             recovery._record({"event": "attempt_finished", "logical_id": logical_id,
@@ -110,7 +120,7 @@ def call_with_job_deadline(recovery, payload, send):
             else:
                 non429_failures += 1
                 if ordinary_deadline is None:
-                    ordinary_deadline = recovery.clock() + recovery.max_elapsed
+                    ordinary_deadline = failed_at + recovery.max_elapsed
                 delay = min(2 ** min(non429_failures - 1, 20), 30)
             deadline = min(recovery.job_deadline, ordinary_deadline or recovery.job_deadline)
             if non429_failures >= recovery.max_attempts:
