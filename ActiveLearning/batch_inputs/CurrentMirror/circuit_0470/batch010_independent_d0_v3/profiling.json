@@ -1,0 +1,847 @@
+{
+  "circuit_type": "CurrentMirror",
+  "circuit_id": "circuit_0470",
+  "anchor": {
+    "sample_id": "anchor_nominal",
+    "params": {
+      "IB1": -0.0001
+    },
+    "normalized_params": {},
+    "parameter_valid": true,
+    "simulation_valid": true,
+    "functional_valid": true,
+    "functional_failure_reasons": [],
+    "current_error": 0.006525248889084129,
+    "output_resistance": 50691871.22279691,
+    "compliance_relative_variation": 0.9903625587707674,
+    "tracking_max_error": 0.006572864120418105,
+    "compliance_quality_smoke_passed": false,
+    "tracking_quality_smoke_passed": true,
+    "compliance_output_branch_alive": true,
+    "reference_responsive": true,
+    "failure_reason": null,
+    "source": "nominal",
+    "preparation_evaluation_wall_time_seconds": 0.05555388214997947
+  },
+  "anchor_discovery": {
+    "status": "ANCHOR_FOUND",
+    "evaluated_candidates": 1,
+    "sampling": {
+      "method": "nominal_local_sobol",
+      "seed": 42,
+      "local_radius": 0.02,
+      "max_evaluations": 12
+    },
+    "elapsed_seconds": 0.05557161080650985,
+    "failure_distribution": {}
+  },
+  "total_samples": 25,
+  "parameter_valid_samples": 25,
+  "simulation_valid_samples": 25,
+  "functional_valid_samples": 25,
+  "performance": {
+    "current_error": {
+      "min": 0.005505592349582569,
+      "median": 0.00652875517271793,
+      "max": 0.007455261366920466
+    },
+    "output_resistance": {
+      "min": 1432860.100105749,
+      "median": 50015593.390106,
+      "max": 2477718232.2958083
+    }
+  },
+  "valid_candidate_metrics": [
+    {
+      "sample_id": "profile_local_0_0000",
+      "metrics": {
+        "current_error": 0.006520077466662699,
+        "output_resistance": 51706026.48811446
+      }
+    },
+    {
+      "sample_id": "profile_local_0_0001",
+      "metrics": {
+        "current_error": 0.006479027485261489,
+        "output_resistance": 60509646.43441418
+      }
+    },
+    {
+      "sample_id": "profile_local_0_0002",
+      "metrics": {
+        "current_error": 0.006568942904722409,
+        "output_resistance": 42879213.29803503
+      }
+    },
+    {
+      "sample_id": "profile_local_0_0003",
+      "metrics": {
+        "current_error": 0.006513038300563263,
+        "output_resistance": 53119118.09907525
+      }
+    },
+    {
+      "sample_id": "profile_local_0_0004",
+      "metrics": {
+        "current_error": 0.006547228412325488,
+        "output_resistance": 46598636.60673116
+      }
+    },
+    {
+      "sample_id": "profile_local_0_0005",
+      "metrics": {
+        "current_error": 0.006486393512826284,
+        "output_resistance": 58826419.60814908
+      }
+    },
+    {
+      "sample_id": "profile_local_0_0006",
+      "metrics": {
+        "current_error": 0.006495180735210475,
+        "output_resistance": 56879521.408546425
+      }
+    },
+    {
+      "sample_id": "profile_local_0_0007",
+      "metrics": {
+        "current_error": 0.006538419403140379,
+        "output_resistance": 48197902.754305676
+      }
+    },
+    {
+      "sample_id": "profile_local_0_0008",
+      "metrics": {
+        "current_error": 0.00652875517271793,
+        "output_resistance": 50015593.390106
+      }
+    },
+    {
+      "sample_id": "profile_local_0_0009",
+      "metrics": {
+        "current_error": 0.006496046498272557,
+        "output_resistance": 56691222.24889663
+      }
+    },
+    {
+      "sample_id": "profile_local_0_0010",
+      "metrics": {
+        "current_error": 0.006564800100900971,
+        "output_resistance": 43565164.384934016
+      }
+    },
+    {
+      "sample_id": "profile_local_0_0011",
+      "metrics": {
+        "current_error": 0.006566043140893749,
+        "output_resistance": 43358202.56651005
+      }
+    },
+    {
+      "sample_id": "profile_global_0_0000",
+      "metrics": {
+        "current_error": 0.007455261366920466,
+        "output_resistance": 1432860.100105749
+      }
+    },
+    {
+      "sample_id": "profile_global_0_0001",
+      "metrics": {
+        "current_error": 0.006334722738974064,
+        "output_resistance": 105145677.19224355
+      }
+    },
+    {
+      "sample_id": "profile_global_0_0002",
+      "metrics": {
+        "current_error": 0.005505592349582569,
+        "output_resistance": 2477718232.2958083
+      }
+    },
+    {
+      "sample_id": "profile_global_0_0003",
+      "metrics": {
+        "current_error": 0.006779886796539507,
+        "output_resistance": 19107171.4156001
+      }
+    },
+    {
+      "sample_id": "profile_global_0_0004",
+      "metrics": {
+        "current_error": 0.006951156102049487,
+        "output_resistance": 9909453.56370101
+      }
+    },
+    {
+      "sample_id": "profile_global_0_0005",
+      "metrics": {
+        "current_error": 0.0056779425135508755,
+        "output_resistance": 1290468717.6416535
+      }
+    },
+    {
+      "sample_id": "profile_global_0_0006",
+      "metrics": {
+        "current_error": 0.006205397565411023,
+        "output_resistance": 172476432.8004683
+      }
+    },
+    {
+      "sample_id": "profile_global_0_0007",
+      "metrics": {
+        "current_error": 0.007326390768524105,
+        "output_resistance": 2349524.7632590155
+      }
+    },
+    {
+      "sample_id": "profile_global_0_0008",
+      "metrics": {
+        "current_error": 0.00715534450729468,
+        "output_resistance": 4528642.938626955
+      }
+    },
+    {
+      "sample_id": "profile_global_0_0009",
+      "metrics": {
+        "current_error": 0.0060335280829715045,
+        "output_resistance": 332756628.68466026
+      }
+    },
+    {
+      "sample_id": "profile_global_0_0010",
+      "metrics": {
+        "current_error": 0.005807775745018634,
+        "output_resistance": 787514677.1426642
+      }
+    },
+    {
+      "sample_id": "profile_global_0_0011",
+      "metrics": {
+        "current_error": 0.00708000150266033,
+        "output_resistance": 6046007.4419238465
+      }
+    },
+    {
+      "sample_id": "profile_global_0_0012",
+      "metrics": {
+        "current_error": 0.0066503717930432886,
+        "output_resistance": 31387470.972818144
+      }
+    }
+  ],
+  "failure_distribution": {},
+  "elapsed_seconds": 0.29926191200502217,
+  "spice_point_evaluations": 25,
+  "anchor_spice_point_evaluations": 1,
+  "records": [
+    {
+      "sample_id": "profile_local_0_0000",
+      "params": {
+        "IB1": -9.803941442307724e-05
+      },
+      "normalized_params": {
+        "IB1": 0.4978501771505542
+      },
+      "parameter_valid": true,
+      "simulation_valid": true,
+      "functional_valid": true,
+      "functional_failure_reasons": [],
+      "current_error": 0.006520077466662699,
+      "output_resistance": 51706026.48811446,
+      "compliance_relative_variation": 0.999753130423868,
+      "tracking_max_error": 0.006567693206961457,
+      "compliance_quality_smoke_passed": false,
+      "tracking_quality_smoke_passed": true,
+      "compliance_output_branch_alive": true,
+      "reference_responsive": true,
+      "failure_reason": null,
+      "source": "local",
+      "preparation_evaluation_wall_time_seconds": 0.010820511961355805
+    },
+    {
+      "sample_id": "profile_local_0_0001",
+      "params": {
+        "IB1": -8.378073150419546e-05
+      },
+      "normalized_params": {
+        "IB1": 0.4807860369856767
+      },
+      "parameter_valid": true,
+      "simulation_valid": true,
+      "functional_valid": true,
+      "functional_failure_reasons": [],
+      "current_error": 0.006479027485261489,
+      "output_resistance": 60509646.43441418,
+      "compliance_relative_variation": 0.9214786663887101,
+      "tracking_max_error": 0.006526647319645679,
+      "compliance_quality_smoke_passed": false,
+      "tracking_quality_smoke_passed": true,
+      "compliance_output_branch_alive": true,
+      "reference_responsive": true,
+      "failure_reason": null,
+      "source": "local",
+      "preparation_evaluation_wall_time_seconds": 0.010598937049508095
+    },
+    {
+      "sample_id": "profile_local_0_0002",
+      "params": {
+        "IB1": -0.00011821163080994945
+      },
+      "normalized_params": {
+        "IB1": 0.5181650521906238
+      },
+      "parameter_valid": true,
+      "simulation_valid": true,
+      "functional_valid": true,
+      "functional_failure_reasons": [],
+      "current_error": 0.006568942904722409,
+      "output_resistance": 42879213.29803503,
+      "compliance_relative_variation": 0.9070799999055352,
+      "tracking_max_error": 0.006616553886512331,
+      "compliance_quality_smoke_passed": false,
+      "tracking_quality_smoke_passed": true,
+      "compliance_output_branch_alive": true,
+      "reference_responsive": true,
+      "failure_reason": null,
+      "source": "local",
+      "preparation_evaluation_wall_time_seconds": 0.010851011844351888
+    },
+    {
+      "sample_id": "profile_local_0_0003",
+      "params": {
+        "IB1": -9.543238826847688e-05
+      },
+      "normalized_params": {
+        "IB1": 0.49492394812861584
+      },
+      "parameter_valid": true,
+      "simulation_valid": true,
+      "functional_valid": true,
+      "functional_failure_reasons": [],
+      "current_error": 0.006513038300563263,
+      "output_resistance": 53119118.09907525,
+      "compliance_relative_variation": 0.9863006510282213,
+      "tracking_max_error": 0.006560654735867929,
+      "compliance_quality_smoke_passed": false,
+      "tracking_quality_smoke_passed": true,
+      "compliance_output_branch_alive": true,
+      "reference_responsive": true,
+      "failure_reason": null,
+      "source": "local",
+      "preparation_evaluation_wall_time_seconds": 0.010441591031849384
+    },
+    {
+      "sample_id": "profile_local_0_0004",
+      "params": {
+        "IB1": -0.00010878014886216119
+      },
+      "normalized_params": {
+        "IB1": 0.5091374121994233
+      },
+      "parameter_valid": true,
+      "simulation_valid": true,
+      "functional_valid": true,
+      "functional_failure_reasons": [],
+      "current_error": 0.006547228412325488,
+      "output_resistance": 46598636.60673116,
+      "compliance_relative_variation": 0.9483873710780407,
+      "tracking_max_error": 0.006594841495232283,
+      "compliance_quality_smoke_passed": false,
+      "tracking_quality_smoke_passed": true,
+      "compliance_output_branch_alive": true,
+      "reference_responsive": true,
+      "failure_reason": null,
+      "source": "local",
+      "preparation_evaluation_wall_time_seconds": 0.010305840987712145
+    },
+    {
+      "sample_id": "profile_local_0_0005",
+      "params": {
+        "IB1": -8.617706451424677e-05
+      },
+      "normalized_params": {
+        "IB1": 0.48384792411197547
+      },
+      "parameter_valid": true,
+      "simulation_valid": true,
+      "functional_valid": true,
+      "functional_failure_reasons": [],
+      "current_error": 0.006486393512826284,
+      "output_resistance": 58826419.60814908,
+      "compliance_relative_variation": 0.9354779594391069,
+      "tracking_max_error": 0.0065340126047142245,
+      "compliance_quality_smoke_passed": false,
+      "tracking_quality_smoke_passed": true,
+      "compliance_output_branch_alive": true,
+      "reference_responsive": true,
+      "failure_reason": null,
+      "source": "local",
+      "preparation_evaluation_wall_time_seconds": 0.010925699025392532
+    },
+    {
+      "sample_id": "profile_local_0_0006",
+      "params": {
+        "IB1": -8.912561293393452e-05
+      },
+      "normalized_params": {
+        "IB1": 0.4875006323991604
+      },
+      "parameter_valid": true,
+      "simulation_valid": true,
+      "functional_valid": true,
+      "functional_failure_reasons": [],
+      "current_error": 0.006495180735210475,
+      "output_resistance": 56879521.408546425,
+      "compliance_relative_variation": 0.9522127953013935,
+      "tracking_max_error": 0.006542798946193004,
+      "compliance_quality_smoke_passed": false,
+      "tracking_quality_smoke_passed": true,
+      "compliance_output_branch_alive": true,
+      "reference_responsive": true,
+      "failure_reason": null,
+      "source": "local",
+      "preparation_evaluation_wall_time_seconds": 0.010510276071727276
+    },
+    {
+      "sample_id": "profile_local_0_0007",
+      "params": {
+        "IB1": -0.00010517220694965521
+      },
+      "normalized_params": {
+        "IB1": 0.505475246829118
+      },
+      "parameter_valid": true,
+      "simulation_valid": true,
+      "functional_valid": true,
+      "functional_failure_reasons": [],
+      "current_error": 0.006538419403140379,
+      "output_resistance": 48197902.754305676,
+      "compliance_relative_variation": 0.965198602930587,
+      "tracking_max_error": 0.006586033344351078,
+      "compliance_quality_smoke_passed": false,
+      "tracking_quality_smoke_passed": true,
+      "compliance_output_branch_alive": true,
+      "reference_responsive": true,
+      "failure_reason": null,
+      "source": "local",
+      "preparation_evaluation_wall_time_seconds": 0.01228631311096251
+    },
+    {
+      "sample_id": "profile_local_0_0008",
+      "params": {
+        "IB1": -0.00010135156776272251
+      },
+      "normalized_params": {
+        "IB1": 0.5014576177477186
+      },
+      "parameter_valid": true,
+      "simulation_valid": true,
+      "functional_valid": true,
+      "functional_failure_reasons": [],
+      "current_error": 0.00652875517271793,
+      "output_resistance": 50015593.390106,
+      "compliance_relative_variation": 0.983661376008057,
+      "tracking_max_error": 0.00657637005974848,
+      "compliance_quality_smoke_passed": false,
+      "tracking_quality_smoke_passed": true,
+      "compliance_output_branch_alive": true,
+      "reference_responsive": true,
+      "failure_reason": null,
+      "source": "local",
+      "preparation_evaluation_wall_time_seconds": 0.014073037775233388
+    },
+    {
+      "sample_id": "profile_local_0_0009",
+      "params": {
+        "IB1": -8.942152663348888e-05
+      },
+      "normalized_params": {
+        "IB1": 0.487860520003112
+      },
+      "parameter_valid": true,
+      "simulation_valid": true,
+      "functional_valid": true,
+      "functional_failure_reasons": [],
+      "current_error": 0.006496046498272557,
+      "output_resistance": 56691222.24889663,
+      "compliance_relative_variation": 0.9538633098657056,
+      "tracking_max_error": 0.006543664622688089,
+      "compliance_quality_smoke_passed": false,
+      "tracking_quality_smoke_passed": true,
+      "compliance_output_branch_alive": true,
+      "reference_responsive": true,
+      "failure_reason": null,
+      "source": "local",
+      "preparation_evaluation_wall_time_seconds": 0.01363367703743279
+    },
+    {
+      "sample_id": "profile_local_0_0010",
+      "params": {
+        "IB1": -0.00011635116175647564
+      },
+      "normalized_params": {
+        "IB1": 0.5164426810094854
+      },
+      "parameter_valid": true,
+      "simulation_valid": true,
+      "functional_valid": true,
+      "functional_failure_reasons": [],
+      "current_error": 0.006564800100900971,
+      "output_resistance": 43565164.384934016,
+      "compliance_relative_variation": 0.914941894815855,
+      "tracking_max_error": 0.0066124114820043526,
+      "compliance_quality_smoke_passed": false,
+      "tracking_quality_smoke_passed": true,
+      "compliance_output_branch_alive": true,
+      "reference_responsive": true,
+      "failure_reason": null,
+      "source": "local",
+      "preparation_evaluation_wall_time_seconds": 0.011588427936658263
+    },
+    {
+      "sample_id": "profile_local_0_0011",
+      "params": {
+        "IB1": -0.00011690629417792129
+      },
+      "normalized_params": {
+        "IB1": 0.5169594734986553
+      },
+      "parameter_valid": true,
+      "simulation_valid": true,
+      "functional_valid": true,
+      "functional_failure_reasons": [],
+      "current_error": 0.006566043140893749,
+      "output_resistance": 43358202.56651005,
+      "compliance_relative_variation": 0.9125818586664536,
+      "tracking_max_error": 0.006613654402095385,
+      "compliance_quality_smoke_passed": false,
+      "tracking_quality_smoke_passed": true,
+      "compliance_output_branch_alive": true,
+      "reference_responsive": true,
+      "failure_reason": null,
+      "source": "local",
+      "preparation_evaluation_wall_time_seconds": 0.011133163934573531
+    },
+    {
+      "sample_id": "profile_global_0_0000",
+      "params": {
+        "IB1": -0.0035307172207961787
+      },
+      "normalized_params": {
+        "IB1": 0.8869657339528203
+      },
+      "parameter_valid": true,
+      "simulation_valid": true,
+      "functional_valid": true,
+      "functional_failure_reasons": [],
+      "current_error": 0.007455261366920466,
+      "output_resistance": 1432860.100105749,
+      "compliance_relative_variation": 0.047648691883569856,
+      "tracking_max_error": 0.007502793315228552,
+      "compliance_quality_smoke_passed": true,
+      "tracking_quality_smoke_passed": true,
+      "compliance_output_branch_alive": true,
+      "reference_responsive": true,
+      "failure_reason": null,
+      "source": "global",
+      "preparation_evaluation_wall_time_seconds": 0.011686190962791443
+    },
+    {
+      "sample_id": "profile_global_0_0001",
+      "params": {
+        "IB1": -4.822229292125848e-05
+      },
+      "normalized_params": {
+        "IB1": 0.42081196419894695
+      },
+      "parameter_valid": true,
+      "simulation_valid": true,
+      "functional_valid": true,
+      "functional_failure_reasons": [],
+      "current_error": 0.006334722738974064,
+      "output_resistance": 105145677.19224355,
+      "compliance_relative_variation": 0.6599357751646228,
+      "tracking_max_error": 0.006382357391181111,
+      "compliance_quality_smoke_passed": false,
+      "tracking_quality_smoke_passed": true,
+      "compliance_output_branch_alive": true,
+      "reference_responsive": true,
+      "failure_reason": null,
+      "source": "global",
+      "preparation_evaluation_wall_time_seconds": 0.011430368991568685
+    },
+    {
+      "sample_id": "profile_global_0_0002",
+      "params": {
+        "IB1": -2.030933893338047e-06
+      },
+      "normalized_params": {
+        "IB1": 0.07692394685000181
+      },
+      "parameter_valid": true,
+      "simulation_valid": true,
+      "functional_valid": true,
+      "functional_failure_reasons": [],
+      "current_error": 0.005505592349582569,
+      "output_resistance": 2477718232.2958083,
+      "compliance_relative_variation": 0.04098892104666887,
+      "tracking_max_error": 0.0055534885451688915,
+      "compliance_quality_smoke_passed": true,
+      "tracking_quality_smoke_passed": true,
+      "compliance_output_branch_alive": true,
+      "reference_responsive": true,
+      "failure_reason": null,
+      "source": "global",
+      "preparation_evaluation_wall_time_seconds": 0.011485868832096457
+    },
+    {
+      "sample_id": "profile_global_0_0003",
+      "params": {
+        "IB1": -0.0002651765636257785
+      },
+      "normalized_params": {
+        "IB1": 0.6058837845921516
+      },
+      "parameter_valid": true,
+      "simulation_valid": true,
+      "functional_valid": true,
+      "functional_failure_reasons": [],
+      "current_error": 0.006779886796539507,
+      "output_resistance": 19107171.4156001,
+      "compliance_relative_variation": 0.539538723547563,
+      "tracking_max_error": 0.00682747814898668,
+      "compliance_quality_smoke_passed": false,
+      "tracking_quality_smoke_passed": true,
+      "compliance_output_branch_alive": true,
+      "reference_responsive": true,
+      "failure_reason": null,
+      "source": "global",
+      "preparation_evaluation_wall_time_seconds": 0.01108540897257626
+    },
+    {
+      "sample_id": "profile_global_0_0004",
+      "params": {
+        "IB1": -0.0005111189036216623
+      },
+      "normalized_params": {
+        "IB1": 0.6771304858848453
+      },
+      "parameter_valid": true,
+      "simulation_valid": true,
+      "functional_valid": true,
+      "functional_failure_reasons": [],
+      "current_error": 0.006951156102049487,
+      "output_resistance": 9909453.56370101,
+      "compliance_relative_variation": 0.3198624418746305,
+      "tracking_max_error": 0.006998732179759886,
+      "compliance_quality_smoke_passed": false,
+      "tracking_quality_smoke_passed": true,
+      "compliance_output_branch_alive": true,
+      "reference_responsive": true,
+      "failure_reason": null,
+      "source": "global",
+      "preparation_evaluation_wall_time_seconds": 0.011320044985041022
+    },
+    {
+      "sample_id": "profile_global_0_0005",
+      "params": {
+        "IB1": -3.916525528077636e-06
+      },
+      "normalized_params": {
+        "IB1": 0.14822524040937424
+      },
+      "parameter_valid": true,
+      "simulation_valid": true,
+      "functional_valid": true,
+      "functional_failure_reasons": [],
+      "current_error": 0.0056779425135508755,
+      "output_resistance": 1290468717.6416535,
+      "compliance_relative_variation": 0.07737945689094948,
+      "tracking_max_error": 0.005725724152378466,
+      "compliance_quality_smoke_passed": false,
+      "tracking_quality_smoke_passed": true,
+      "compliance_output_branch_alive": true,
+      "reference_responsive": true,
+      "failure_reason": null,
+      "source": "global",
+      "preparation_evaluation_wall_time_seconds": 0.011432260042056441
+    },
+    {
+      "sample_id": "profile_global_0_0006",
+      "params": {
+        "IB1": -2.9398505020100346e-05
+      },
+      "normalized_params": {
+        "IB1": 0.3670813115313649
+      },
+      "parameter_valid": true,
+      "simulation_valid": true,
+      "functional_valid": true,
+      "functional_failure_reasons": [],
+      "current_error": 0.006205397565411023,
+      "output_resistance": 172476432.8004683,
+      "compliance_relative_variation": 0.4623047560982603,
+      "tracking_max_error": 0.0062530483371835656,
+      "compliance_quality_smoke_passed": false,
+      "tracking_quality_smoke_passed": true,
+      "compliance_output_branch_alive": true,
+      "reference_responsive": true,
+      "failure_reason": null,
+      "source": "global",
+      "preparation_evaluation_wall_time_seconds": 0.010821935953572392
+    },
+    {
+      "sample_id": "profile_global_0_0007",
+      "params": {
+        "IB1": -0.002153861889044369
+      },
+      "normalized_params": {
+        "IB1": 0.833304462954402
+      },
+      "parameter_valid": true,
+      "simulation_valid": true,
+      "functional_valid": true,
+      "functional_failure_reasons": [],
+      "current_error": 0.007326390768524105,
+      "output_resistance": 2349524.7632590155,
+      "compliance_relative_variation": 0.0814346140453045,
+      "tracking_max_error": 0.007373933892019484,
+      "compliance_quality_smoke_passed": false,
+      "tracking_quality_smoke_passed": true,
+      "compliance_output_branch_alive": true,
+      "reference_responsive": true,
+      "failure_reason": null,
+      "source": "global",
+      "preparation_evaluation_wall_time_seconds": 0.011411516927182674
+    },
+    {
+      "sample_id": "profile_global_0_0008",
+      "params": {
+        "IB1": -0.0011179047695752328
+      },
+      "normalized_params": {
+        "IB1": 0.7621012022718787
+      },
+      "parameter_valid": true,
+      "simulation_valid": true,
+      "functional_valid": true,
+      "functional_failure_reasons": [],
+      "current_error": 0.00715534450729468,
+      "output_resistance": 4528642.938626955,
+      "compliance_relative_variation": 0.1570202080666932,
+      "tracking_max_error": 0.007202902981994101,
+      "compliance_quality_smoke_passed": false,
+      "tracking_quality_smoke_passed": true,
+      "compliance_output_branch_alive": true,
+      "reference_responsive": true,
+      "failure_reason": null,
+      "source": "global",
+      "preparation_evaluation_wall_time_seconds": 0.011007922934368253
+    },
+    {
+      "sample_id": "profile_global_0_0009",
+      "params": {
+        "IB1": -1.5234415239971973e-05
+      },
+      "normalized_params": {
+        "IB1": 0.29570644721388817
+      },
+      "parameter_valid": true,
+      "simulation_valid": true,
+      "functional_valid": true,
+      "functional_failure_reasons": [],
+      "current_error": 0.0060335280829715045,
+      "output_resistance": 332756628.68466026,
+      "compliance_relative_variation": 0.2699760614244766,
+      "tracking_max_error": 0.006081204891021476,
+      "compliance_quality_smoke_passed": false,
+      "tracking_quality_smoke_passed": true,
+      "compliance_output_branch_alive": true,
+      "reference_responsive": true,
+      "failure_reason": null,
+      "source": "global",
+      "preparation_evaluation_wall_time_seconds": 0.010831005871295929
+    },
+    {
+      "sample_id": "profile_global_0_0010",
+      "params": {
+        "IB1": -6.428855958106587e-06
+      },
+      "normalized_params": {
+        "IB1": 0.20203342381864786
+      },
+      "parameter_valid": true,
+      "simulation_valid": true,
+      "functional_valid": true,
+      "functional_failure_reasons": [],
+      "current_error": 0.005807775745018634,
+      "output_resistance": 787514677.1426642,
+      "compliance_relative_variation": 0.12379107895617264,
+      "tracking_max_error": 0.005855505622804609,
+      "compliance_quality_smoke_passed": false,
+      "tracking_quality_smoke_passed": true,
+      "compliance_output_branch_alive": true,
+      "reference_responsive": true,
+      "failure_reason": null,
+      "source": "global",
+      "preparation_evaluation_wall_time_seconds": 0.011350838001817465
+    },
+    {
+      "sample_id": "profile_global_0_0011",
+      "params": {
+        "IB1": -0.000837484368786722
+      },
+      "normalized_params": {
+        "IB1": 0.7307441774755716
+      },
+      "parameter_valid": true,
+      "simulation_valid": true,
+      "functional_valid": true,
+      "functional_failure_reasons": [],
+      "current_error": 0.00708000150266033,
+      "output_resistance": 6046007.4419238465,
+      "compliance_relative_variation": 0.2061253741228421,
+      "tracking_max_error": 0.007127566161241568,
+      "compliance_quality_smoke_passed": false,
+      "tracking_quality_smoke_passed": true,
+      "compliance_output_branch_alive": true,
+      "reference_responsive": true,
+      "failure_reason": null,
+      "source": "global",
+      "preparation_evaluation_wall_time_seconds": 0.010748890927061439
+    },
+    {
+      "sample_id": "profile_global_0_0012",
+      "params": {
+        "IB1": -0.00016146886373581278
+      },
+      "normalized_params": {
+        "IB1": 0.5520221972838044
+      },
+      "parameter_valid": true,
+      "simulation_valid": true,
+      "functional_valid": true,
+      "functional_failure_reasons": [],
+      "current_error": 0.0066503717930432886,
+      "output_resistance": 31387470.972818144,
+      "compliance_relative_variation": 0.7559240591499456,
+      "tracking_max_error": 0.006697975354967754,
+      "compliance_quality_smoke_passed": false,
+      "tracking_quality_smoke_passed": true,
+      "compliance_output_branch_alive": true,
+      "reference_responsive": true,
+      "failure_reason": null,
+      "source": "global",
+      "preparation_evaluation_wall_time_seconds": 0.011085618985816836
+    }
+  ],
+  "evaluator_unstable": false,
+  "sampling": {
+    "method": "anchor_local_plus_sobol",
+    "seed": 142,
+    "local_radius": 0.02,
+    "initial_samples": 25,
+    "additional_samples": 0,
+    "max_evaluations": 25
+  },
+  "evaluation_backend": "spice"
+}

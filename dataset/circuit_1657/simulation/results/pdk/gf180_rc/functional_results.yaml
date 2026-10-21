@@ -1,0 +1,24 @@
+schema_version: 1
+circuit: circuit_1657
+pdk_stage: gf180_rc
+actual_type: single_ended_opamp
+functional_status: PASS
+performance_status: PASS
+numerical_status: PASS
+physical_status: PASS
+core_analyses:
+- ac
+- dc
+remaining_issue: null
+migration_class: IDEAL_PASS_TO_GF180_PASS
+parameter_delta: []
+numerical_assist_used:
+  nodeset: true
+  VDD_ramp: true
+  source_gmin_stepping: true
+  nonzero_clock_edges: true
+  startup_perturbation: true
+  bounded_maxstep: true
+  per_circuit_timeout: orchestrator controlled
+topology_limitation: false
+PDK_eligible: true

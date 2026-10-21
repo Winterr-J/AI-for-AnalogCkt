@@ -1,0 +1,84 @@
+{
+  "status": "READY_FOR_D0",
+  "failed_stage": null,
+  "reason": null,
+  "error_class": null,
+  "circuit_type": "OpAmp",
+  "circuit_id": "circuit_1657",
+  "artifact_paths": {
+    "run_directory": "/home/ubuntu/batch010_manual_preparation_v3/circuit_1657/OpAmp_circuit_1657_pijzvbf9",
+    "anchor": "/home/ubuntu/batch010_manual_preparation_v3/circuit_1657/OpAmp_circuit_1657_pijzvbf9/anchor.json",
+    "profiling": "/home/ubuntu/batch010_manual_preparation_v3/circuit_1657/OpAmp_circuit_1657_pijzvbf9/profiling.json",
+    "target_generation": "/home/ubuntu/batch010_manual_preparation_v3/circuit_1657/OpAmp_circuit_1657_pijzvbf9/target_generation.json",
+    "config": "/home/ubuntu/batch010_manual_preparation_v3/circuit_1657/OpAmp_circuit_1657_pijzvbf9/active_learning_config.yaml",
+    "result": "/home/ubuntu/batch010_manual_preparation_v3/circuit_1657/OpAmp_circuit_1657_pijzvbf9/preparation_result.json"
+  },
+  "costs": {
+    "evaluation_backend": "spice",
+    "anchor_spice_point_evaluations": 1,
+    "profile_spice_point_evaluations": 25,
+    "llm_calls": 2,
+    "llm_retries": 1,
+    "llm_usage": [
+      {
+        "stage": "auto_target",
+        "round": 1,
+        "provider": "gemini",
+        "model": "gemini-3.5-flash-lite",
+        "input_tokens": 2127,
+        "output_tokens": 337,
+        "total_tokens": 2464
+      },
+      {
+        "stage": "auto_target",
+        "round": 2,
+        "provider": "gemini",
+        "model": "gemini-3.5-flash-lite",
+        "input_tokens": 2137,
+        "output_tokens": 281,
+        "total_tokens": 2418
+      }
+    ],
+    "anchor_seconds": 0.06572173000313342,
+    "profiling_seconds": 0.5054843018297106,
+    "target_generation_seconds": 4.846078980015591,
+    "llm_backend": "provider_api"
+  },
+  "profile_counts": {
+    "total_samples": 25,
+    "parameter_valid_samples": 25,
+    "simulation_valid_samples": 20,
+    "functional_valid_samples": 12
+  },
+  "validation": {
+    "valid": true,
+    "errors": [],
+    "target_specs": {
+      "low_frequency_open_loop_gain_db": {
+        "operator": ">=",
+        "value": 43.1
+      },
+      "unity_gain_frequency_hz": {
+        "operator": ">=",
+        "value": 121000000.0
+      },
+      "phase_margin_deg": {
+        "operator": ">=",
+        "value": 90.3
+      }
+    },
+    "joint_supporting_sample_ids": [
+      "profile_local_0_0001",
+      "profile_local_0_0002",
+      "profile_local_0_0003"
+    ]
+  },
+  "d0": {
+    "mode": "independent",
+    "path": "/home/ubuntu/batch010_manual_preparation_v3/circuit_1657/OpAmp_circuit_1657_pijzvbf9/d0/d0_v3_seed42.jsonl",
+    "anchor_sample_id": "anchor_nominal",
+    "seed": 42,
+    "initialized": false
+  },
+  "elapsed_seconds": 5.483573636971414
+}

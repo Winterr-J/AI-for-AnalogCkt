@@ -1,0 +1,9 @@
+circuit_id: circuit_0468
+circuit_number: 0468
+analoggenie_folder_id: 604
+circuit_type: current mirrors
+circuit_name: Basic two-transistor BJT current mirror (AnalogGenie 604)
+circuit_function: Copies a reference current into one or more output branches for bias generation and current scaling using the basic two-transistor bjt current mirror topology.
+source_ports: VSS, IOUT1, IB1
+device_summary: npn=2
+actual_circuit_type: basic BJT current mirror

@@ -1,0 +1,72 @@
+schema_version: 2
+circuit_id: circuit_0470
+circuit_type: "current mirrors"
+scope: ideal_device_parameters_only
+model_library:
+  ideal_gummel_poon_npn:
+    device_type: npn
+    model_type: Gummel_Poon
+    model_parameters:
+      IS:
+        optimizable: false
+        default: 1e-15
+        unit: A
+      BF:
+        optimizable: false
+        default: 100.0
+        unit: unitless
+      VAF:
+        optimizable: false
+        default: 100.0
+        unit: V
+device_design_space:
+  Q3:
+    device_type: npn
+    model_parameter: Q3_model
+    selectable_models:
+      - ideal_gummel_poon_npn
+    parameters:
+      m:
+        data_type: continuous
+        minimum: 1
+        maximum: 100
+        default: 1
+        unit: unitless
+        scale: linear
+        constraint_source: GF180MCU_limit
+        integer_only: true
+  Q2:
+    device_type: npn
+    model_parameter: Q2_model
+    selectable_models:
+      - ideal_gummel_poon_npn
+    parameters:
+      m:
+        data_type: continuous
+        minimum: 1
+        maximum: 100
+        default: 1
+        unit: unitless
+        scale: linear
+        constraint_source: GF180MCU_limit
+        integer_only: true
+  Q0:
+    device_type: npn
+    model_parameter: Q0_model
+    selectable_models:
+      - ideal_gummel_poon_npn
+    parameters:
+      m:
+        data_type: continuous
+        minimum: 1
+        maximum: 100
+        default: 1
+        unit: unitless
+        scale: linear
+        constraint_source: GF180MCU_limit
+        integer_only: true
+notes:
+  fixed_model_parameters: "Ideal MOS VTO/KP/LAMBDA, BJT IS/BF/VAF, and diode IS/N are defaults and are not optimizable"
+  geometry_alignment: "W, L, and m limits follow the corresponding GF180MCU envelopes where a native scalable primitive exists"
+  hierarchy_note: "Logic and transmission-gate symbols remain hierarchical blocks; wrapper-level W/L is not invented"
+  separation_note: "Operating values are stored separately in operating_space.yaml"

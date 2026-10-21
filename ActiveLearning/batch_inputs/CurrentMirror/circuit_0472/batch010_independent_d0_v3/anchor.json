@@ -1,0 +1,62 @@
+{
+  "status": "ANCHOR_FOUND",
+  "anchor": {
+    "sample_id": "anchor_nominal",
+    "params": {
+      "IB1": -0.0001,
+      "R0": 10000.0,
+      "R1": 10000.0
+    },
+    "normalized_params": {},
+    "parameter_valid": true,
+    "simulation_valid": true,
+    "functional_valid": true,
+    "functional_failure_reasons": [],
+    "current_error": 0.0003876460432572428,
+    "output_resistance": 28931134.000124402,
+    "compliance_relative_variation": 25.40516711845629,
+    "tracking_max_error": 0.0004303560435651669,
+    "compliance_quality_smoke_passed": false,
+    "tracking_quality_smoke_passed": true,
+    "compliance_output_branch_alive": true,
+    "reference_responsive": true,
+    "failure_reason": null,
+    "source": "nominal",
+    "preparation_evaluation_wall_time_seconds": 0.05781771894544363
+  },
+  "records": [
+    {
+      "sample_id": "anchor_nominal",
+      "params": {
+        "IB1": -0.0001,
+        "R0": 10000.0,
+        "R1": 10000.0
+      },
+      "normalized_params": {},
+      "parameter_valid": true,
+      "simulation_valid": true,
+      "functional_valid": true,
+      "functional_failure_reasons": [],
+      "current_error": 0.0003876460432572428,
+      "output_resistance": 28931134.000124402,
+      "compliance_relative_variation": 25.40516711845629,
+      "tracking_max_error": 0.0004303560435651669,
+      "compliance_quality_smoke_passed": false,
+      "tracking_quality_smoke_passed": true,
+      "compliance_output_branch_alive": true,
+      "reference_responsive": true,
+      "failure_reason": null,
+      "source": "nominal",
+      "preparation_evaluation_wall_time_seconds": 0.05781771894544363
+    }
+  ],
+  "evaluated_candidates": 1,
+  "spice_point_evaluations": 1,
+  "sampling": {
+    "method": "nominal_local_sobol",
+    "seed": 42,
+    "local_radius": 0.02,
+    "max_evaluations": 12
+  },
+  "elapsed_seconds": 0.05783460498787463
+}

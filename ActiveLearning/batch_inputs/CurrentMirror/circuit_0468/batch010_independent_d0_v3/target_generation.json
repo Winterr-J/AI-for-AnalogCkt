@@ -1,0 +1,66 @@
+{
+  "status": "TARGET_VALIDATED",
+  "proposal": {
+    "target_specs": {
+      "current_error": {
+        "operator": "<=",
+        "value": 0.009,
+        "unit": "ratio"
+      },
+      "output_resistance": {
+        "operator": ">=",
+        "value": 20000000.0,
+        "unit": "ohm"
+      }
+    },
+    "reason": "The selected target jointly achieves a lower current error (<= 0.009) and a significantly higher output resistance (>= 20 MΩ) than the anchor, successfully demonstrated by profile_global_0_0002 which achieves a current error of ~0.00882 and an output resistance of ~50.2 MΩ. The anchor fails the output resistance threshold of 20 MΩ (having only ~1.02 MΩ).",
+    "supporting_sample_ids": [
+      "profile_global_0_0002"
+    ],
+    "confidence": 1.0
+  },
+  "validation": {
+    "valid": true,
+    "errors": [],
+    "target_specs": {
+      "current_error": {
+        "operator": "<=",
+        "value": 0.009
+      },
+      "output_resistance": {
+        "operator": ">=",
+        "value": 20000000.0
+      }
+    },
+    "joint_supporting_sample_ids": [
+      "profile_global_0_0002",
+      "profile_global_0_0005"
+    ]
+  },
+  "attempts": 2,
+  "correction_attempts": 1,
+  "usage": [
+    {
+      "stage": "auto_target",
+      "round": 1,
+      "provider": "gemini",
+      "model": "gemini-3.5-flash-lite",
+      "input_tokens": 2362,
+      "output_tokens": 275,
+      "total_tokens": 2637
+    },
+    {
+      "stage": "auto_target",
+      "round": 2,
+      "provider": "gemini",
+      "model": "gemini-3.5-flash-lite",
+      "input_tokens": 2372,
+      "output_tokens": 243,
+      "total_tokens": 2615
+    }
+  ],
+  "elapsed_seconds": 4.578830297105014,
+  "provider": "gemini",
+  "model": "gemini-3.5-flash-lite",
+  "llm_backend": "provider_api"
+}

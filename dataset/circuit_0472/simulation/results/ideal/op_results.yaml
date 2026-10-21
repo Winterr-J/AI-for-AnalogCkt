@@ -1,0 +1,40 @@
+status: PASS
+node_voltages:
+  net05: 1.0096094758730367
+  iout1: 1.6500000000000001
+  net04: 1.0097480226547006
+  net02: 1.6603547996774177
+  ib1: 2.209989598217362
+  vdd: 3.3000000000000003
+branch_currents:
+  vvdd: -1.974532456759583e-06
+  viout1_probe: -9.996123539567428e-05
+mos_operating_regions: {}
+bjt_operating_points:
+  Q2:
+    ic: 1.9745258585025416e-06
+    ib: 1.9531801717797357e-08
+    vbe: 0.5496347985399443
+    vce: 1.6396452003225825
+    area: 1.0
+  Q1:
+    ic: 9.998046377832126e-05
+    ib: 9.943394968978321e-07
+    vbe: 0.6506067770227171
+    vce: 1.2002415755626614
+    area: 1.0
+  Q0:
+    ic: 9.99612320956746e-05
+    ib: 9.997165012392296e-07
+    vbe: 0.650745323804381
+    vce: 0.6403905241269634
+    area: 1.0
+key_bias_points:
+  metric_kind: current
+  nodes_or_branches:
+  - IOUT1
+  value: -9.996123539567428e-05
+warning_or_failure_reason: null
+final_functional_status: PASS
+topology_limitation: false
+pdk_eligibility: ELIGIBLE

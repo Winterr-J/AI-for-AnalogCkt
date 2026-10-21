@@ -1,0 +1,55 @@
+status: PASS
+node_voltages:
+  net012: 0.13162061133064412
+  net011: 0.13239731002639205
+  iout1: 1.6500000000000001
+  ib1: 1.1446926334479934
+branch_currents:
+  viout1_probe: -0.00010048855857012692
+mos_operating_regions:
+  M1:
+    id: 0.00010048855491442564
+    gm: 0.000265495781960873
+    vgs: 1.1446926334479934
+    vds: 0.132397310026392
+    vth: null
+    vdsat: 0.44469263344799337
+    conducting: true
+    region: triode_or_unknown
+  M0:
+    id: 9.999999742737349e-05
+    gm: 0.00026393418207437046
+    vgs: 1.1446926334479934
+    vds: 0.13162061133064418
+    vth: null
+    vdsat: 0.44469263344799337
+    conducting: true
+    region: triode_or_unknown
+  M4:
+    id: 9.999999885530732e-05
+    gm: 0.0006388306244952899
+    vgs: 1.0130720221173493
+    vds: 1.0130720221173493
+    vth: null
+    vdsat: 0.3130720221173492
+    conducting: true
+    region: saturation
+  M3:
+    id: 0.00010048855699480639
+    gm: 0.0006435482557588349
+    vgs: 1.0122953234216014
+    vds: 1.5176026899736081
+    vth: null
+    vdsat: 0.3122953234216014
+    conducting: true
+    region: saturation
+bjt_operating_points: {}
+key_bias_points:
+  metric_kind: current
+  nodes_or_branches:
+  - IOUT1
+  value: -0.00010048855857012692
+warning_or_failure_reason: null
+final_functional_status: PASS
+topology_limitation: false
+pdk_eligibility: ELIGIBLE

@@ -1,0 +1,28 @@
+status: PASS
+node_voltages:
+  xr1.21: 0.008087659271920872
+  xr1.11: 1.00152180658376
+  xr0.21: 0.008088769125959388
+  xr0.11: 1.0016592435088736
+  net05: 1.0096094659365578
+  iout1: 1.6500000000000001
+  net04: 1.0097480127157208
+  net02: 1.6603547897384392
+  ib1: 2.2099895882750413
+  vdd: 3.3000000000000003
+branch_currents:
+  vvdd: -1.974532456696916e-06
+  viout1_probe: -9.996123539588592e-05
+mos_operating_regions: {}
+bjt_operating_points: {}
+key_bias_points:
+  metric_kind: current
+  nodes_or_branches:
+  - IOUT1
+  value: -9.996123539588592e-05
+warning_or_failure_reason: 'device-internal OP vectors unavailable: RuntimeError: hierarchical GF180 internal vectors
+  omitted; scalar OP is rerun'
+simulation_stage: gf180mcu_rc
+final_functional_status: PASS
+topology_limitation: false
+pdk_eligibility: ELIGIBLE

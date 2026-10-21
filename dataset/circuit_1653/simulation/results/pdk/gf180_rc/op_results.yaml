@@ -1,0 +1,30 @@
+status: PASS
+analysis_mode: operating_point
+node_voltages:
+  vb1: 1.6500000000000001
+  net15: 0.49942650029267277
+  net014: 0.9853030770110813
+  net1006: 2.048970547790357
+  vdd: 3.3000000000000003
+  net1005: 0.9853030770110812
+  vin2: 1.2000000000000002
+  net11: 2.2079466941856185
+  net16: 0.24085994954984388
+  vin1: 1.2000000000000002
+  net20: 2.2079466941856185
+  vout1: 0.880301374418477
+  net9: 0.8775532105292685
+branch_currents:
+  vvdd: -0.0004122075147741684
+  vvin1: -1.2000000000000001e-12
+  vvin2: -1.2000000000000001e-12
+  vvb1: -0.0004798510184229911
+key_output:
+  kind: voltage
+  nodes_or_branches:
+  - VOUT1
+  value: 0.880301374418477
+warning_or_failure_reason: null
+pdk_stage: gf180_rc
+functional_stage_status: PASS
+core_analysis: false

@@ -1,0 +1,56 @@
+{
+  "status": "TARGET_VALIDATED",
+  "proposal": {
+    "target_specs": {
+      "current_error": {
+        "operator": "<=",
+        "value": 0.003,
+        "unit": "ratio"
+      },
+      "output_resistance": {
+        "operator": ">=",
+        "value": 1070000.0,
+        "unit": "ohm"
+      }
+    },
+    "reason": "We select an observed-feasible joint target based on sample 'profile_local_0_0011', which achieves a current_error of ~0.001999 (improving upon the anchor's 0.004886) and an output_resistance of ~1,079,900 ohms (exceeding the anchor's ~1,039,423 ohms). The anchor fails this output resistance threshold, satisfying the requirement that the anchor must fail at least one threshold.",
+    "supporting_sample_ids": [
+      "profile_local_0_0011"
+    ],
+    "confidence": 1.0
+  },
+  "validation": {
+    "valid": true,
+    "errors": [],
+    "target_specs": {
+      "current_error": {
+        "operator": "<=",
+        "value": 0.003
+      },
+      "output_resistance": {
+        "operator": ">=",
+        "value": 1070000.0
+      }
+    },
+    "joint_supporting_sample_ids": [
+      "profile_local_0_0011"
+    ]
+  },
+  "attempts": 1,
+  "correction_attempts": 0,
+  "usage": [
+    {
+      "stage": "auto_target",
+      "round": 1,
+      "provider": "gemini",
+      "model": "gemini-3.5-flash-lite",
+      "input_tokens": 2260,
+      "output_tokens": 256,
+      "total_tokens": 2516
+    }
+  ],
+  "elapsed_seconds": 2.435936987865716,
+  "provider": "gemini",
+  "model": "gemini-3.5-flash-lite",
+  "llm_backend": "provider_api"
+}

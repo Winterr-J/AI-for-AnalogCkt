@@ -1,0 +1,57 @@
+{
+  "status": "TARGET_VALIDATED",
+  "proposal": {
+    "target_specs": {
+      "current_error": {
+        "operator": "<=",
+        "value": 0.0001,
+        "unit": "ratio"
+      },
+      "output_resistance": {
+        "operator": ">=",
+        "value": 1000000000.0,
+        "unit": "ohm"
+      }
+    },
+    "reason": "The anchor has a current_error of ~1.31e-4 and output_resistance of ~5.02e7 ohm, failing the tighter joint threshold. Sample profile_global_0_0002 achieves an observed-feasible joint improvement with a current_error of 9.05e-5 (<= 0.0001) and an output_resistance of 2.46e9 ohm (>= 1.0e9 ohm).",
+    "supporting_sample_ids": [
+      "profile_global_0_0002"
+    ],
+    "confidence": 1.0
+  },
+  "validation": {
+    "valid": true,
+    "errors": [],
+    "target_specs": {
+      "current_error": {
+        "operator": "<=",
+        "value": 0.0001
+      },
+      "output_resistance": {
+        "operator": ">=",
+        "value": 1000000000.0
+      }
+    },
+    "joint_supporting_sample_ids": [
+      "profile_global_0_0002",
+      "profile_global_0_0005"
+    ]
+  },
+  "attempts": 1,
+  "correction_attempts": 0,
+  "usage": [
+    {
+      "stage": "auto_target",
+      "round": 1,
+      "provider": "gemini",
+      "model": "gemini-3.5-flash-lite",
+      "input_tokens": 2418,
+      "output_tokens": 248,
+      "total_tokens": 2666
+    }
+  ],
+  "elapsed_seconds": 2.447766952915117,
+  "provider": "gemini",
+  "model": "gemini-3.5-flash-lite",
+  "llm_backend": "provider_api"
+}

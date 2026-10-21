@@ -1,0 +1,6 @@
+status: N/R
+analysis_mode: tran
+reason: not required by frozen core-function criterion
+pdk_stage: gf180_rc
+functional_stage_status: PASS
+core_analysis: false

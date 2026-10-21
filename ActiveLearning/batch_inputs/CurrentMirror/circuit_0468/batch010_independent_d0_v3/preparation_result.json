@@ -1,0 +1,79 @@
+{
+  "status": "READY_FOR_D0",
+  "failed_stage": null,
+  "reason": null,
+  "error_class": null,
+  "circuit_type": "CurrentMirror",
+  "circuit_id": "circuit_0468",
+  "artifact_paths": {
+    "run_directory": "/home/ubuntu/batch010_manual_preparation_v3/circuit_0468/CurrentMirror_circuit_0468_iw6bjzn1",
+    "anchor": "/home/ubuntu/batch010_manual_preparation_v3/circuit_0468/CurrentMirror_circuit_0468_iw6bjzn1/anchor.json",
+    "profiling": "/home/ubuntu/batch010_manual_preparation_v3/circuit_0468/CurrentMirror_circuit_0468_iw6bjzn1/profiling.json",
+    "target_generation": "/home/ubuntu/batch010_manual_preparation_v3/circuit_0468/CurrentMirror_circuit_0468_iw6bjzn1/target_generation.json",
+    "config": "/home/ubuntu/batch010_manual_preparation_v3/circuit_0468/CurrentMirror_circuit_0468_iw6bjzn1/active_learning_config.yaml",
+    "result": "/home/ubuntu/batch010_manual_preparation_v3/circuit_0468/CurrentMirror_circuit_0468_iw6bjzn1/preparation_result.json"
+  },
+  "costs": {
+    "evaluation_backend": "spice",
+    "anchor_spice_point_evaluations": 1,
+    "profile_spice_point_evaluations": 25,
+    "llm_calls": 2,
+    "llm_retries": 1,
+    "llm_usage": [
+      {
+        "stage": "auto_target",
+        "round": 1,
+        "provider": "gemini",
+        "model": "gemini-3.5-flash-lite",
+        "input_tokens": 2362,
+        "output_tokens": 275,
+        "total_tokens": 2637
+      },
+      {
+        "stage": "auto_target",
+        "round": 2,
+        "provider": "gemini",
+        "model": "gemini-3.5-flash-lite",
+        "input_tokens": 2372,
+        "output_tokens": 243,
+        "total_tokens": 2615
+      }
+    ],
+    "anchor_seconds": 0.05521533195860684,
+    "profiling_seconds": 0.2852386210579425,
+    "target_generation_seconds": 4.578830297105014,
+    "llm_backend": "provider_api"
+  },
+  "profile_counts": {
+    "total_samples": 25,
+    "parameter_valid_samples": 25,
+    "simulation_valid_samples": 25,
+    "functional_valid_samples": 25
+  },
+  "validation": {
+    "valid": true,
+    "errors": [],
+    "target_specs": {
+      "current_error": {
+        "operator": "<=",
+        "value": 0.009
+      },
+      "output_resistance": {
+        "operator": ">=",
+        "value": 20000000.0
+      }
+    },
+    "joint_supporting_sample_ids": [
+      "profile_global_0_0002",
+      "profile_global_0_0005"
+    ]
+  },
+  "d0": {
+    "mode": "independent",
+    "path": "/home/ubuntu/batch010_manual_preparation_v3/circuit_0468/CurrentMirror_circuit_0468_iw6bjzn1/d0/d0_v3_seed42.jsonl",
+    "anchor_sample_id": "anchor_nominal",
+    "seed": 42,
+    "initialized": false
+  },
+  "elapsed_seconds": 4.95012151193805
+}

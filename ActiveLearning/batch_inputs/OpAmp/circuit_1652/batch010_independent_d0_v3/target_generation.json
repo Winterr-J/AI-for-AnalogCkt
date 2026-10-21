@@ -1,0 +1,65 @@
+{
+  "status": "TARGET_VALIDATED",
+  "proposal": {
+    "target_specs": {
+      "low_frequency_open_loop_gain_db": {
+        "operator": ">=",
+        "value": 49.34905017950357,
+        "unit": "dB"
+      },
+      "unity_gain_frequency_hz": {
+        "operator": ">=",
+        "value": 62429894.376227416,
+        "unit": "Hz"
+      },
+      "phase_margin_deg": {
+        "operator": ">=",
+        "value": 90.19533517166641,
+        "unit": "degree"
+      }
+    },
+    "reason": "The selected target specifications correspond directly to the jointly observed performance metrics of sample 'profile_local_0_0003'. In this sample, all three metrics (low_frequency_open_loop_gain_db, unity_gain_frequency_hz, and phase_margin_deg) are achieved simultaneously. The anchor fails to meet the low-frequency open-loop gain threshold (48.94 dB < 49.35 dB), satisfying the requirement that the anchor fails at least one threshold.",
+    "supporting_sample_ids": [
+      "profile_local_0_0003"
+    ],
+    "confidence": 1.0
+  },
+  "validation": {
+    "valid": true,
+    "errors": [],
+    "target_specs": {
+      "low_frequency_open_loop_gain_db": {
+        "operator": ">=",
+        "value": 49.34905017950357
+      },
+      "unity_gain_frequency_hz": {
+        "operator": ">=",
+        "value": 62429894.376227416
+      },
+      "phase_margin_deg": {
+        "operator": ">=",
+        "value": 90.19533517166641
+      }
+    },
+    "joint_supporting_sample_ids": [
+      "profile_local_0_0003"
+    ]
+  },
+  "attempts": 1,
+  "correction_attempts": 0,
+  "usage": [
+    {
+      "stage": "auto_target",
+      "round": 1,
+      "provider": "gemini",
+      "model": "gemini-3.5-flash-lite",
+      "input_tokens": 2102,
+      "output_tokens": 333,
+      "total_tokens": 2435
+    }
+  ],
+  "elapsed_seconds": 2.56762667093426,
+  "provider": "gemini",
+  "model": "gemini-3.5-flash-lite",
+  "llm_backend": "provider_api"
+}

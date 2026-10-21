@@ -1,0 +1,76 @@
+{
+  "status": "TARGET_VALIDATED",
+  "proposal": {
+    "target_specs": {
+      "low_frequency_open_loop_gain_db": {
+        "operator": ">=",
+        "value": 43.1,
+        "unit": "dB"
+      },
+      "unity_gain_frequency_hz": {
+        "operator": ">=",
+        "value": 121000000.0,
+        "unit": "Hz"
+      },
+      "phase_margin_deg": {
+        "operator": ">=",
+        "value": 90.3,
+        "unit": "degree"
+      }
+    },
+    "reason": "The anchor fails the unity gain frequency threshold (118.2 MHz < 121.0 MHz). Sample profile_local_0_0002 jointly achieves a low-frequency open-loop gain of 43.22 dB, a unity gain frequency of 123.08 MHz, and a phase margin of 90.40 degrees, successfully meeting all stricter target criteria.",
+    "supporting_sample_ids": [
+      "profile_local_0_0002"
+    ],
+    "confidence": 1.0
+  },
+  "validation": {
+    "valid": true,
+    "errors": [],
+    "target_specs": {
+      "low_frequency_open_loop_gain_db": {
+        "operator": ">=",
+        "value": 43.1
+      },
+      "unity_gain_frequency_hz": {
+        "operator": ">=",
+        "value": 121000000.0
+      },
+      "phase_margin_deg": {
+        "operator": ">=",
+        "value": 90.3
+      }
+    },
+    "joint_supporting_sample_ids": [
+      "profile_local_0_0001",
+      "profile_local_0_0002",
+      "profile_local_0_0003"
+    ]
+  },
+  "attempts": 2,
+  "correction_attempts": 1,
+  "usage": [
+    {
+      "stage": "auto_target",
+      "round": 1,
+      "provider": "gemini",
+      "model": "gemini-3.5-flash-lite",
+      "input_tokens": 2127,
+      "output_tokens": 337,
+      "total_tokens": 2464
+    },
+    {
+      "stage": "auto_target",
+      "round": 2,
+      "provider": "gemini",
+      "model": "gemini-3.5-flash-lite",
+      "input_tokens": 2137,
+      "output_tokens": 281,
+      "total_tokens": 2418
+    }
+  ],
+  "elapsed_seconds": 4.846078980015591,
+  "provider": "gemini",
+  "model": "gemini-3.5-flash-lite",
+  "llm_backend": "provider_api"
+}

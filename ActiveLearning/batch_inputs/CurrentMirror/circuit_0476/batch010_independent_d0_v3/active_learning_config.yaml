@@ -1,0 +1,81 @@
+active_learning:
+  max_iterations: 5
+data:
+  d0_path: d0/d0_v3_seed42.jsonl
+  initialize_if_missing: true
+  sampling_mode: v3
+  seed: 42
+  n_samples: 20
+  n_local: 10
+  n_global: 9
+  d0_mode: independent
+  d0_path_relative_to: config
+  initial_anchor:
+    source: profiling
+    sample_id: anchor_nominal
+    params:
+      IB1: -0.0001
+      L_M0: 1.0e-06
+      L_M1: 1.0e-06
+      L_M3: 1.0e-06
+      L_M4: 1.0e-06
+      W_M0: 9.999999999999999e-06
+      W_M1: 9.999999999999999e-06
+      W_M3: 9.999999999999999e-06
+      W_M4: 9.999999999999999e-06
+target_specs:
+  current_error:
+    operator: <=
+    value: 0.003
+  output_resistance:
+    operator: '>='
+    value: 1070000.0
+target_source: auto_generated
+performance_target_selected: true
+benchmark_version: auto_target_v1_CurrentMirror_circuit_0476__g1efsr9
+target_provenance:
+  source: automatic_profiling_llm_v1
+  purpose: experimental_benchmark_not_user_specification
+  profiling_backend: spice
+  circuit_type: CurrentMirror
+  circuit_id: circuit_0476
+  anchor:
+    sample_id: anchor_nominal
+    params:
+      IB1: -0.0001
+      L_M0: 1.0e-06
+      L_M1: 1.0e-06
+      L_M3: 1.0e-06
+      L_M4: 1.0e-06
+      W_M0: 9.999999999999999e-06
+      W_M1: 9.999999999999999e-06
+      W_M3: 9.999999999999999e-06
+      W_M4: 9.999999999999999e-06
+    metrics:
+      current_error: 0.004885585701267018
+      output_resistance: 1039423.640347882
+  profiling_artifact: profiling.json
+  target_recommendation: target_generation.json
+  generated_config: active_learning_config.yaml
+  d0_mode: independent
+  d0_anchor_source: profiling
+  d0_anchor_sample_id: anchor_nominal
+  d0_seed: 42
+  joint_supporting_sample_ids:
+  - profile_local_0_0011
+  llm_declared_supporting_sample_ids:
+  - profile_local_0_0011
+  reason: We select an observed-feasible joint target based on sample 'profile_local_0_0011',
+    which achieves a current_error of ~0.001999 (improving upon the anchor's 0.004886)
+    and an output_resistance of ~1,079,900 ohms (exceeding the anchor's ~1,039,423
+    ohms). The anchor fails this output resistance threshold, satisfying the requirement
+    that the anchor must fail at least one threshold.
+  confidence: 1.0
+  provider: gemini
+  model: gemini-3.5-flash-lite
+  llm_backend: provider_api
+  target_generation_attempts: 1
+  seed: 42
+  simulator_environment:
+    platform: Linux-6.8.0-138-generic-x86_64-with-glibc2.39
+    python: 3.12.3

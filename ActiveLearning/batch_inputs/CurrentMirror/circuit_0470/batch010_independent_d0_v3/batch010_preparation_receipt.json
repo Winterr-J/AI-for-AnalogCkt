@@ -1,0 +1,19 @@
+{
+  "circuit_id": "circuit_0470",
+  "status": "PREPARATION_READY",
+  "d0_record_count": 20,
+  "simulation_valid": 20,
+  "functional_valid": 19,
+  "meets_spec_count": 0,
+  "artifacts_sha256": {
+    "active_learning_config.yaml": "78ce9866a45c7afb8f192213cd68511b247b9a905c25c47488d853d7c73a4ae5",
+    "d0/d0_v3_seed42.jsonl": "1503ff79bf0d7e78ed5b4e03814798f5d80bf4082491c279288c073f5aab25ce",
+    "d0/d0_v3_seed42.csv": "cbc72b570e5304f71d06d82212a4dc86b6f857d5f2b368b00f65e407fdb889dc",
+    "d0/d0_v3_seed42_initialization.json": "a800910123ad75c704decf438a8cb623302d2c56db68d5574b02d66e27a64031",
+    "anchor.json": "ca5ca2c9a4c20bf2b2c0f414074ad78cb7c1adcbd6d1a9aa63c56d07e93841ea",
+    "profiling.json": "54851b9ed19e876f58d242cd0b9ffee619261844c80f38dbd09c785d17f150b9",
+    "target_generation.json": "482684b283f8d00c2144f533f53fd391bad8c83d51a300fb622f5d7fa68df7f6",
+    "preparation_result.json": "f56587360eba6643b46527d9b7c4930452150c7a3b9460f0ceff45cabc040796"
+  },
+  "origin": "batch010_manual_preparation_v3"
+}

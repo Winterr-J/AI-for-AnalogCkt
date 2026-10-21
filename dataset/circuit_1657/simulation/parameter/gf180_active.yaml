@@ -1,0 +1,174 @@
+schema_version: 1
+circuit:
+  id: circuit_1657
+  analoggenie_folder_id: 1817
+  category: opamp
+  actual_circuit_type: single_ended_opamp
+  base_topology: opamp
+simulation_stage: gf180_active
+pdk:
+  technology: GF180MCU
+  corner: typical
+  voltage_class: 3.3V
+  selected_voltage_class: 3p3
+  selection_reason: maximum declared supply=3.3 V
+replacement_scope: GF180 MOS/BJT active devices; ideal R/C/L retained
+device_parameters:
+  MM8:
+    device_type: nmos4
+    model: nfet_03v3
+    simulator_subcircuit: nmos_3p3
+    W_um: 10.0
+    L_um: 1.0
+    m: 1
+  MM7:
+    device_type: nmos4
+    model: nfet_03v3
+    simulator_subcircuit: nmos_3p3
+    W_um: 10.0
+    L_um: 1.0
+    m: 1
+  MM3:
+    device_type: nmos4
+    model: nfet_03v3
+    simulator_subcircuit: nmos_3p3
+    W_um: 10.0
+    L_um: 1.0
+    m: 1
+  MM0:
+    device_type: nmos4
+    model: nfet_03v3
+    simulator_subcircuit: nmos_3p3
+    W_um: 10.0
+    L_um: 1.0
+    m: 1
+  MM4:
+    device_type: nmos4
+    model: nfet_03v3
+    simulator_subcircuit: nmos_3p3
+    W_um: 10.0
+    L_um: 1.0
+    m: 1
+  MM6:
+    device_type: pmos4
+    model: pfet_03v3
+    simulator_subcircuit: pmos_3p3
+    W_um: 20.0
+    L_um: 1.0
+    m: 1
+  MM5:
+    device_type: pmos4
+    model: pfet_03v3
+    simulator_subcircuit: pmos_3p3
+    W_um: 20.0
+    L_um: 1.0
+    m: 1
+  MM1:
+    device_type: pmos4
+    model: pfet_03v3
+    simulator_subcircuit: pmos_3p3
+    W_um: 20.0
+    L_um: 1.0
+    m: 1
+  MM2:
+    device_type: pmos4
+    model: pfet_03v3
+    simulator_subcircuit: pmos_3p3
+    W_um: 20.0
+    L_um: 1.0
+    m: 1
+  MM2_dup2:
+    device_type: nmos4
+    model: nfet_03v3
+    simulator_subcircuit: nmos_3p3
+    W_um: 10.0
+    L_um: 1.0
+    m: 1
+  MM10:
+    device_type: nmos4
+    model: nfet_03v3
+    simulator_subcircuit: nmos_3p3
+    W_um: 10.0
+    L_um: 1.0
+    m: 1
+  MM1_dup2:
+    device_type: pmos4
+    model: pfet_03v3
+    simulator_subcircuit: pmos_3p3
+    W_um: 20.0
+    L_um: 1.0
+    m: 1
+  MM0_dup2:
+    device_type: pmos4
+    model: pfet_03v3
+    simulator_subcircuit: pmos_3p3
+    W_um: 20.0
+    L_um: 1.0
+    m: 1
+  MM2_dup3:
+    device_type: nmos4
+    model: nfet_03v3
+    simulator_subcircuit: nmos_3p3
+    W_um: 10.0
+    L_um: 1.0
+    m: 1
+  MM0_dup3:
+    device_type: nmos4
+    model: nfet_03v3
+    simulator_subcircuit: nmos_3p3
+    W_um: 10.0
+    L_um: 1.0
+    m: 1
+  MM3_dup2:
+    device_type: pmos4
+    model: pfet_03v3
+    simulator_subcircuit: pmos_3p3
+    W_um: 20.0
+    L_um: 1.0
+    m: 1
+  MM1_dup3:
+    device_type: pmos4
+    model: pfet_03v3
+    simulator_subcircuit: pmos_3p3
+    W_um: 20.0
+    L_um: 1.0
+    m: 1
+operating_parameters:
+  VDD: 3.3
+  VSS: 0.0
+  VIN1: 1.2
+  VIN2: 1.2
+  VB1: 1.65
+  VB2: 1.65
+  VOUT1: 1.65
+adjusted_parameters: []
+functional_status: PASS
+remaining_issues: []
+search_policy: ideal working point first -> input/VCM/clock/VCTRL -> VB -> IB -> grouped W -> L/m; first
+  usable functional point
+performance_status: PASS
+numerical_status: PASS
+physical_status: PASS
+physical_validity:
+  status: PASS
+  violations: []
+  warnings: []
+  maximum_terminal_stress_V: 2.3363137893085653
+  maximum_static_branch_current_A: 0.0011243710837637992
+  body_connections_preserved: true
+ideal_status_reference:
+  functional_status: PASS
+  performance_status: PASS
+  numerical_status: PASS
+migration_class: IDEAL_PASS_TO_GF180_PASS
+numerical_assist_used:
+  nodeset: true
+  VDD_ramp: true
+  source_gmin_stepping: true
+  nonzero_clock_edges: true
+  startup_perturbation: true
+  bounded_maxstep: true
+  per_circuit_timeout: orchestrator controlled
+topology_limitation: false
+PDK_eligible: true
+special_passive_status: N/R

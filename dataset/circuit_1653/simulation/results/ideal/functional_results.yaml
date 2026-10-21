@@ -1,0 +1,14 @@
+schema_version: 1
+circuit: circuit_1653
+actual_type: single_ended_opamp
+original_status: PASS
+functional_status: PASS
+performance_status: PASS
+numerical_status: PASS
+core_analyses:
+- dc
+- ac
+action_taken: baseline classification retained
+remaining_issue: null
+topology_limitation: false
+PDK_eligible: true

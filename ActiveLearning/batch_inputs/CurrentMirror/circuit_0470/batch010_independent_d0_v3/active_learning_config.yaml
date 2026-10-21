@@ -1,0 +1,65 @@
+active_learning:
+  max_iterations: 5
+data:
+  d0_path: d0/d0_v3_seed42.jsonl
+  initialize_if_missing: true
+  sampling_mode: v3
+  seed: 42
+  n_samples: 20
+  n_local: 10
+  n_global: 9
+  d0_mode: independent
+  d0_path_relative_to: config
+  initial_anchor:
+    source: profiling
+    sample_id: anchor_nominal
+    params:
+      IB1: -0.0001
+target_specs:
+  current_error:
+    operator: <=
+    value: 0.0056
+  output_resistance:
+    operator: '>='
+    value: 1000000000.0
+target_source: auto_generated
+performance_target_selected: true
+benchmark_version: auto_target_v1_CurrentMirror_circuit_0470_2teo_bvx
+target_provenance:
+  source: automatic_profiling_llm_v1
+  purpose: experimental_benchmark_not_user_specification
+  profiling_backend: spice
+  circuit_type: CurrentMirror
+  circuit_id: circuit_0470
+  anchor:
+    sample_id: anchor_nominal
+    params:
+      IB1: -0.0001
+    metrics:
+      current_error: 0.006525248889084129
+      output_resistance: 50691871.22279691
+  profiling_artifact: profiling.json
+  target_recommendation: target_generation.json
+  generated_config: active_learning_config.yaml
+  d0_mode: independent
+  d0_anchor_source: profiling
+  d0_anchor_sample_id: anchor_nominal
+  d0_seed: 42
+  joint_supporting_sample_ids:
+  - profile_global_0_0002
+  llm_declared_supporting_sample_ids:
+  - profile_global_0_0002
+  reason: The anchor has a current_error of ~0.00652 and an output_resistance of ~50.7
+    Mohm, failing the ambitious targets of <= 0.0056 and >= 1 Gohm. However, the observed
+    sample 'profile_global_0_0002' jointly achieves a current_error of 0.005506 and
+    an output_resistance of 2,477,718,232 ohms, demonstrating that these tighter performance
+    specifications are physically feasible and jointly attainable in this circuit.
+  confidence: 1.0
+  provider: gemini
+  model: gemini-3.5-flash-lite
+  llm_backend: provider_api
+  target_generation_attempts: 1
+  seed: 42
+  simulator_environment:
+    platform: Linux-6.8.0-138-generic-x86_64-with-glibc2.39
+    python: 3.12.3

@@ -1,0 +1,61 @@
+circuit:
+  id: circuit_0472
+  original_id: 608
+  original_type: current mirrors
+  topology_name: Resistor-biased BJT current mirror (AnalogGenie 608)
+  original_category: current mirrors
+  actual_circuit_type: resistor-biased BJT current mirror
+models:
+  npn:
+    name: NPN_IDEAL
+    IS: 1.0e-15
+    BF: 100.0
+    VAF: 100.0
+    EG: 1.11
+    XTI: 3.0
+devices:
+  BJT:
+    Q2:
+      model: NPN_IDEAL
+      area: 1.0
+      m: 1
+    Q1:
+      model: NPN_IDEAL
+      area: 1.0
+      m: 1
+    Q0:
+      model: NPN_IDEAL
+      area: 1.0
+      m: 1
+  R:
+    R0:
+      model: ideal_resistor
+      R_ohm: 10000.0
+    R1:
+      model: ideal_resistor
+      R_ohm: 10000.0
+operating_parameters: &id001
+  VDD: 3.3
+  IB1: -0.0001
+  VSS: 0.0
+pnp_devices: null
+adjusted_from_global_default: []
+search_policy: global ideal defaults, then limited operating-parameter sweep; first
+  functional point; no performance optimization
+functional_assessment:
+  required_analyses:
+  - op
+  - dc
+  overall: WARN
+  reasons:
+  - 'dc: output current exists, but its basic constant-current region is narrow or
+    has low output resistance'
+functional_audit:
+  final_functional_status: PASS
+  best_working_point: *id001
+  remaining_issue: 'dc: output current exists, but its basic constant-current region
+    is narrow or has low output resistance'
+  topology_limitation: false
+  pdk_eligibility: ELIGIBLE
+  validation_policy: cell/core validated by its own function; non-core analyses do
+    not cause functional failure

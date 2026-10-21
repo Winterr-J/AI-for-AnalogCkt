@@ -1,0 +1,38 @@
+schema_version: 2
+circuit_id: circuit_0468
+circuit_type: "current mirrors"
+scope: device_parameters_only
+data_type_vocabulary:
+  - continuous
+  - categorial
+device_parameters:
+  Q1:
+    device_type: npn
+    source_device_type: npn
+    tunable_parameters:
+      Q1_model:
+        parameter_category: model
+        data_type: categorial
+        optimizable: true
+        unit: unitless
+      m:
+        parameter_category: physical
+        data_type: continuous
+        optimizable: true
+        unit: unitless
+        integer_only: true
+  Q0:
+    device_type: npn
+    source_device_type: npn
+    tunable_parameters:
+      Q0_model:
+        parameter_category: model
+        data_type: categorial
+        optimizable: true
+        unit: unitless
+      m:
+        parameter_category: physical
+        data_type: continuous
+        optimizable: true
+        unit: unitless
+        integer_only: true

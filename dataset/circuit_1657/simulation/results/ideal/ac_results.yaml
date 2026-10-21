@@ -1,0 +1,15 @@
+status: PASS
+analysis_mode: small_signal_frequency_response
+drive_mode: VIN1
+source_specs:
+  VIN1: DC 1.2 AC 1
+frequency_range_Hz:
+- 1.0
+- 999999999.9999859
+low_frequency_magnitude: 145.18934659692763
+high_frequency_magnitude: 145.18934659692763
+peak_magnitude: 145.18934659692763
+peak_frequency_Hz: 1.0
+magnitude_variation_dB: 0.0
+inferred_response_type: low-pass
+warning_or_failure_reason: null

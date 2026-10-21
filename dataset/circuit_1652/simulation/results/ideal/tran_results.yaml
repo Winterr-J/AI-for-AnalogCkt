@@ -1,0 +1,19 @@
+status: PASS
+analysis_mode: functional_transient
+stimulus_sources:
+  VIN1: PULSE(1 1.4 2u 10n 10n 3u 6u)
+  VIN2: 1.2
+simulation_time_range_s:
+- 0.0
+- 1.0e-05
+maximum_step_s: 1.0e-08
+startup_assist:
+  ic_nodeset_node: null
+  VDD_ramp: false
+output_tail_mean: 1.3389061447559327
+output_tail_vpp: 3.287509235438511
+output_final: 3.293376157403932
+settled_proxy: true
+oscillation_frequency_Hz: null
+period_coefficient_of_variation: null
+warning_or_failure_reason: null

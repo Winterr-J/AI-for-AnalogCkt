@@ -1,0 +1,71 @@
+{
+  "status": "READY_FOR_D0",
+  "failed_stage": null,
+  "reason": null,
+  "error_class": null,
+  "circuit_type": "CurrentMirror",
+  "circuit_id": "circuit_0472",
+  "artifact_paths": {
+    "run_directory": "/home/ubuntu/batch010_manual_preparation_v3/circuit_0472/CurrentMirror_circuit_0472_iy37bxio",
+    "anchor": "/home/ubuntu/batch010_manual_preparation_v3/circuit_0472/CurrentMirror_circuit_0472_iy37bxio/anchor.json",
+    "profiling": "/home/ubuntu/batch010_manual_preparation_v3/circuit_0472/CurrentMirror_circuit_0472_iy37bxio/profiling.json",
+    "target_generation": "/home/ubuntu/batch010_manual_preparation_v3/circuit_0472/CurrentMirror_circuit_0472_iy37bxio/target_generation.json",
+    "config": "/home/ubuntu/batch010_manual_preparation_v3/circuit_0472/CurrentMirror_circuit_0472_iy37bxio/active_learning_config.yaml",
+    "result": "/home/ubuntu/batch010_manual_preparation_v3/circuit_0472/CurrentMirror_circuit_0472_iy37bxio/preparation_result.json"
+  },
+  "costs": {
+    "evaluation_backend": "spice",
+    "anchor_spice_point_evaluations": 1,
+    "profile_spice_point_evaluations": 25,
+    "llm_calls": 1,
+    "llm_retries": 0,
+    "llm_usage": [
+      {
+        "stage": "auto_target",
+        "round": 1,
+        "provider": "gemini",
+        "model": "gemini-3.5-flash-lite",
+        "input_tokens": 2261,
+        "output_tokens": 322,
+        "total_tokens": 2583
+      }
+    ],
+    "anchor_seconds": 0.05783460498787463,
+    "profiling_seconds": 0.3291427150834352,
+    "target_generation_seconds": 2.646930906921625,
+    "llm_backend": "provider_api"
+  },
+  "profile_counts": {
+    "total_samples": 25,
+    "parameter_valid_samples": 25,
+    "simulation_valid_samples": 25,
+    "functional_valid_samples": 24
+  },
+  "validation": {
+    "valid": true,
+    "errors": [],
+    "target_specs": {
+      "current_error": {
+        "operator": "<=",
+        "value": 0.015
+      },
+      "output_resistance": {
+        "operator": ">=",
+        "value": 29000000.0
+      }
+    },
+    "joint_supporting_sample_ids": [
+      "profile_local_0_0003",
+      "profile_local_0_0008",
+      "profile_local_0_0009"
+    ]
+  },
+  "d0": {
+    "mode": "independent",
+    "path": "/home/ubuntu/batch010_manual_preparation_v3/circuit_0472/CurrentMirror_circuit_0472_iy37bxio/d0/d0_v3_seed42.jsonl",
+    "anchor_sample_id": "anchor_nominal",
+    "seed": 42,
+    "initialized": false
+  },
+  "elapsed_seconds": 3.0673221722245216
+}

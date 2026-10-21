@@ -1,0 +1,30 @@
+status: PASS
+node_voltages:
+  iout1: 1.6500000000000001
+  ib1: 0.6502438449306588
+branch_currents:
+  viout1_probe: -9.901937149688728e-05
+mos_operating_regions: {}
+bjt_operating_points:
+  Q1:
+    ic: 9.803921444502408e-05
+    ib: 9.803927946940858e-07
+    vbe: 0.6502438449306588
+    vce: 0.6502438449306588
+    area: 1.0
+  Q0:
+    ic: 9.901936852758592e-05
+    ib: 9.803917939379534e-07
+    vbe: 0.6502438449306588
+    vce: 1.6500000000000001
+    area: 1.0
+key_bias_points:
+  metric_kind: current
+  nodes_or_branches:
+  - IOUT1
+  value: -9.901937149688728e-05
+warning_or_failure_reason: null
+final_functional_status: PASS
+topology_limitation: false
+pdk_eligibility: ELIGIBLE
+simulation_stage: gf180mcu_mos

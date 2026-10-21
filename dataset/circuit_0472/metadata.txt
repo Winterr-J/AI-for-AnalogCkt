@@ -1,0 +1,9 @@
+circuit_id: circuit_0472
+circuit_number: 0472
+analoggenie_folder_id: 608
+circuit_type: current mirrors
+circuit_name: Resistor-biased BJT current mirror (AnalogGenie 608)
+circuit_function: Copies a reference current into one or more output branches for bias generation and current scaling using the resistor-biased bjt current mirror topology.
+source_ports: VDD, VSS, IOUT1, IB1
+device_summary: npn=3, resistor=2
+actual_circuit_type: resistor-biased BJT current mirror

@@ -1,0 +1,1252 @@
+{
+  "circuit_type": "CurrentMirror",
+  "circuit_id": "circuit_0476",
+  "anchor": {
+    "sample_id": "anchor_nominal",
+    "params": {
+      "IB1": -0.0001,
+      "L_M0": 1e-06,
+      "L_M1": 1e-06,
+      "L_M3": 1e-06,
+      "L_M4": 1e-06,
+      "W_M0": 9.999999999999999e-06,
+      "W_M1": 9.999999999999999e-06,
+      "W_M3": 9.999999999999999e-06,
+      "W_M4": 9.999999999999999e-06
+    },
+    "normalized_params": {},
+    "parameter_valid": true,
+    "simulation_valid": true,
+    "functional_valid": true,
+    "functional_failure_reasons": [],
+    "current_error": 0.004885585701267018,
+    "output_resistance": 1039423.640347882,
+    "compliance_relative_variation": 0.00966852910013859,
+    "tracking_max_error": 0.00534054825380552,
+    "compliance_quality_smoke_passed": true,
+    "tracking_quality_smoke_passed": true,
+    "compliance_output_branch_alive": true,
+    "reference_responsive": true,
+    "failure_reason": null,
+    "source": "nominal",
+    "preparation_evaluation_wall_time_seconds": 0.06150836497545242
+  },
+  "anchor_discovery": {
+    "status": "ANCHOR_FOUND",
+    "evaluated_candidates": 1,
+    "sampling": {
+      "method": "nominal_local_sobol",
+      "seed": 42,
+      "local_radius": 0.02,
+      "max_evaluations": 12
+    },
+    "elapsed_seconds": 0.06152847898192704,
+    "failure_distribution": {}
+  },
+  "total_samples": 25,
+  "parameter_valid_samples": 25,
+  "simulation_valid_samples": 25,
+  "functional_valid_samples": 24,
+  "performance": {
+    "current_error": {
+      "min": 0.0019990144151510007,
+      "median": 0.27318619473210315,
+      "max": 1493.6742816540475
+    },
+    "output_resistance": {
+      "min": 7.420930121652524,
+      "median": 1037264.1022505845,
+      "max": 446696851607.8385
+    }
+  },
+  "valid_candidate_metrics": [
+    {
+      "sample_id": "profile_local_0_0000",
+      "metrics": {
+        "current_error": 0.06256188581954812,
+        "output_resistance": 1127972.2040279286
+      }
+    },
+    {
+      "sample_id": "profile_local_0_0001",
+      "metrics": {
+        "current_error": 0.043331075708458,
+        "output_resistance": 1047946.2606232796
+      }
+    },
+    {
+      "sample_id": "profile_local_0_0002",
+      "metrics": {
+        "current_error": 0.013366895382151153,
+        "output_resistance": 1032019.3437209469
+      }
+    },
+    {
+      "sample_id": "profile_local_0_0003",
+      "metrics": {
+        "current_error": 0.004040383711315378,
+        "output_resistance": 1030849.9797880466
+      }
+    },
+    {
+      "sample_id": "profile_local_0_0004",
+      "metrics": {
+        "current_error": 0.04957774860917411,
+        "output_resistance": 1092908.8115347186
+      }
+    },
+    {
+      "sample_id": "profile_local_0_0005",
+      "metrics": {
+        "current_error": 0.010482159856895967,
+        "output_resistance": 1042508.8607802221
+      }
+    },
+    {
+      "sample_id": "profile_local_0_0006",
+      "metrics": {
+        "current_error": 0.01837800537204543,
+        "output_resistance": 1105561.6960331167
+      }
+    },
+    {
+      "sample_id": "profile_local_0_0007",
+      "metrics": {
+        "current_error": 0.0955618281657382,
+        "output_resistance": 960923.3552539676
+      }
+    },
+    {
+      "sample_id": "profile_local_0_0008",
+      "metrics": {
+        "current_error": 0.017124094094397902,
+        "output_resistance": 986852.8850400497
+      }
+    },
+    {
+      "sample_id": "profile_local_0_0009",
+      "metrics": {
+        "current_error": 0.020050357672123032,
+        "output_resistance": 954007.4317815127
+      }
+    },
+    {
+      "sample_id": "profile_local_0_0010",
+      "metrics": {
+        "current_error": 0.05120955263575854,
+        "output_resistance": 1188918.223590066
+      }
+    },
+    {
+      "sample_id": "profile_local_0_0011",
+      "metrics": {
+        "current_error": 0.0019990144151510007,
+        "output_resistance": 1079900.7590382325
+      }
+    },
+    {
+      "sample_id": "profile_global_0_0000",
+      "metrics": {
+        "current_error": 0.9732336193852914,
+        "output_resistance": 17081.76966380559
+      }
+    },
+    {
+      "sample_id": "profile_global_0_0001",
+      "metrics": {
+        "current_error": 18.846796074586404,
+        "output_resistance": 8048215.874361837
+      }
+    },
+    {
+      "sample_id": "profile_global_0_0003",
+      "metrics": {
+        "current_error": 0.9683124762987578,
+        "output_resistance": 4030107.2759301453
+      }
+    },
+    {
+      "sample_id": "profile_global_0_0004",
+      "metrics": {
+        "current_error": 1493.6742816540475,
+        "output_resistance": 7.420930121652524
+      }
+    },
+    {
+      "sample_id": "profile_global_0_0005",
+      "metrics": {
+        "current_error": 0.9804213790733424,
+        "output_resistance": 5369389388.20565
+      }
+    },
+    {
+      "sample_id": "profile_global_0_0006",
+      "metrics": {
+        "current_error": 3.620709685445574,
+        "output_resistance": 696613.7624484894
+      }
+    },
+    {
+      "sample_id": "profile_global_0_0007",
+      "metrics": {
+        "current_error": 0.9951670740250137,
+        "output_resistance": 440157.0588151742
+      }
+    },
+    {
+      "sample_id": "profile_global_0_0008",
+      "metrics": {
+        "current_error": 14.27757009327593,
+        "output_resistance": 41.579788249408786
+      }
+    },
+    {
+      "sample_id": "profile_global_0_0009",
+      "metrics": {
+        "current_error": 0.9999506413232851,
+        "output_resistance": 446696851607.8385
+      }
+    },
+    {
+      "sample_id": "profile_global_0_0010",
+      "metrics": {
+        "current_error": 0.9741970699877202,
+        "output_resistance": 238308676.8288768
+      }
+    },
+    {
+      "sample_id": "profile_global_0_0011",
+      "metrics": {
+        "current_error": 4.369821565373085,
+        "output_resistance": 1657.6019819368016
+      }
+    },
+    {
+      "sample_id": "profile_global_0_0012",
+      "metrics": {
+        "current_error": 0.4508105612984681,
+        "output_resistance": 6018.8618631769905
+      }
+    }
+  ],
+  "failure_distribution": {
+    "functional_invalid": 1
+  },
+  "elapsed_seconds": 0.36715274304151535,
+  "spice_point_evaluations": 25,
+  "anchor_spice_point_evaluations": 1,
+  "records": [
+    {
+      "sample_id": "profile_local_0_0000",
+      "params": {
+        "IB1": -9.914298463515651e-05,
+        "L_M0": 9.398376110504181e-07,
+        "L_M1": 9.940815913370723e-07,
+        "L_M3": 1.0248121456875295e-06,
+        "L_M4": 1.0048296340531331e-06,
+        "W_M0": 9.945935894223724e-06,
+        "W_M1": 9.647619949413082e-06,
+        "W_M3": 1.001601003036267e-05,
+        "W_M4": 1.034956813624597e-05
+      },
+      "normalized_params": {
+        "IB1": 0.49906549722980564,
+        "L_M0": 0.49326320523047257,
+        "L_M1": 0.49935550787328065,
+        "L_M3": 0.5026610659654357,
+        "L_M4": 0.5005231086573898,
+        "W_M0": 0.7494114139232617,
+        "W_M1": 0.7461050467213113,
+        "W_M3": 0.7501736876958464,
+        "W_M4": 0.7537305570144565
+      },
+      "parameter_valid": true,
+      "simulation_valid": true,
+      "functional_valid": true,
+      "functional_failure_reasons": [],
+      "current_error": 0.06256188581954812,
+      "output_resistance": 1127972.2040279286,
+      "compliance_relative_variation": 0.009633455936379993,
+      "tracking_max_error": 0.06293666179865716,
+      "compliance_quality_smoke_passed": true,
+      "tracking_quality_smoke_passed": false,
+      "compliance_output_branch_alive": true,
+      "reference_responsive": true,
+      "failure_reason": null,
+      "source": "local",
+      "preparation_evaluation_wall_time_seconds": 0.015035437885671854
+    },
+    {
+      "sample_id": "profile_local_0_0001",
+      "params": {
+        "IB1": -9.829774553987053e-05,
+        "L_M0": 9.687841735713746e-07,
+        "L_M1": 9.551589766281287e-07,
+        "L_M3": 1.0220757538087864e-06,
+        "L_M4": 1.0905636875078188e-06,
+        "W_M0": 1.0689190083846994e-05,
+        "W_M1": 9.729383724442642e-06,
+        "W_M3": 9.238697802022398e-06,
+        "W_M4": 1.0085295928000716e-05
+      },
+      "normalized_params": {
+        "IB1": 0.49813588934912834,
+        "L_M0": 0.496556758848065,
+        "L_M1": 0.49501891538973214,
+        "L_M3": 0.502370771464814,
+        "L_M4": 0.5094127582227348,
+        "W_M0": 0.757236200029009,
+        "W_M1": 0.7470213330488388,
+        "W_M3": 0.7414026903902404,
+        "W_M4": 0.750922161507602
+      },
+      "parameter_valid": true,
+      "simulation_valid": true,
+      "functional_valid": true,
+      "functional_failure_reasons": [],
+      "current_error": 0.043331075708458,
+      "output_resistance": 1047946.2606232796,
+      "compliance_relative_variation": 0.010241747329183872,
+      "tracking_max_error": 0.04374631074730554,
+      "compliance_quality_smoke_passed": true,
+      "tracking_quality_smoke_passed": true,
+      "compliance_output_branch_alive": true,
+      "reference_responsive": true,
+      "failure_reason": null,
+      "source": "local",
+      "preparation_evaluation_wall_time_seconds": 0.013936652103438973
+    },
+    {
+      "sample_id": "profile_local_0_0002",
+      "params": {
+        "IB1": -0.00010031786612587939,
+        "L_M0": 9.968761457749527e-07,
+        "L_M1": 1.0058920488545484e-06,
+        "L_M3": 9.886778582209554e-07,
+        "L_M4": 1.007486218103412e-06,
+        "W_M0": 1.0023390723872592e-05,
+        "W_M1": 1.0063200906070356e-05,
+        "W_M3": 9.978798059097693e-06,
+        "W_M4": 9.946443616935733e-06
+      },
+      "normalized_params": {
+        "IB1": 0.5003445714128986,
+        "L_M0": 0.49966030097515357,
+        "L_M1": 0.5006378438125849,
+        "L_M3": 0.498763702022869,
+        "L_M4": 0.5008097784818039,
+        "W_M0": 0.7502536650027585,
+        "W_M1": 0.7506840358045442,
+        "W_M3": 0.7497695584747167,
+        "W_M4": 0.7494169562761032
+      },
+      "parameter_valid": true,
+      "simulation_valid": true,
+      "functional_valid": true,
+      "functional_failure_reasons": [],
+      "current_error": 0.013366895382151153,
+      "output_resistance": 1032019.3437209469,
+      "compliance_relative_variation": 0.009626209710107622,
+      "tracking_max_error": 0.01382766366026043,
+      "compliance_quality_smoke_passed": true,
+      "tracking_quality_smoke_passed": true,
+      "compliance_output_branch_alive": true,
+      "reference_responsive": true,
+      "failure_reason": null,
+      "source": "local",
+      "preparation_evaluation_wall_time_seconds": 0.014099112013354897
+    },
+    {
+      "sample_id": "profile_local_0_0003",
+      "params": {
+        "IB1": -0.00010084561111849061,
+        "L_M0": 1.0008009173088361e-06,
+        "L_M1": 1.0017009495259181e-06,
+        "L_M3": 1.001580848451701e-06,
+        "L_M4": 1.004006171333893e-06,
+        "W_M0": 1.001948611316118e-05,
+        "W_M1": 1.0008956336533113e-05,
+        "W_M3": 9.994211903798725e-06,
+        "W_M4": 1.0015240235575077e-05
+      },
+      "normalized_params": {
+        "IB1": 0.5009142505293689,
+        "L_M0": 0.500086923687224,
+        "L_M1": 0.5001845213619648,
+        "L_M3": 0.5001715029154541,
+        "L_M4": 0.5004340955747648,
+        "W_M0": 0.7502113619211903,
+        "W_M1": 0.7500971986676556,
+        "W_M3": 0.7499371383497572,
+        "W_M4": 0.7501653427941507
+      },
+      "parameter_valid": true,
+      "simulation_valid": true,
+      "functional_valid": true,
+      "functional_failure_reasons": [],
+      "current_error": 0.004040383711315378,
+      "output_resistance": 1030849.9797880466,
+      "compliance_relative_variation": 0.00967526770634905,
+      "tracking_max_error": 0.004497534116958197,
+      "compliance_quality_smoke_passed": true,
+      "tracking_quality_smoke_passed": true,
+      "compliance_output_branch_alive": true,
+      "reference_responsive": true,
+      "failure_reason": null,
+      "source": "local",
+      "preparation_evaluation_wall_time_seconds": 0.01441021985374391
+    },
+    {
+      "sample_id": "profile_local_0_0004",
+      "params": {
+        "IB1": -0.00010033760678487117,
+        "L_M0": 1.0092814267640328e-06,
+        "L_M1": 9.800114753921317e-07,
+        "L_M3": 1.0223024713437045e-06,
+        "L_M4": 1.0051261880774542e-06,
+        "W_M0": 1.0321905260228505e-05,
+        "W_M1": 9.201414450414838e-06,
+        "W_M3": 9.557581803253097e-06,
+        "W_M4": 9.648473827629869e-06
+      },
+      "normalized_params": {
+        "IB1": 0.5003659345463645,
+        "L_M0": 0.5010030703126886,
+        "L_M1": 0.4978077902675886,
+        "L_M3": 0.5023948526679783,
+        "L_M4": 0.5005551471171075,
+        "W_M0": 0.7534399671433554,
+        "W_M1": 0.7409636481622909,
+        "W_M3": 0.7450870059573436,
+        "W_M4": 0.7461146557800744
+      },
+      "parameter_valid": true,
+      "simulation_valid": true,
+      "functional_valid": true,
+      "functional_failure_reasons": [],
+      "current_error": 0.04957774860917411,
+      "output_resistance": 1092908.8115347186,
+      "compliance_relative_variation": 0.0096893842981559,
+      "tracking_max_error": 0.0499744511360638,
+      "compliance_quality_smoke_passed": true,
+      "tracking_quality_smoke_passed": true,
+      "compliance_output_branch_alive": true,
+      "reference_responsive": true,
+      "failure_reason": null,
+      "source": "local",
+      "preparation_evaluation_wall_time_seconds": 0.014255772111937404
+    },
+    {
+      "sample_id": "profile_local_0_0005",
+      "params": {
+        "IB1": -9.991883205959619e-05,
+        "L_M0": 1.0003392075336223e-06,
+        "L_M1": 1.0090320396702433e-06,
+        "L_M3": 9.974996282621814e-07,
+        "L_M4": 1.0118534869036184e-06,
+        "W_M0": 9.966914131106563e-06,
+        "W_M1": 1.003013055543391e-05,
+        "W_M3": 1.0068441745880045e-05,
+        "W_M4": 1.0074123853622949e-05
+      },
+      "normalized_params": {
+        "IB1": 0.49991183724364874,
+        "L_M0": 0.5000368227450949,
+        "L_M1": 0.5009762391387796,
+        "L_M3": 0.49972818562761284,
+        "L_M4": 0.5012794081566372,
+        "W_M0": 0.749640179164733,
+        "W_M1": 0.7503266464937763,
+        "W_M3": 0.7507405654156807,
+        "W_M4": 0.7508018214679841
+      },
+      "parameter_valid": true,
+      "simulation_valid": true,
+      "functional_valid": true,
+      "functional_failure_reasons": [],
+      "current_error": 0.010482159856895967,
+      "output_resistance": 1042508.8607802221,
+      "compliance_relative_variation": 0.009595024350297831,
+      "tracking_max_error": 0.010938256367754931,
+      "compliance_quality_smoke_passed": true,
+      "tracking_quality_smoke_passed": true,
+      "compliance_output_branch_alive": true,
+      "reference_responsive": true,
+      "failure_reason": null,
+      "source": "local",
+      "preparation_evaluation_wall_time_seconds": 0.014097027014940977
+    },
+    {
+      "sample_id": "profile_local_0_0006",
+      "params": {
+        "IB1": -9.787708254764062e-05,
+        "L_M0": 1.0149570883018455e-06,
+        "L_M1": 9.823732522411235e-07,
+        "L_M3": 1.0035450599597759e-06,
+        "L_M4": 9.783060802035906e-07,
+        "W_M0": 1.0177229833867498e-05,
+        "W_M1": 9.540470243607625e-06,
+        "W_M3": 1.0073433465038621e-05,
+        "W_M4": 9.963269434022025e-06
+      },
+      "normalized_params": {
+        "IB1": 0.49767025393080794,
+        "L_M0": 0.5016119202402199,
+        "L_M1": 0.4980691322801398,
+        "L_M3": 0.5003842193559859,
+        "L_M4": 0.49761868817202715,
+        "W_M0": 0.7519073955909633,
+        "W_M1": 0.7448924453314436,
+        "W_M3": 0.7507943805671367,
+        "W_M4": 0.7496004687464999
+      },
+      "parameter_valid": true,
+      "simulation_valid": true,
+      "functional_valid": true,
+      "functional_failure_reasons": [],
+      "current_error": 0.01837800537204543,
+      "output_resistance": 1105561.6960331167,
+      "compliance_relative_variation": 0.009508924148319378,
+      "tracking_max_error": 0.018767749267882324,
+      "compliance_quality_smoke_passed": true,
+      "tracking_quality_smoke_passed": true,
+      "compliance_output_branch_alive": true,
+      "reference_responsive": true,
+      "failure_reason": null,
+      "source": "local",
+      "preparation_evaluation_wall_time_seconds": 0.014882327057421207
+    },
+    {
+      "sample_id": "profile_local_0_0007",
+      "params": {
+        "IB1": -0.00010733360350458957,
+        "L_M0": 9.554294334328247e-07,
+        "L_M1": 1.0099413808375344e-06,
+        "L_M3": 9.672021903740647e-07,
+        "L_M4": 9.991213729482086e-07,
+        "W_M0": 1.0133943717036272e-05,
+        "W_M1": 1.0277973097742815e-05,
+        "W_M3": 1.1452628819182412e-05,
+        "W_M4": 9.493000550437478e-06
+      },
+      "normalized_params": {
+        "IB1": 0.5076839275369103,
+        "L_M0": 0.49504965406113804,
+        "L_M1": 0.5010740417828893,
+        "L_M3": 0.4963793178446648,
+        "L_M4": 0.49990456234674474,
+        "W_M0": 0.7514446219827312,
+        "W_M1": 0.7529768691497729,
+        "W_M3": 0.7647262963551092,
+        "W_M4": 0.7443508765138381
+      },
+      "parameter_valid": true,
+      "simulation_valid": true,
+      "functional_valid": true,
+      "functional_failure_reasons": [],
+      "current_error": 0.0955618281657382,
+      "output_resistance": 960923.3552539676,
+      "compliance_relative_variation": 0.00894387580274647,
+      "tracking_max_error": 0.09606082913310687,
+      "compliance_quality_smoke_passed": true,
+      "tracking_quality_smoke_passed": false,
+      "compliance_output_branch_alive": true,
+      "reference_responsive": true,
+      "failure_reason": null,
+      "source": "local",
+      "preparation_evaluation_wall_time_seconds": 0.013945347163826227
+    },
+    {
+      "sample_id": "profile_local_0_0008",
+      "params": {
+        "IB1": -0.0001020992383153259,
+        "L_M0": 1.0091987528400544e-06,
+        "L_M1": 9.95247268622454e-07,
+        "L_M3": 1.051949893086377e-06,
+        "L_M4": 9.908127677479976e-07,
+        "W_M0": 9.903312262376936e-06,
+        "W_M1": 1.0084383436021988e-05,
+        "W_M3": 9.560051139556853e-06,
+        "W_M4": 9.702497671169825e-06
+      },
+      "normalized_params": {
+        "IB1": 0.5022556255396393,
+        "L_M0": 0.500994176287034,
+        "L_M1": 0.4994827485927142,
+        "L_M3": 0.5054987634538711,
+        "L_M4": 0.4989978985818953,
+        "W_M0": 0.7489451182626741,
+        "W_M1": 0.7509123375975572,
+        "W_M3": 0.7451150538631658,
+        "W_M4": 0.7467208867927654
+      },
+      "parameter_valid": true,
+      "simulation_valid": true,
+      "functional_valid": true,
+      "functional_failure_reasons": [],
+      "current_error": 0.017124094094397902,
+      "output_resistance": 986852.8850400497,
+      "compliance_relative_variation": 0.010192161459919134,
+      "tracking_max_error": 0.01754727395455116,
+      "compliance_quality_smoke_passed": true,
+      "tracking_quality_smoke_passed": true,
+      "compliance_output_branch_alive": true,
+      "reference_responsive": true,
+      "failure_reason": null,
+      "source": "local",
+      "preparation_evaluation_wall_time_seconds": 0.01412329194135964
+    },
+    {
+      "sample_id": "profile_local_0_0009",
+      "params": {
+        "IB1": -0.00010617286979514121,
+        "L_M0": 9.6377063435198e-07,
+        "L_M1": 9.292053830273108e-07,
+        "L_M3": 1.0078889804864489e-06,
+        "L_M4": 1.003886982581036e-06,
+        "W_M0": 1.0154598424805685e-05,
+        "W_M1": 9.746716899860427e-06,
+        "W_M3": 9.527871193065934e-06,
+        "W_M4": 9.92467510835131e-06
+      },
+      "normalized_params": {
+        "IB1": 0.5065033890650877,
+        "L_M0": 0.4959934223534096,
+        "L_M1": 0.4920279292672747,
+        "L_M3": 0.5008531742432782,
+        "L_M4": 0.500421205691249,
+        "W_M0": 0.7516656883522577,
+        "W_M1": 0.7472145879659922,
+        "W_M3": 0.7447489693258901,
+        "W_M4": 0.749179074678443
+      },
+      "parameter_valid": true,
+      "simulation_valid": true,
+      "functional_valid": true,
+      "functional_failure_reasons": [],
+      "current_error": 0.020050357672123032,
+      "output_resistance": 954007.4317815127,
+      "compliance_relative_variation": 0.010169063537308091,
+      "tracking_max_error": 0.020476750055686957,
+      "compliance_quality_smoke_passed": true,
+      "tracking_quality_smoke_passed": true,
+      "compliance_output_branch_alive": true,
+      "reference_responsive": true,
+      "failure_reason": null,
+      "source": "local",
+      "preparation_evaluation_wall_time_seconds": 0.014102049870416522
+    },
+    {
+      "sample_id": "profile_local_0_0010",
+      "params": {
+        "IB1": -9.633659760113379e-05,
+        "L_M0": 1.0505420185922447e-06,
+        "L_M1": 1.0441648414502198e-06,
+        "L_M3": 1.0178987716925093e-06,
+        "L_M4": 9.853494173788824e-07,
+        "W_M0": 1.0193758168104584e-05,
+        "W_M1": 9.45720071189606e-06,
+        "W_M3": 9.959786263328558e-06,
+        "W_M4": 1.0082444548201743e-05
+      },
+      "normalized_params": {
+        "IB1": 0.4959478259784471,
+        "L_M0": 0.5053533568979637,
+        "L_M1": 0.5046922664484133,
+        "L_M3": 0.5019261475745218,
+        "L_M4": 0.49839756603305935,
+        "W_M0": 0.7520835815945262,
+        "W_M1": 0.7439406515612794,
+        "W_M3": 0.7495625046447552,
+        "W_M4": 0.7508914605343767
+      },
+      "parameter_valid": true,
+      "simulation_valid": true,
+      "functional_valid": true,
+      "functional_failure_reasons": [],
+      "current_error": 0.05120955263575854,
+      "output_resistance": 1188918.223590066,
+      "compliance_relative_variation": 0.009296494160050153,
+      "tracking_max_error": 0.051577830379874345,
+      "compliance_quality_smoke_passed": true,
+      "tracking_quality_smoke_passed": false,
+      "compliance_output_branch_alive": true,
+      "reference_responsive": true,
+      "failure_reason": null,
+      "source": "local",
+      "preparation_evaluation_wall_time_seconds": 0.01381129608489573
+    },
+    {
+      "sample_id": "profile_local_0_0011",
+      "params": {
+        "IB1": -0.00010030616114672214,
+        "L_M0": 9.800515862553507e-07,
+        "L_M1": 1.0036943610160805e-06,
+        "L_M3": 9.460841872169695e-07,
+        "L_M4": 9.768785804378266e-07,
+        "W_M0": 9.862070970489857e-06,
+        "W_M1": 9.853165010469173e-06,
+        "W_M3": 1.0010721193146791e-05,
+        "W_M4": 1.0123210033403512e-05
+      },
+      "normalized_params": {
+        "IB1": 0.5003319024222156,
+        "L_M0": 0.4978122339834322,
+        "L_M1": 0.5004003710477914,
+        "L_M3": 0.4939824459442625,
+        "L_M4": 0.4974601467836285,
+        "W_M0": 0.7484920308806906,
+        "W_M1": 0.7483939389897322,
+        "W_M3": 0.750116341520719,
+        "W_M4": 0.7513295618892479
+      },
+      "parameter_valid": true,
+      "simulation_valid": true,
+      "functional_valid": true,
+      "functional_failure_reasons": [],
+      "current_error": 0.0019990144151510007,
+      "output_resistance": 1079900.7590382325,
+      "compliance_relative_variation": 0.009307842623383735,
+      "tracking_max_error": 0.0024352662420587087,
+      "compliance_quality_smoke_passed": true,
+      "tracking_quality_smoke_passed": true,
+      "compliance_output_branch_alive": true,
+      "reference_responsive": true,
+      "failure_reason": null,
+      "source": "local",
+      "preparation_evaluation_wall_time_seconds": 0.014092609053477645
+    },
+    {
+      "sample_id": "profile_global_0_0000",
+      "params": {
+        "IB1": -0.0035307172207961787,
+        "L_M0": 7.450817462670754e-06,
+        "L_M1": 1.024013513253776e-06,
+        "L_M3": 8.373985414810356e-05,
+        "L_M4": 1.0385754668488784e-07,
+        "W_M0": 1.3467857709727988e-08,
+        "W_M1": 3.6525802229096e-06,
+        "W_M3": 2.755424856380831e-07,
+        "W_M4": 1.5075598822362228e-05
+      },
+      "normalized_params": {
+        "IB1": 0.8869657339528203,
+        "L_M0": 0.7180509809404612,
+        "L_M1": 0.5025764219462872,
+        "L_M3": 0.9807330500334501,
+        "L_M4": 0.2541095148772001,
+        "W_M0": 0.032324629835784435,
+        "W_M1": 0.6406499408185482,
+        "W_M3": 0.3600471429526806,
+        "W_M4": 0.7945686429738998
+      },
+      "parameter_valid": true,
+      "simulation_valid": true,
+      "functional_valid": true,
+      "functional_failure_reasons": [],
+      "current_error": 0.9732336193852914,
+      "output_resistance": 17081.76966380559,
+      "compliance_relative_variation": 0.6273902618454527,
+      "tracking_max_error": 0.9760814073517076,
+      "compliance_quality_smoke_passed": false,
+      "tracking_quality_smoke_passed": false,
+      "compliance_output_branch_alive": true,
+      "reference_responsive": true,
+      "failure_reason": null,
+      "source": "global",
+      "preparation_evaluation_wall_time_seconds": 0.014273618115112185
+    },
+    {
+      "sample_id": "profile_global_0_0001",
+      "params": {
+        "IB1": -1.4032457933908377e-05,
+        "L_M0": 4.144638133256811e-07,
+        "L_M1": 1.0605954465349005e-07,
+        "L_M3": 7.069282746494485e-08,
+        "L_M4": 3.053149700992175e-06,
+        "W_M0": 1.7499028892172931e-06,
+        "W_M1": 2.8866999639495636e-07,
+        "W_M3": 8.855868261822375e-06,
+        "W_M4": 4.1666874694933376e-07
+      },
+      "normalized_params": {
+        "IB1": 0.2867834372445941,
+        "L_M0": 0.4043716546148062,
+        "L_M1": 0.25638743955641985,
+        "L_M3": 0.21234383806586266,
+        "L_M4": 0.6211870247498155,
+        "W_M0": 0.5607534870505333,
+        "W_M1": 0.36510041169822216,
+        "W_M3": 0.7368077868595719,
+        "W_M4": 0.4049477316439152
+      },
+      "parameter_valid": true,
+      "simulation_valid": true,
+      "functional_valid": true,
+      "functional_failure_reasons": [],
+      "current_error": 18.846796074586404,
+      "output_resistance": 8048215.874361837,
+      "compliance_relative_variation": 0.13307697404737465,
+      "tracking_max_error": 18.85182595097206,
+      "compliance_quality_smoke_passed": false,
+      "tracking_quality_smoke_passed": false,
+      "compliance_output_branch_alive": true,
+      "reference_responsive": true,
+      "failure_reason": null,
+      "source": "global",
+      "preparation_evaluation_wall_time_seconds": 0.01423919782973826
+    },
+    {
+      "sample_id": "profile_global_0_0002",
+      "params": {
+        "IB1": -1.0926097307735125e-06,
+        "L_M0": 1.5081447859554493e-05,
+        "L_M1": 1.6961685884438664e-05,
+        "L_M3": 1.0629943379646248e-06,
+        "L_M4": 5.293747604962994e-05,
+        "W_M0": 1.1608563382322566e-05,
+        "W_M1": 2.219274084230251e-05,
+        "W_M3": 6.96005961428552e-05,
+        "W_M4": 2.928936326458808e-08
+      },
+      "normalized_params": {
+        "IB1": 0.009616266004741192,
+        "L_M0": 0.7946107592433691,
+        "L_M1": 0.8073672540485859,
+        "L_M3": 0.5066327378153801,
+        "L_M4": 0.9309408077970147,
+        "W_M0": 0.7661946192383766,
+        "W_M1": 0.8365527354180813,
+        "W_M3": 0.9606532398611307,
+        "W_M4": 0.11667748261243105
+      },
+      "parameter_valid": true,
+      "simulation_valid": true,
+      "functional_valid": false,
+      "functional_failure_reasons": [
+        "reference_tracking_not_evaluable_due_to_bounds"
+      ],
+      "current_error": 1364.1754469467235,
+      "output_resistance": 1402.7940774784126,
+      "compliance_relative_variation": 0.5567296002098113,
+      "tracking_max_error": null,
+      "compliance_quality_smoke_passed": false,
+      "tracking_quality_smoke_passed": false,
+      "compliance_output_branch_alive": true,
+      "reference_responsive": false,
+      "failure_reason": null,
+      "source": "global",
+      "preparation_evaluation_wall_time_seconds": 0.009348948020488024
+    },
+    {
+      "sample_id": "profile_global_0_0003",
+      "params": {
+        "IB1": -0.00042245146075830934,
+        "L_M0": 2.6645013460185727e-08,
+        "L_M1": 1.7558943876500655e-08,
+        "L_M3": 1.5963023128374097e-07,
+        "L_M4": 5.694535670319144e-08,
+        "W_M0": 1.1519779716406412e-07,
+        "W_M1": 5.497445525773402e-08,
+        "W_M3": 2.1571329073670443e-08,
+        "W_M4": 5.85316131135348e-06
+      },
+      "normalized_params": {
+        "IB1": 0.6564442040398717,
+        "L_M0": 0.10640398599207401,
+        "L_M1": 0.06112459767609835,
+        "L_M3": 0.30077878572046757,
+        "L_M4": 0.18886457942426205,
+        "W_M0": 0.2653610436245799,
+        "W_M1": 0.18504023365676403,
+        "W_M3": 0.08346922602504492,
+        "W_M4": 0.6918476233258843
+      },
+      "parameter_valid": true,
+      "simulation_valid": true,
+      "functional_valid": true,
+      "functional_failure_reasons": [],
+      "current_error": 0.9683124762987578,
+      "output_resistance": 4030107.2759301453,
+      "compliance_relative_variation": 0.13920751274814375,
+      "tracking_max_error": 0.9683593004209924,
+      "compliance_quality_smoke_passed": false,
+      "tracking_quality_smoke_passed": false,
+      "compliance_output_branch_alive": true,
+      "reference_responsive": true,
+      "failure_reason": null,
+      "source": "global",
+      "preparation_evaluation_wall_time_seconds": 0.01409192499704659
+    },
+    {
+      "sample_id": "profile_global_0_0004",
+      "params": {
+        "IB1": -0.00015031404096727902,
+        "L_M0": 3.993290682100203e-05,
+        "L_M1": 7.565538972084092e-07,
+        "L_M3": 8.375418696690299e-07,
+        "L_M4": 1.9597231552112845e-08,
+        "W_M0": 3.9494125105958726e-08,
+        "W_M1": 4.387717272694343e-05,
+        "W_M3": 3.031466686225627e-05,
+        "W_M4": 3.2437858044913396e-08
+      },
+      "normalized_params": {
+        "IB1": 0.5442498875781894,
+        "L_M0": 0.9003327311947942,
+        "L_M1": 0.4697099681943655,
+        "L_M3": 0.48075163178145885,
+        "L_M4": 0.0730486810207367,
+        "W_M0": 0.14913312438875437,
+        "W_M1": 0.9105596588924527,
+        "W_M3": 0.8704131999984384,
+        "W_M4": 0.12776304222643375
+      },
+      "parameter_valid": true,
+      "simulation_valid": true,
+      "functional_valid": true,
+      "functional_failure_reasons": [],
+      "current_error": 1493.6742816540475,
+      "output_resistance": 7.420930121652524,
+      "compliance_relative_variation": 0.6036549222590097,
+      "tracking_max_error": 1694.2394189785591,
+      "compliance_quality_smoke_passed": false,
+      "tracking_quality_smoke_passed": false,
+      "compliance_output_branch_alive": true,
+      "reference_responsive": true,
+      "failure_reason": null,
+      "source": "global",
+      "preparation_evaluation_wall_time_seconds": 0.014070241944864392
+    },
+    {
+      "sample_id": "profile_global_0_0005",
+      "params": {
+        "IB1": -3.297285230783485e-06,
+        "L_M0": 7.020489958247125e-08,
+        "L_M1": 7.83140713805991e-06,
+        "L_M3": 7.0730375324524605e-06,
+        "L_M4": 1.580294197267498e-05,
+        "W_M0": 3.38602495002785e-06,
+        "W_M1": 1.8057083773393988e-08,
+        "W_M3": 9.432150053261437e-08,
+        "W_M4": 1.5659884973860166e-06
+      },
+      "normalized_params": {
+        "IB1": 0.12953912932425737,
+        "L_M0": 0.211591855622828,
+        "L_M1": 0.7234599506482482,
+        "L_M3": 0.7124014906585217,
+        "L_M4": 0.7996844863519073,
+        "W_M0": 0.6324225384742022,
+        "W_M1": 0.06416190322488546,
+        "W_M3": 0.24365267530083656,
+        "W_M4": 0.5486971419304609
+      },
+      "parameter_valid": true,
+      "simulation_valid": true,
+      "functional_valid": true,
+      "functional_failure_reasons": [],
+      "current_error": 0.9804213790733424,
+      "output_resistance": 5369389388.20565,
+      "compliance_relative_variation": 0.0029328719212693374,
+      "tracking_max_error": 0.9804329133988481,
+      "compliance_quality_smoke_passed": true,
+      "tracking_quality_smoke_passed": false,
+      "compliance_output_branch_alive": true,
+      "reference_responsive": true,
+      "failure_reason": null,
+      "source": "global",
+      "preparation_evaluation_wall_time_seconds": 0.013940422097221017
+    },
+    {
+      "sample_id": "profile_global_0_0006",
+      "params": {
+        "IB1": -4.566056047787454e-05,
+        "L_M0": 2.6200542775416964e-06,
+        "L_M1": 7.035105271625859e-08,
+        "L_M3": 1.0628112612676173e-08,
+        "L_M4": 9.279767628998593e-06,
+        "W_M0": 4.581973071552874e-05,
+        "W_M1": 2.6608424692983917e-06,
+        "W_M3": 7.252471931219192e-07,
+        "W_M4": 6.981611718334098e-05
+      },
+      "normalized_params": {
+        "IB1": 0.41488530952483416,
+        "L_M0": 0.6045775720849633,
+        "L_M1": 0.21181765012443066,
+        "L_M3": 0.006614036858081818,
+        "L_M4": 0.7418842753395438,
+        "W_M0": 0.915263133123517,
+        "W_M1": 0.6062547909095883,
+        "W_M3": 0.46512151416391134,
+        "W_M4": 0.9609889229759574
+      },
+      "parameter_valid": true,
+      "simulation_valid": true,
+      "functional_valid": true,
+      "functional_failure_reasons": [],
+      "current_error": 3.620709685445574,
+      "output_resistance": 696613.7624484894,
+      "compliance_relative_variation": 0.006890431943839664,
+      "tracking_max_error": 3.622118293031462,
+      "compliance_quality_smoke_passed": true,
+      "tracking_quality_smoke_passed": false,
+      "compliance_output_branch_alive": true,
+      "reference_responsive": true,
+      "failure_reason": null,
+      "source": "global",
+      "preparation_evaluation_wall_time_seconds": 0.014094411861151457
+    },
+    {
+      "sample_id": "profile_global_0_0007",
+      "params": {
+        "IB1": -0.001011217940681358,
+        "L_M0": 1.462988366390677e-07,
+        "L_M1": 7.286921913054709e-05,
+        "L_M3": 1.5954531495725046e-05,
+        "L_M4": 3.639154019277506e-07,
+        "W_M0": 5.143514104030561e-07,
+        "W_M1": 3.431369854325464e-07,
+        "W_M3": 2.3400362695404093e-06,
+        "W_M4": 2.6184099000415513e-07
+      },
+      "normalized_params": {
+        "IB1": 0.7512111915275455,
+        "L_M0": 0.29131021816283464,
+        "L_M1": 0.9656360289081931,
+        "L_M3": 0.800721013918519,
+        "L_M4": 0.3902501091361046,
+        "W_M0": 0.4278149837628007,
+        "W_M1": 0.3838668828830123,
+        "W_M3": 0.5923056472092867,
+        "W_M4": 0.3545094085857272
+      },
+      "parameter_valid": true,
+      "simulation_valid": true,
+      "functional_valid": true,
+      "functional_failure_reasons": [],
+      "current_error": 0.9951670740250137,
+      "output_resistance": 440157.0588151742,
+      "compliance_relative_variation": 0.5516934271035709,
+      "tracking_max_error": 0.9955015001385277,
+      "compliance_quality_smoke_passed": false,
+      "tracking_quality_smoke_passed": false,
+      "compliance_output_branch_alive": true,
+      "reference_responsive": true,
+      "failure_reason": null,
+      "source": "global",
+      "preparation_evaluation_wall_time_seconds": 0.014031922910362482
+    },
+    {
+      "sample_id": "profile_global_0_0008",
+      "params": {
+        "IB1": -0.002565506766949881,
+        "L_M0": 3.059739404420634e-05,
+        "L_M1": 3.366509242663796e-08,
+        "L_M3": 3.910651623347329e-06,
+        "L_M4": 1.064279286940639e-06,
+        "W_M0": 3.006482065914929e-07,
+        "W_M1": 7.735857903136894e-05,
+        "W_M3": 1.0598457077050929e-05,
+        "W_M4": 9.71189836147816e-08
+      },
+      "normalized_params": {
+        "IB1": 0.8522932911291718,
+        "L_M0": 0.8714211098849773,
+        "L_M1": 0.1317949527874589,
+        "L_M3": 0.6480622822418809,
+        "L_M4": 0.5067639024928212,
+        "W_M0": 0.3695146543905139,
+        "W_M1": 0.9721271209418774,
+        "W_M3": 0.7563106613233685,
+        "W_M4": 0.2468260321766138
+      },
+      "parameter_valid": true,
+      "simulation_valid": true,
+      "functional_valid": true,
+      "functional_failure_reasons": [],
+      "current_error": 14.27757009327593,
+      "output_resistance": 41.579788249408786,
+      "compliance_relative_variation": 0.6178108551075855,
+      "tracking_max_error": 16.31957193229869,
+      "compliance_quality_smoke_passed": false,
+      "tracking_quality_smoke_passed": false,
+      "compliance_output_branch_alive": true,
+      "reference_responsive": true,
+      "failure_reason": null,
+      "source": "global",
+      "preparation_evaluation_wall_time_seconds": 0.013918793993070722
+    },
+    {
+      "sample_id": "profile_global_0_0009",
+      "params": {
+        "IB1": -5.691319396891077e-05,
+        "L_M0": 1.7318216241244783e-08,
+        "L_M1": 3.2446940689320304e-05,
+        "L_M3": 4.318967653450683e-07,
+        "L_M4": 3.126939580145748e-07,
+        "W_M0": 2.4872231989493027e-05,
+        "W_M1": 1.0619641764228806e-08,
+        "W_M3": 3.299817769299333e-08,
+        "W_M4": 2.0481973307975493e-06
+      },
+      "normalized_params": {
+        "IB1": 0.43880323972553015,
+        "L_M0": 0.059625789523124695,
+        "L_M1": 0.877793438732624,
+        "L_M3": 0.4088449878618121,
+        "L_M4": 0.3737798724323511,
+        "W_M0": 0.848928689956665,
+        "W_M1": 0.0065274666994810104,
+        "W_M3": 0.12962248921394348,
+        "W_M4": 0.5778429489582777
+      },
+      "parameter_valid": true,
+      "simulation_valid": true,
+      "functional_valid": true,
+      "functional_failure_reasons": [],
+      "current_error": 0.9999506413232851,
+      "output_resistance": 446696851607.8385,
+      "compliance_relative_variation": 0.0007985724939936321,
+      "tracking_max_error": 0.9999506537427004,
+      "compliance_quality_smoke_passed": true,
+      "tracking_quality_smoke_passed": false,
+      "compliance_output_branch_alive": true,
+      "reference_responsive": true,
+      "failure_reason": null,
+      "source": "global",
+      "preparation_evaluation_wall_time_seconds": 0.014152150135487318
+    },
+    {
+      "sample_id": "profile_global_0_0010",
+      "params": {
+        "IB1": -8.440942506526396e-06,
+        "L_M0": 3.609312996116097e-06,
+        "L_M1": 5.568434885767897e-07,
+        "L_M3": 3.080071033582418e-05,
+        "L_M4": 5.4035472982870316e-08,
+        "W_M0": 1.9797682217229967e-06,
+        "W_M1": 1.4831361079396918e-06,
+        "W_M3": 4.272295270005234e-07,
+        "W_M4": 4.466908591497723e-05
+      },
+      "normalized_params": {
+        "IB1": 0.2315977355465293,
+        "L_M0": 0.6393561363220215,
+        "L_M1": 0.4364332864060998,
+        "L_M3": 0.8721401831135154,
+        "L_M4": 0.18316973932087421,
+        "W_M0": 0.5741535872220993,
+        "W_M1": 0.5427952520549297,
+        "W_M3": 0.4076653150841594,
+        "W_M4": 0.912501766346395
+      },
+      "parameter_valid": true,
+      "simulation_valid": true,
+      "functional_valid": true,
+      "functional_failure_reasons": [],
+      "current_error": 0.9741970699877202,
+      "output_resistance": 238308676.8288768,
+      "compliance_relative_variation": 0.019268378973863905,
+      "tracking_max_error": 0.9742156982837575,
+      "compliance_quality_smoke_passed": true,
+      "tracking_quality_smoke_passed": false,
+      "compliance_output_branch_alive": true,
+      "reference_responsive": true,
+      "failure_reason": null,
+      "source": "global",
+      "preparation_evaluation_wall_time_seconds": 0.014384065056219697
+    },
+    {
+      "sample_id": "profile_global_0_0011",
+      "params": {
+        "IB1": -0.0001856798462329835,
+        "L_M0": 6.488396038139141e-07,
+        "L_M1": 5.364294738058296e-06,
+        "L_M3": 1.913619955535343e-08,
+        "L_M4": 5.81588955266714e-05,
+        "W_M0": 2.1432709631660395e-08,
+        "W_M1": 6.380044225023744e-07,
+        "W_M3": 1.3791967570756672e-06,
+        "W_M4": 1.2126269666468812e-07
+      },
+      "normalized_params": {
+        "IB1": 0.5671911919489503,
+        "L_M0": 0.45303433761000633,
+        "L_M1": 0.6823781579732895,
+        "L_M3": 0.07046392280608416,
+        "L_M4": 0.9411540376022458,
+        "W_M0": 0.08276927005499601,
+        "W_M1": 0.4512059222906828,
+        "W_M3": 0.5349065568298101,
+        "W_M4": 0.27093180548399687
+      },
+      "parameter_valid": true,
+      "simulation_valid": true,
+      "functional_valid": true,
+      "functional_failure_reasons": [],
+      "current_error": 4.369821565373085,
+      "output_resistance": 1657.6019819368016,
+      "compliance_relative_variation": 0.6058206186520149,
+      "tracking_max_error": 5.0672571612433766,
+      "compliance_quality_smoke_passed": false,
+      "tracking_quality_smoke_passed": false,
+      "compliance_output_branch_alive": true,
+      "reference_responsive": true,
+      "failure_reason": null,
+      "source": "global",
+      "preparation_evaluation_wall_time_seconds": 0.014038823079317808
+    },
+    {
+      "sample_id": "profile_global_0_0012",
+      "params": {
+        "IB1": -0.0006135596817671082,
+        "L_M0": 1.6989887254768239e-06,
+        "L_M1": 2.473276037888885e-05,
+        "L_M3": 3.909162518729638e-08,
+        "L_M4": 1.912368485597472e-05,
+        "W_M0": 5.819160499642603e-07,
+        "W_M1": 6.9221447389439204e-06,
+        "W_M3": 1.1295773112943534e-07,
+        "W_M4": 2.124623650205379e-05
+      },
+      "normalized_params": {
+        "IB1": 0.6969642033800483,
+        "L_M0": 0.5575476242229342,
+        "L_M1": 0.8483181474730372,
+        "L_M3": 0.14802093151956797,
+        "L_M4": 0.8203928945586085,
+        "W_M0": 0.4412150839343667,
+        "W_M1": 0.7100601689890027,
+        "W_M3": 0.26322899013757706,
+        "W_M4": 0.8318205028772354
+      },
+      "parameter_valid": true,
+      "simulation_valid": true,
+      "functional_valid": true,
+      "functional_failure_reasons": [],
+      "current_error": 0.4508105612984681,
+      "output_resistance": 6018.8618631769905,
+      "compliance_relative_variation": 0.562516400225693,
+      "tracking_max_error": 0.49066705142614114,
+      "compliance_quality_smoke_passed": false,
+      "tracking_quality_smoke_passed": false,
+      "compliance_output_branch_alive": true,
+      "reference_responsive": true,
+      "failure_reason": null,
+      "source": "global",
+      "preparation_evaluation_wall_time_seconds": 0.014016113011166453
+    }
+  ],
+  "evaluator_unstable": false,
+  "sampling": {
+    "method": "anchor_local_plus_sobol",
+    "seed": 142,
+    "local_radius": 0.02,
+    "initial_samples": 25,
+    "additional_samples": 0,
+    "max_evaluations": 25
+  },
+  "evaluation_backend": "spice"
+}

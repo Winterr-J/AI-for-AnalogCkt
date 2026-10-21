@@ -1,0 +1,73 @@
+{
+  "status": "READY_FOR_D0",
+  "failed_stage": null,
+  "reason": null,
+  "error_class": null,
+  "circuit_type": "OpAmp",
+  "circuit_id": "circuit_1653",
+  "artifact_paths": {
+    "run_directory": "/home/ubuntu/batch010_manual_preparation_v3/circuit_1653/OpAmp_circuit_1653_c8dsvcbe",
+    "anchor": "/home/ubuntu/batch010_manual_preparation_v3/circuit_1653/OpAmp_circuit_1653_c8dsvcbe/anchor.json",
+    "profiling": "/home/ubuntu/batch010_manual_preparation_v3/circuit_1653/OpAmp_circuit_1653_c8dsvcbe/profiling.json",
+    "target_generation": "/home/ubuntu/batch010_manual_preparation_v3/circuit_1653/OpAmp_circuit_1653_c8dsvcbe/target_generation.json",
+    "config": "/home/ubuntu/batch010_manual_preparation_v3/circuit_1653/OpAmp_circuit_1653_c8dsvcbe/active_learning_config.yaml",
+    "result": "/home/ubuntu/batch010_manual_preparation_v3/circuit_1653/OpAmp_circuit_1653_c8dsvcbe/preparation_result.json"
+  },
+  "costs": {
+    "evaluation_backend": "spice",
+    "anchor_spice_point_evaluations": 1,
+    "profile_spice_point_evaluations": 25,
+    "llm_calls": 1,
+    "llm_retries": 0,
+    "llm_usage": [
+      {
+        "stage": "auto_target",
+        "round": 1,
+        "provider": "gemini",
+        "model": "gemini-3.5-flash-lite",
+        "input_tokens": 1995,
+        "output_tokens": 295,
+        "total_tokens": 2290
+      }
+    ],
+    "anchor_seconds": 0.07003427110612392,
+    "profiling_seconds": 0.5061185660306364,
+    "target_generation_seconds": 2.429786145919934,
+    "llm_backend": "provider_api"
+  },
+  "profile_counts": {
+    "total_samples": 25,
+    "parameter_valid_samples": 25,
+    "simulation_valid_samples": 19,
+    "functional_valid_samples": 11
+  },
+  "validation": {
+    "valid": true,
+    "errors": [],
+    "target_specs": {
+      "low_frequency_open_loop_gain_db": {
+        "operator": ">=",
+        "value": 48.0
+      },
+      "unity_gain_frequency_hz": {
+        "operator": ">=",
+        "value": 68000000.0
+      },
+      "phase_margin_deg": {
+        "operator": ">=",
+        "value": 90.2
+      }
+    },
+    "joint_supporting_sample_ids": [
+      "profile_local_0_0009"
+    ]
+  },
+  "d0": {
+    "mode": "independent",
+    "path": "/home/ubuntu/batch010_manual_preparation_v3/circuit_1653/OpAmp_circuit_1653_c8dsvcbe/d0/d0_v3_seed42.jsonl",
+    "anchor_sample_id": "anchor_nominal",
+    "seed": 42,
+    "initialized": false
+  },
+  "elapsed_seconds": 3.0738282680977136
+}

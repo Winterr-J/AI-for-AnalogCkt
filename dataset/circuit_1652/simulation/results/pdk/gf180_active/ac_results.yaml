@@ -1,0 +1,18 @@
+status: PASS
+analysis_mode: small_signal_frequency_response
+drive_mode: VIN1
+source_specs:
+  VIN1: DC 1.2 AC 1
+frequency_range_Hz:
+- 1.0
+- 999999999.9999859
+low_frequency_magnitude: 230.9140934406618
+high_frequency_magnitude: 0.4389736765668469
+peak_magnitude: 230.9140934406618
+peak_frequency_Hz: 1.0
+magnitude_variation_dB: 54.42023923907706
+inferred_response_type: low-pass
+warning_or_failure_reason: null
+pdk_stage: gf180_active
+functional_stage_status: PASS
+core_analysis: true

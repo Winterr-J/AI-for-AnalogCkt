@@ -1,0 +1,108 @@
+schema_version: 2
+circuit_id: circuit_0476
+circuit_type: "current mirrors"
+scope: device_parameters_only
+data_type_vocabulary:
+  - continuous
+  - categorial
+device_parameters:
+  M1:
+    device_type: nmos
+    source_device_type: nmos4
+    tunable_parameters:
+      M1_model:
+        parameter_category: model
+        data_type: categorial
+        optimizable: true
+        unit: unitless
+      W:
+        parameter_category: physical
+        data_type: continuous
+        optimizable: true
+        unit: um
+      L:
+        parameter_category: physical
+        data_type: continuous
+        optimizable: true
+        unit: um
+      m:
+        parameter_category: physical
+        data_type: continuous
+        optimizable: true
+        unit: unitless
+        integer_only: true
+  M0:
+    device_type: nmos
+    source_device_type: nmos4
+    tunable_parameters:
+      M0_model:
+        parameter_category: model
+        data_type: categorial
+        optimizable: true
+        unit: unitless
+      W:
+        parameter_category: physical
+        data_type: continuous
+        optimizable: true
+        unit: um
+      L:
+        parameter_category: physical
+        data_type: continuous
+        optimizable: true
+        unit: um
+      m:
+        parameter_category: physical
+        data_type: continuous
+        optimizable: true
+        unit: unitless
+        integer_only: true
+  M4:
+    device_type: nmos
+    source_device_type: nmos4
+    tunable_parameters:
+      M4_model:
+        parameter_category: model
+        data_type: categorial
+        optimizable: true
+        unit: unitless
+      W:
+        parameter_category: physical
+        data_type: continuous
+        optimizable: true
+        unit: um
+      L:
+        parameter_category: physical
+        data_type: continuous
+        optimizable: true
+        unit: um
+      m:
+        parameter_category: physical
+        data_type: continuous
+        optimizable: true
+        unit: unitless
+        integer_only: true
+  M3:
+    device_type: nmos
+    source_device_type: nmos4
+    tunable_parameters:
+      M3_model:
+        parameter_category: model
+        data_type: categorial
+        optimizable: true
+        unit: unitless
+      W:
+        parameter_category: physical
+        data_type: continuous
+        optimizable: true
+        unit: um
+      L:
+        parameter_category: physical
+        data_type: continuous
+        optimizable: true
+        unit: um
+      m:
+        parameter_category: physical
+        data_type: continuous
+        optimizable: true
+        unit: unitless
+        integer_only: true

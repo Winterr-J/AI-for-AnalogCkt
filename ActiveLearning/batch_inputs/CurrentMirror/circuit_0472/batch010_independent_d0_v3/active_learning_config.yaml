@@ -1,0 +1,74 @@
+active_learning:
+  max_iterations: 5
+data:
+  d0_path: d0/d0_v3_seed42.jsonl
+  initialize_if_missing: true
+  sampling_mode: v3
+  seed: 42
+  n_samples: 20
+  n_local: 10
+  n_global: 9
+  d0_mode: independent
+  d0_path_relative_to: config
+  initial_anchor:
+    source: profiling
+    sample_id: anchor_nominal
+    params:
+      IB1: -0.0001
+      R0: 10000.0
+      R1: 10000.0
+target_specs:
+  current_error:
+    operator: <=
+    value: 0.015
+  output_resistance:
+    operator: '>='
+    value: 29000000.0
+target_source: auto_generated
+performance_target_selected: true
+benchmark_version: auto_target_v1_CurrentMirror_circuit_0472_iy37bxio
+target_provenance:
+  source: automatic_profiling_llm_v1
+  purpose: experimental_benchmark_not_user_specification
+  profiling_backend: spice
+  circuit_type: CurrentMirror
+  circuit_id: circuit_0472
+  anchor:
+    sample_id: anchor_nominal
+    params:
+      IB1: -0.0001
+      R0: 10000.0
+      R1: 10000.0
+    metrics:
+      current_error: 0.0003876460432572428
+      output_resistance: 28931134.000124402
+  profiling_artifact: profiling.json
+  target_recommendation: target_generation.json
+  generated_config: active_learning_config.yaml
+  d0_mode: independent
+  d0_anchor_source: profiling
+  d0_anchor_sample_id: anchor_nominal
+  d0_seed: 42
+  joint_supporting_sample_ids:
+  - profile_local_0_0003
+  - profile_local_0_0008
+  - profile_local_0_0009
+  llm_declared_supporting_sample_ids:
+  - profile_local_0_0003
+  reason: We select a joint experimental target that improves upon the anchor's current
+    error while maintaining a high output resistance. Specifically, the anchor has
+    a current_error of ~0.000388 and output_resistance of ~28.9M ohms. To ensure the
+    anchor fails at least one threshold (as required), we set the current_error threshold
+    to <= 0.015 (which the anchor satisfies) and the output_resistance threshold to
+    >= 29,000,000 ohms (which the anchor fails, since 28.93M < 29M). Observed sample
+    'profile_local_0_0003' achieves a current_error of ~0.00880 and an output_resistance
+    of ~29,297,030 ohms, jointly satisfying both thresholds.
+  confidence: 1.0
+  provider: gemini
+  model: gemini-3.5-flash-lite
+  llm_backend: provider_api
+  target_generation_attempts: 1
+  seed: 42
+  simulator_environment:
+    platform: Linux-6.8.0-138-generic-x86_64-with-glibc2.39
+    python: 3.12.3

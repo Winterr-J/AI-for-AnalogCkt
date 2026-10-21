@@ -1,0 +1,58 @@
+circuit:
+  id: circuit_0476
+  original_id: 612
+  original_type: current mirrors
+  topology_name: Four-transistor NMOS cascode current mirror (AnalogGenie 612)
+  original_category: current mirrors
+  actual_circuit_type: NMOS cascode current mirror
+models:
+  nmos:
+    name: NMOS_IDEAL
+    level: 1
+    VTO: 0.7
+    KP_uA_per_V2: 200.0
+    LAMBDA: 0.02
+devices:
+  MOS:
+    M1:
+      model: NMOS_IDEAL
+      W_um: 10.0
+      L_um: 1.0
+      m: 1
+    M0:
+      model: NMOS_IDEAL
+      W_um: 10.0
+      L_um: 1.0
+      m: 1
+    M4:
+      model: NMOS_IDEAL
+      W_um: 10.0
+      L_um: 1.0
+      m: 1
+    M3:
+      model: NMOS_IDEAL
+      W_um: 10.0
+      L_um: 1.0
+      m: 1
+operating_parameters: &id001
+  VDD: 3.3
+  IB1: -0.0001
+  VSS: 0.0
+pnp_devices: null
+adjusted_from_global_default: []
+search_policy: global ideal defaults, then limited operating-parameter sweep; first
+  functional point; no performance optimization
+functional_assessment:
+  required_analyses:
+  - op
+  - dc
+  overall: PASS
+  reasons: null
+functional_audit:
+  final_functional_status: PASS
+  best_working_point: *id001
+  remaining_issue: null
+  topology_limitation: false
+  pdk_eligibility: ELIGIBLE
+  validation_policy: cell/core validated by its own function; non-core analyses do
+    not cause functional failure
