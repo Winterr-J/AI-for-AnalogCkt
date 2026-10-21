@@ -130,6 +130,47 @@ def _verify_safe_skip(directory: Path, job_id: str, row: dict) -> bool:
             and reaped.get("exit_code") == 3)
 
 
+def _confirmed_failed_child(directory: Path, job_id: str, row: dict,
+                            manifest: dict, authorization: dict | None) -> bool:
+    """Continue only after the failed attempt is reaped and batch authority is intact."""
+    try:
+        attempt = row["attempts"][-1]
+        path = (directory / "jobs" / job_id / "attempts" /
+                attempt["attempt_id"] / "child_reaped.json")
+        if path.is_symlink():
+            return False
+        reaped = read_json(path)
+        if reaped.get("attempt_id") != attempt["attempt_id"] or \
+                reaped.get("exit_confirmed") is not True or \
+                type(reaped.get("exit_code")) is not int:
+            return False
+        ledger = read_jsonl_strict(directory / "api_usage.jsonl")
+        started = [item for item in ledger if item.get("event") == "attempt_started"]
+        finished = [item for item in ledger if item.get("event") == "attempt_finished"]
+        key = lambda item: (item.get("job_id"), item.get("attempt_id"),
+                            item.get("logical_id"), item.get("attempt"))
+        if sorted(map(key, started), key=str) != sorted(map(key, finished), key=str):
+            return False
+        if authorization is not None:
+            from .authorization import (
+                validate_authorization, validate_authorization_claim,
+                verify_published_source_closure,
+            )
+            current = load_manifest(manifest["manifest_path"])
+            if current["manifest_sha256"] != manifest["manifest_sha256"]:
+                return False
+            approved = validate_authorization(
+                current, authorization["authorization_path"],
+                authorization["authorization_sha256"], directory.parent)
+            validate_authorization_claim(approved)
+            verify_published_source_closure(current)
+            verify_job(current, next(job for job in current["jobs"]
+                                     if job["job_id"] == job_id))
+    except Exception:
+        return False
+    return True
+
+
 def _run_batch(
     manifest: dict, output_root: str | Path,
     worker: Callable[[dict, Path], dict], *, offline_only: bool,
@@ -184,6 +225,11 @@ def _run_batch(
                 _event(directory, job_id, "INTERRUPTED_UNCERTAIN", row["error_code"])
                 break
             if row["state"] == "INTERRUPTED_UNCERTAIN":
+                if row.get("error_code") in {
+                        "INVALID_WORKER_RESULT", "SAFE_STOP_ARTIFACT_INVALID"}:
+                    break
+                if _confirmed_failed_child(directory, job_id, row, manifest, authorization):
+                    continue
                 break
             if row["state"] in {"SKIPPED_JOB_TIMEOUT", "SKIPPED_JOB_BUDGET"}:
                 if not _verify_safe_skip(directory, job_id, row):
@@ -241,6 +287,8 @@ def _run_batch(
                 row["error_code"] = type(error).__name__
                 _save(directory, state)
                 _event(directory, job_id, "INTERRUPTED_UNCERTAIN", row["error_code"])
+                if _confirmed_failed_child(directory, job_id, row, manifest, authorization):
+                    continue
                 break
             if isinstance(outcome, dict) and outcome.get("state") in {
                     "SKIPPED_JOB_TIMEOUT", "SKIPPED_JOB_BUDGET"}:

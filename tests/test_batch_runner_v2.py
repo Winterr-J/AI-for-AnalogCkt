@@ -12,7 +12,8 @@ from unittest.mock import patch
 
 from ActiveLearning.batch_runner_v2 import plan_batch, report_batch, run_mock_batch, status_batch
 from ActiveLearning.batch_runner_v2.__main__ import main as cli_main
-from ActiveLearning.batch_runner_v2.storage import sha256_file
+from ActiveLearning.batch_runner_v2.gemini_recovery import RetryExhaustedError
+from ActiveLearning.batch_runner_v2.storage import append_jsonl, atomic_json, sha256_file
 
 
 class BatchRunnerV2Tests(unittest.TestCase):
@@ -138,6 +139,206 @@ class BatchRunnerV2Tests(unittest.TestCase):
         again = run_mock_batch(self.manifest, self.output,
                                lambda *_: self.fail("no completed or uncertain replay"))
         self.assertEqual(again["interrupted_uncertain"], 1)
+
+    def test_reaped_retry_exhaustion_preserves_failure_and_runs_next_job(self):
+        called = []
+
+        def worker(job, attempt):
+            called.append(job["job_id"])
+            if job["job_id"] == "job_1":
+                (attempt / "worker_diagnostic.json").write_text(
+                    '{"error_type":"RetryExhaustedError"}\n', encoding="utf-8")
+                atomic_json(attempt / "child_reaped.json", {
+                    "attempt_id": attempt.name, "exit_confirmed": True, "exit_code": 1})
+                raise RetryExhaustedError("synthetic exhausted request")
+            return self.success(job, attempt)
+
+        report = run_mock_batch(self.manifest, self.output, worker)
+        self.assertEqual(called, ["job_0", "job_1", "job_2"])
+        self.assertEqual((report["completed"], report["interrupted_uncertain"]), (2, 1))
+        row = status_batch("offline_batch_1", self.output)["jobs"]["job_1"]
+        self.assertEqual(row["state"], "INTERRUPTED_UNCERTAIN")
+        self.assertEqual(row["error_code"], "RetryExhaustedError")
+        self.assertEqual(len(row["attempts"]), 1)
+        attempt = Path(row["attempts"][0]["attempt_directory"])
+        self.assertTrue((attempt / "worker_diagnostic.json").is_file())
+        self.assertTrue((attempt / "child_reaped.json").is_file())
+        self.assertTrue(report["api_usage"]["usage_unknown"])
+        resumed = run_mock_batch(self.manifest, self.output,
+                                 lambda *_: self.fail("terminal job replayed"))
+        self.assertEqual(resumed["interrupted_uncertain"], 1)
+        self.assertEqual(len(status_batch("offline_batch_1", self.output)["jobs"]["job_1"]["attempts"]), 1)
+
+    def test_unconfirmed_child_exit_stops_before_next_job(self):
+        called = []
+
+        def worker(job, attempt):
+            called.append(job["job_id"])
+            if job["job_id"] == "job_1":
+                atomic_json(attempt / "child_reaped.json", {
+                    "attempt_id": attempt.name, "exit_confirmed": False})
+                raise RetryExhaustedError("synthetic exhausted request")
+            return self.success(job, attempt)
+
+        report = run_mock_batch(self.manifest, self.output, worker)
+        self.assertEqual(called, ["job_0", "job_1"])
+        self.assertEqual(report["jobs"]["job_2"]["state"], "PENDING")
+
+    def test_real_child_style_retry_diagnostic_and_closed_ledger_continue(self):
+        called = []
+
+        def worker(job, attempt):
+            called.append(job["job_id"])
+            if job["job_id"] == "job_1":
+                (attempt / "worker_diagnostic.json").write_text(
+                    '{"error_type":"RetryExhaustedError"}\n', encoding="utf-8")
+                event = {"job_id": job["job_id"], "attempt_id": attempt.name,
+                         "logical_id": "request_1", "attempt": 1}
+                journal = self.output / "offline_batch_1" / "api_usage.jsonl"
+                append_jsonl(journal, {**event, "event": "attempt_started"})
+                append_jsonl(journal, {**event, "event": "attempt_finished",
+                                       "outcome": "server_error", "usage_unknown": True})
+                atomic_json(attempt / "child_reaped.json", {
+                    "attempt_id": attempt.name, "exit_confirmed": True, "exit_code": 1})
+                raise RuntimeError("real AL child exited without verified completion")
+            return self.success(job, attempt)
+
+        report = run_mock_batch(self.manifest, self.output, worker)
+        self.assertEqual(called, ["job_0", "job_1", "job_2"])
+        self.assertEqual(report["jobs"]["job_1"]["state"], "INTERRUPTED_UNCERTAIN")
+        self.assertEqual(report["api_usage"]["physical_attempts"], 1)
+        self.assertTrue(report["api_usage"]["usage_unknown"])
+        self.assertEqual(status_batch("offline_batch_1", self.output)["jobs"]["job_1"]["error_code"],
+                         "RuntimeError")
+
+    def test_reaped_offline_subprocess_failure_continues(self):
+        from ActiveLearning.batch_runner_v2.al_process import run_offline_fake_child
+
+        called = []
+
+        def worker(job, attempt):
+            called.append(job["job_id"])
+            if job["job_id"] == "job_1":
+                return run_offline_fake_child(job, attempt, scenario="nonzero")
+            return self.success(job, attempt)
+
+        report = run_mock_batch(self.manifest, self.output, worker)
+        self.assertEqual(called, ["job_0", "job_1", "job_2"])
+        self.assertEqual((report["completed"], report["interrupted_uncertain"]), (2, 1))
+        row = status_batch("offline_batch_1", self.output)["jobs"]["job_1"]
+        attempt = Path(row["attempts"][0]["attempt_directory"])
+        self.assertEqual(json.loads((attempt / "child_reaped.json").read_text())["exit_code"], 2)
+
+    def test_unclosed_physical_attempt_stops_after_reaped_child(self):
+        called = []
+
+        def worker(job, attempt):
+            called.append(job["job_id"])
+            if job["job_id"] == "job_1":
+                journal = self.output / "offline_batch_1" / "api_usage.jsonl"
+                append_jsonl(journal, {"job_id": job["job_id"],
+                                       "attempt_id": attempt.name, "logical_id": "request_1",
+                                       "attempt": 1, "event": "attempt_started"})
+                atomic_json(attempt / "child_reaped.json", {
+                    "attempt_id": attempt.name, "exit_confirmed": True, "exit_code": 1})
+                raise RetryExhaustedError("synthetic exhausted request")
+            return self.success(job, attempt)
+
+        report = run_mock_batch(self.manifest, self.output, worker)
+        self.assertEqual(called, ["job_0", "job_1"])
+        self.assertEqual(report["jobs"]["job_2"]["state"], "PENDING")
+
+    def test_invalid_worker_result_remains_a_stop_on_restart(self):
+        def worker(job, attempt):
+            if job["job_id"] == "job_1":
+                atomic_json(attempt / "child_reaped.json", {
+                    "attempt_id": attempt.name, "exit_confirmed": True, "exit_code": 0})
+                return {}
+            return self.success(job, attempt)
+
+        first = run_mock_batch(self.manifest, self.output, worker)
+        self.assertEqual(first["jobs"]["job_2"]["state"], "PENDING")
+        called = []
+        second = run_mock_batch(self.manifest, self.output,
+                                lambda job, attempt: (called.append(job["job_id"]),
+                                                      self.success(job, attempt))[1])
+        self.assertEqual(called, [])
+        self.assertEqual(second["jobs"]["job_2"]["state"], "PENDING")
+
+    def test_restart_continues_after_confirmed_reap_without_replay(self):
+        def worker(job, attempt):
+            if job["job_id"] == "job_1":
+                raise RetryExhaustedError("synthetic exhausted request")
+            return self.success(job, attempt)
+
+        run_mock_batch(self.manifest, self.output, worker)
+        row = status_batch("offline_batch_1", self.output)["jobs"]["job_1"]
+        attempt = Path(row["attempts"][0]["attempt_directory"])
+        atomic_json(attempt / "child_reaped.json", {
+            "attempt_id": attempt.name, "exit_confirmed": True, "exit_code": 1})
+        called = []
+        result = run_mock_batch(self.manifest, self.output,
+                                lambda job, attempt: (called.append(job["job_id"]),
+                                                      self.success(job, attempt))[1])
+        self.assertEqual(called, ["job_2"])
+        self.assertEqual((result["completed"], result["interrupted_uncertain"]), (2, 1))
+        self.assertEqual(len(status_batch("offline_batch_1", self.output)["jobs"]["job_1"]["attempts"]), 1)
+
+    def test_reaped_child_does_not_bypass_batch_authorization_recheck(self):
+        from ActiveLearning.batch_runner_v2.runner import _run_batch
+        from ActiveLearning.batch_runner_v2.schema import load_manifest
+
+        manifest = load_manifest(self.manifest)
+        authorization = {
+            "execution_scope": "offline_integration", "authorization_id": "mock_auth",
+            "authorization_sha256": "a" * 64,
+            "authorization_path": str(self.root / "unavailable_approval.json"),
+        }
+        called = []
+
+        def worker(job, attempt):
+            called.append(job["job_id"])
+            if job["job_id"] == "job_1":
+                atomic_json(attempt / "child_reaped.json", {
+                    "attempt_id": attempt.name, "exit_confirmed": True, "exit_code": 1})
+                raise RetryExhaustedError("synthetic exhausted request")
+            return self.success(job, attempt)
+
+        report = _run_batch(manifest, self.output, worker, offline_only=True,
+                            authorization=authorization)
+        self.assertEqual(called, ["job_0", "job_1"])
+        self.assertEqual(report["jobs"]["job_2"]["state"], "PENDING")
+        self.assertEqual(report["jobs"]["job_1"]["state"], "INTERRUPTED_UNCERTAIN")
+
+    def test_reaped_child_continues_when_batch_authorization_rechecks_pass(self):
+        from ActiveLearning.batch_runner_v2.runner import _run_batch
+        from ActiveLearning.batch_runner_v2.schema import load_manifest
+
+        manifest = load_manifest(self.manifest)
+        authorization = {
+            "execution_scope": "offline_integration", "authorization_id": "mock_auth",
+            "authorization_sha256": "a" * 64,
+            "authorization_path": str(self.root / "mock_approval.json"),
+        }
+        called = []
+
+        def worker(job, attempt):
+            called.append(job["job_id"])
+            if job["job_id"] == "job_1":
+                atomic_json(attempt / "child_reaped.json", {
+                    "attempt_id": attempt.name, "exit_confirmed": True, "exit_code": 1})
+                raise RetryExhaustedError("synthetic exhausted request")
+            return self.success(job, attempt)
+
+        with patch("ActiveLearning.batch_runner_v2.authorization.validate_authorization",
+                   return_value=authorization) as validate, patch(
+                   "ActiveLearning.batch_runner_v2.authorization.validate_authorization_claim"), patch(
+                   "ActiveLearning.batch_runner_v2.authorization.verify_published_source_closure"):
+            report = _run_batch(manifest, self.output, worker, offline_only=True,
+                                authorization=authorization)
+        self.assertEqual(called, ["job_0", "job_1", "job_2"])
+        self.assertEqual(report["interrupted_uncertain"], 1)
+        validate.assert_called_once()
 
     def test_corrupted_completed_artifact_becomes_blocked(self):
         run_mock_batch(self.manifest, self.output, self.success)
