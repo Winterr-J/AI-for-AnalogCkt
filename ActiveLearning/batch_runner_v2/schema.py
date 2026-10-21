@@ -13,6 +13,9 @@ except ImportError:  # The bundled offline test runtime has no PyYAML.
     yaml = None
 
 from .storage import sha256_file
+from ActiveLearning.inverse_design.qwen_provider import (
+    QWEN_FLASH_MODEL, validate_qwen_endpoint,
+)
 
 _LABEL = re.compile(r"[A-Za-z0-9_-]+\Z")
 _MODEL = re.compile(r"[A-Za-z0-9_-]+(?:\.[A-Za-z0-9_-]+)*\Z")
@@ -35,6 +38,7 @@ _REQUIRED_REAL_AL_CLOSURE = {
     "ActiveLearning/active_learning.py",
     "ActiveLearning/experiment_logging.py",
     "ActiveLearning/inverse_design/llm_client.py",
+    "ActiveLearning/inverse_design/qwen_provider.py",
     "ActiveLearning/batch_runner_v2/al_process.py",
     "ActiveLearning/batch_runner_v2/authorization.py",
     "ActiveLearning/batch_runner_v2/gemini_recovery.py",
@@ -176,6 +180,8 @@ def load_manifest(path: str | Path) -> dict:
     elif version == "batch_runner_v2b2a_candidate_v1":
         expected_manifest_keys = _B2A_MANIFEST_KEYS
         expected_job_keys = _B2A_JOB_KEYS
+        if payload.get("provider") == "qwen":
+            expected_manifest_keys = expected_manifest_keys | {"provider_base_url"}
         if "repository_root" in payload:
             expected_manifest_keys = expected_manifest_keys | {"repository_root"}
     else:
@@ -183,8 +189,13 @@ def load_manifest(path: str | Path) -> dict:
     if set(payload) != expected_manifest_keys:
         raise ValueError("invalid V2-A manifest fields")
     _label(payload["batch_id"], "batch_id")
-    if payload["provider"] != "gemini":
-        raise ValueError("V2-A recovery adapter supports only mocked Gemini")
+    if payload["provider"] == "qwen":
+        if version != "batch_runner_v2b2a_candidate_v1" or (
+                payload["model"] != QWEN_FLASH_MODEL):
+            raise ValueError("Qwen requires the approved B2A model")
+        validate_qwen_endpoint(payload["provider_base_url"])
+    elif payload["provider"] != "gemini":
+        raise ValueError("unsupported V2 provider")
     _model(payload["model"])
     _label(payload["credential_scope"], "credential_scope")
     limits = payload["resource_limits"]
@@ -235,6 +246,8 @@ def load_manifest(path: str | Path) -> dict:
         maximum = retry.get("rate_limit_max_backoff_seconds", 300)
         if not (1 <= initial <= maximum <= 300):
             raise ValueError("rate-limit backoff must be within 1..300 seconds")
+    elif payload["provider"] == "qwen":
+        raise ValueError("Qwen requires job_deadline recovery and per-job attempt cap")
     jobs = payload["jobs"]
     if not isinstance(jobs, list) or not jobs:
         raise ValueError("batch needs at least one job")

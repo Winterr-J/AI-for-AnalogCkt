@@ -85,7 +85,7 @@ def authorization_identity(manifest: dict, output_root: str | Path) -> dict:
     """Return all non-secret manifest fields an external approval must repeat."""
     if manifest.get("schema_version") != "batch_runner_v2b2a_candidate_v1":
         raise AuthorizationError("only a B2A candidate manifest can be authorized")
-    return {
+    identity = {
         "manifest_sha256": manifest["manifest_sha256"],
         "source_revision": manifest["source_revision"],
         "source_closure_sha256": canonical_sha256(manifest["source_closure"]),
@@ -98,6 +98,9 @@ def authorization_identity(manifest: dict, output_root: str | Path) -> dict:
         "jobs": _bound_jobs(manifest),
         "output_root": str(Path(output_root).resolve()),
     }
+    if manifest["provider"] == "qwen":
+        identity["provider_base_url"] = manifest["provider_base_url"]
+    return identity
 
 
 def validate_authorization(
@@ -127,7 +130,9 @@ def validate_authorization(
         approval = json.loads(path.read_text(encoding="utf-8"))
     except (OSError, json.JSONDecodeError) as error:
         raise AuthorizationError("authorization is not valid JSON") from error
-    if not isinstance(approval, dict) or set(approval) != _AUTHORIZATION_KEYS:
+    expected_keys = (_AUTHORIZATION_KEYS | {"provider_base_url"}
+                     if manifest["provider"] == "qwen" else _AUTHORIZATION_KEYS)
+    if not isinstance(approval, dict) or set(approval) != expected_keys:
         raise AuthorizationError("invalid authorization fields")
     if approval["schema_version"] != "batch_runner_v2b2a_authorization_v1":
         raise AuthorizationError("unsupported authorization schema")

@@ -16,7 +16,10 @@ from .gemini_recovery import (
     GeminiRecovery, JobDeadlineExpired, JobPhysicalAttemptLimitError,
     PhysicalAttemptLimitError, ProviderQuotaError, ProviderTerminalError,
 )
-from .llm_bridge import GeminiALClient, build_gemini_chat_transport
+from .llm_bridge import (
+    GeminiALClient, QwenALClient, build_gemini_chat_transport,
+    build_qwen_chat_transport,
+)
 from .schema import _load_config, load_manifest, verify_job
 from .storage import atomic_json, read_json, sha256_file
 
@@ -270,8 +273,13 @@ def _production_run(
 
     deadline = invocation.get("job_deadline_monotonic")
     recovery = _recovery(manifest, job, attempt, deadline)
-    transport = build_gemini_chat_transport(model=manifest["model"])
-    llm_client = GeminiALClient(recovery, transport, manifest["model"])
+    if manifest["provider"] == "qwen":
+        transport = build_qwen_chat_transport(
+            model=manifest["model"], base_url=manifest["provider_base_url"])
+        llm_client = QwenALClient(recovery, transport, manifest["model"])
+    else:
+        transport = build_gemini_chat_transport(model=manifest["model"])
+        llm_client = GeminiALClient(recovery, transport, manifest["model"])
     run_context = {}
     def capture_context(value):
         run_context.update(value)
@@ -284,7 +292,7 @@ def _production_run(
         if deadline is not None and time.monotonic() >= deadline:
             raise RuntimeError("AL job deadline reached outside safe 429 wait")
 
-    os.environ["AL_LLM_PROVIDER"] = "gemini"
+    os.environ["AL_LLM_PROVIDER"] = manifest["provider"]
     result = al_main.run_configured_active_learning(
         job["circuit_type"], job["circuit_id"], config_path=config_path,
         llm_client=llm_client, runs_root=attempt / "al_runs",

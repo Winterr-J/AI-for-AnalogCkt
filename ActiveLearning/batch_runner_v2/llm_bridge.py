@@ -1,4 +1,4 @@
-"""Injected Gemini AL callable; one retry owner and no SDK construction."""
+"""Injected Chat AL callables; one retry owner and no hidden SDK requests."""
 
 from __future__ import annotations
 
@@ -37,11 +37,36 @@ def build_gemini_chat_transport(*, model: str, api_key: str | None = None,
     return send
 
 
+def build_qwen_chat_transport(*, model: str, base_url: str,
+                              api_key: str | None = None) -> Callable[[Any, float], Any]:
+    """Bind the approved Beijing endpoint to one physical Chat request."""
+    selected, key, chosen_model, url = _provider_settings(
+        "qwen", api_key, model, base_url)
+    if selected != "qwen" or chosen_model != model or url != base_url:
+        raise ValueError("Qwen transport identity mismatch")
+    try:
+        from openai import DefaultHttpxClient, OpenAI
+    except ImportError as error:
+        raise RuntimeError("openai package is required for Qwen transport") from error
+    client = OpenAI(api_key=key, base_url=url, max_retries=0,
+                    http_client=DefaultHttpxClient(follow_redirects=False))
+
+    def send(messages: Any, timeout_seconds: float) -> Any:
+        if timeout_seconds <= 0:
+            raise ValueError("request timeout must be positive")
+        return client.chat.completions.create(
+            model=chosen_model, messages=messages, timeout=timeout_seconds,
+            extra_body={"enable_thinking": False},
+            response_format={"type": "json_object"})
+
+    return send
+
+
 class GeminiALClient:
     def __init__(self, recovery: GeminiRecovery, send: Callable[[Any, float], Any], model: str):
         if not isinstance(recovery, GeminiRecovery) or not callable(send):
             raise TypeError("injected recovery and transport are required")
-        if recovery.scope.split("/")[1] != model:
+        if recovery.provider != "gemini" or recovery.scope.split("/")[1] != model:
             raise ValueError("Gemini model differs from recovery scope")
         self.recovery, self.send, self.model = recovery, send, model
 
@@ -52,5 +77,23 @@ class GeminiALClient:
         counts = _usage_counts(response, "gemini")
         if usage_log is not None and counts is not None:
             usage_log.append({**dict(usage_context or {}), "provider": "gemini",
+                              "model": self.model, **counts})
+        return text
+
+
+class QwenALClient:
+    def __init__(self, recovery: GeminiRecovery, send: Callable[[Any, float], Any], model: str):
+        if not isinstance(recovery, GeminiRecovery) or not callable(send):
+            raise TypeError("injected recovery and transport are required")
+        if recovery.provider != "qwen" or recovery.scope.split("/")[1] != model:
+            raise ValueError("Qwen model differs from recovery scope")
+        self.recovery, self.send, self.model = recovery, send, model
+
+    def __call__(self, prompt, usage_log=None, usage_context=None) -> str:
+        response = self.recovery.call(_messages(prompt), self.send)
+        text = _response_text(response, "qwen")
+        counts = _usage_counts(response, "qwen")
+        if usage_log is not None and counts is not None:
+            usage_log.append({**dict(usage_context or {}), "provider": "qwen",
                               "model": self.model, **counts})
         return text

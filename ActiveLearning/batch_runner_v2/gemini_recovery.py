@@ -13,6 +13,8 @@ from email.utils import parsedate_to_datetime
 from pathlib import Path
 from typing import Any, Callable
 
+from ActiveLearning.inverse_design.qwen_provider import qwen_failure_kind
+
 from .storage import append_jsonl, atomic_json, batch_lock, read_json, read_jsonl_strict
 
 
@@ -134,8 +136,8 @@ class GeminiRecovery:
         rate_limit_initial_backoff_seconds: float = 30,
         rate_limit_max_backoff_seconds: float = 300,
     ):
-        if provider != "gemini" or not model or not credential_scope:
-            raise ValueError("a named Gemini provider scope is required")
+        if provider not in {"gemini", "qwen"} or not model or not credential_scope:
+            raise ValueError("a supported named provider scope is required")
         if (type(max_physical_attempts) is not int or max_physical_attempts < 1
                 or type(max_attempts) is not int or max_attempts < 1
                 or any(type(v) not in {int, float} or not math.isfinite(v) or v <= 0
@@ -143,6 +145,8 @@ class GeminiRecovery:
             raise ValueError("retry limits must be positive")
         if rate_limit_mode not in {"legacy", "job_deadline"}:
             raise ValueError("unsupported rate-limit mode")
+        if provider == "qwen" and rate_limit_mode != "job_deadline":
+            raise ValueError("Qwen requires job-deadline recovery")
         if rate_limit_mode == "job_deadline":
             if (job_id is None or attempt_id is None
                     or type(job_deadline_monotonic) not in {int, float}
@@ -155,6 +159,7 @@ class GeminiRecovery:
                 raise ValueError("job deadline recovery requires bounded job identity and limits")
         self.root = Path(root)
         self.root.mkdir(parents=True, exist_ok=True)
+        self.provider = provider
         self.scope = f"{provider}/{model}/{credential_scope}"
         self.job_id, self.attempt_id = job_id, attempt_id
         self.cap = int(max_physical_attempts)
@@ -181,6 +186,11 @@ class GeminiRecovery:
     def _record(self, event: dict) -> None:
         append_jsonl(self.journal, {"scope": self.scope, "job_id": self.job_id,
                                     "attempt_id": self.attempt_id, **event})
+
+    def classify_failure(self, error: Exception, *, strict_hard_quota: bool = False) -> str:
+        if self.provider == "qwen":
+            return qwen_failure_kind(error)
+        return _failure_kind(error, strict_hard_quota=strict_hard_quota)
 
     def _admit(self) -> None:
         if self.provider_block.exists():

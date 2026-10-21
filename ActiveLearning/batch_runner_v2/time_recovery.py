@@ -11,7 +11,7 @@ import uuid
 from .gemini_recovery import (
     JobDeadlineExpired, JobPhysicalAttemptLimitError, PhysicalAttemptLimitError,
     ProviderQuotaError, ProviderTerminalError, RetryExhaustedError,
-    _failure_kind, _get, _retry_after, _usage,
+    _get, _retry_after, _usage,
 )
 from .storage import atomic_json, batch_lock, read_json
 
@@ -88,7 +88,7 @@ def call_with_job_deadline(recovery, payload, send):
             response = send(payload, timeout_seconds)
         except Exception as error:
             failed_at = recovery.clock()
-            kind = _failure_kind(error, strict_hard_quota=True)
+            kind = recovery.classify_failure(error, strict_hard_quota=True)
             status = _get(error, "status_code")
             recovery._record({"event": "attempt_finished", "logical_id": logical_id,
                               "attempt": attempts, "outcome": kind,

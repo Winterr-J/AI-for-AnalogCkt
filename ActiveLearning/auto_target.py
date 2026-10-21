@@ -35,6 +35,7 @@ from ActiveLearning.inverse_design.llm_client import (
     _GEMINI_MODEL,
     call_inverse_design_llm,
 )
+from ActiveLearning.inverse_design.qwen_provider import QWEN_FLASH_MODEL
 from ActiveLearning.onboarding import build_active_learning_circuit_config
 from ActiveLearning.profiling import (
     _evaluate_opamp_point,
@@ -517,8 +518,8 @@ def recommend_target(
         raise ValueError("max_llm_calls must be positive")
     selected_provider = (provider or os.getenv("AL_LLM_PROVIDER", "openai")).strip().lower()
     selected_model = model or (
-        os.getenv("GEMINI_MODEL", _GEMINI_MODEL)
-        if selected_provider == "gemini"
+        os.getenv("GEMINI_MODEL", _GEMINI_MODEL) if selected_provider == "gemini"
+        else os.getenv("QWEN_MODEL", QWEN_FLASH_MODEL) if selected_provider == "qwen"
         else os.getenv("OPENAI_MODEL", LLM_MODEL)
     )
     correction_reasons: list[str] = []
@@ -957,7 +958,7 @@ def main(argv: Sequence[str] | None = None) -> dict[str, Any]:
     parser.add_argument("--profile-artifact")
     parser.add_argument("--base-config")
     parser.add_argument("--output-root", default=str(_DEFAULT_OUTPUT_ROOT))
-    parser.add_argument("--provider", choices=("openai", "gemini"))
+    parser.add_argument("--provider", choices=("openai", "gemini", "qwen"))
     parser.add_argument("--model")
     parser.add_argument("--max-llm-calls", type=int, default=4)
     parser.add_argument("--allow-spice", action="store_true")

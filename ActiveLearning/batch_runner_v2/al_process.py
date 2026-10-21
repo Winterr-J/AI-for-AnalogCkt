@@ -38,6 +38,23 @@ def inspect_runtime_environment() -> dict:
             "ngspice_executable": shutil.which("ngspice")}
 
 
+def _child_environment(manifest: dict, authorization: dict,
+                       production_enabled: bool) -> dict[str, str]:
+    environment = os.environ.copy()
+    if manifest["provider"] == "qwen":
+        environment.pop("GEMINI_API_KEY", None)
+        environment.pop("OPENAI_API_KEY", None)
+        environment.pop("QWEN_BASE_URL", None)  # The authorized manifest supplies it.
+    else:
+        environment.pop("DASHSCOPE_API_KEY", None)
+    if production_enabled:
+        environment["BATCH_RUNNER_V2_PRODUCTION_AUTHORIZATION_SHA256"] = \
+            authorization["authorization_sha256"]
+    else:
+        environment.pop("BATCH_RUNNER_V2_PRODUCTION_AUTHORIZATION_SHA256", None)
+    return environment
+
+
 def _group_alive(pgid: int) -> bool:
     if os.name != "posix":
         return False
@@ -292,12 +309,7 @@ def run_real_al_child(
         "--authorization", authorization["authorization_path"],
         "--authorization-sha256", authorization["authorization_sha256"],
     ]
-    environment = os.environ.copy()
-    if production_enabled:
-        environment["BATCH_RUNNER_V2_PRODUCTION_AUTHORIZATION_SHA256"] = \
-            authorization["authorization_sha256"]
-    else:
-        environment.pop("BATCH_RUNNER_V2_PRODUCTION_AUTHORIZATION_SHA256", None)
+    environment = _child_environment(manifest, authorization, production_enabled)
     try:
         process = subprocess.Popen(
             command, stdin=subprocess.DEVNULL, stdout=subprocess.DEVNULL,

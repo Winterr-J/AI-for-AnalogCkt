@@ -1,4 +1,4 @@
-"""Small OpenAI Responses / Gemini Chat Completions LLM adapter."""
+"""Small OpenAI Responses / Gemini and Qwen Chat Completions adapter."""
 
 from __future__ import annotations
 
@@ -6,6 +6,8 @@ import os
 import time
 from collections.abc import Mapping, Sequence
 from typing import Any
+
+from .qwen_provider import QWEN_FLASH_MODEL, qwen_failure_kind, validate_qwen_endpoint
 
 
 _API_KEY_PLACEHOLDER = "YOUR_API_KEY_HERE"
@@ -41,13 +43,20 @@ def _provider_settings(
 ) -> tuple[str, str, str, str]:
     selected = provider if provider is not None else os.getenv("AL_LLM_PROVIDER", "openai")
     selected = selected.strip().lower()
-    if selected not in {"openai", "gemini"}:
+    if selected not in {"openai", "gemini", "qwen"}:
         raise ValueError(f"Unsupported LLM provider: {selected!r}")
 
     if selected == "gemini":
         key = api_key if api_key is not None else os.getenv("GEMINI_API_KEY")
         chosen_model = model if model is not None else os.getenv("GEMINI_MODEL", _GEMINI_MODEL)
         url = base_url if base_url is not None else os.getenv("GEMINI_BASE_URL", _GEMINI_BASE_URL)
+    elif selected == "qwen":
+        key = api_key if api_key is not None else os.getenv("DASHSCOPE_API_KEY")
+        chosen_model = model if model is not None else os.getenv("QWEN_MODEL", QWEN_FLASH_MODEL)
+        url = base_url if base_url is not None else os.getenv("QWEN_BASE_URL")
+        if chosen_model != QWEN_FLASH_MODEL:
+            raise ValueError("unsupported Qwen model")
+        validate_qwen_endpoint(url)
     else:
         key = api_key if api_key is not None else os.getenv("OPENAI_API_KEY", LLM_API_KEY)
         chosen_model = model if model is not None else os.getenv("OPENAI_MODEL", LLM_MODEL)
@@ -92,6 +101,10 @@ def _messages(prompt: str | Mapping[str, str] | Sequence[Mapping[str, str]]) -> 
 
 
 def _response_text(response: Any, provider: str) -> str:
+    if provider == "qwen":
+        choices = _value(response, "choices")
+        if not choices or len(choices) != 1 or _value(choices[0], "finish_reason") != "stop":
+            raise RuntimeError("Qwen response was missing or did not finish normally")
     if provider == "openai":
         result = _value(response, "output_text")
     else:
@@ -116,7 +129,7 @@ def _usage_counts(response: Any, provider: str) -> dict[str, int] | None:
     usage = _value(response, "usage")
     if usage is None:
         return None
-    if provider == "gemini":
+    if provider in {"gemini", "qwen"}:
         input_count = _value(usage, "prompt_tokens")
         output_count = _value(usage, "completion_tokens")
     else:
@@ -185,8 +198,12 @@ def call_inverse_design_llm(
     client = OpenAI(api_key=key, base_url=url, timeout=request_timeout, max_retries=0)
     for attempt in range(1, max_attempts + 1):
         try:
-            if selected == "gemini":
-                response = client.chat.completions.create(model=chosen_model, messages=messages)
+            if selected in {"gemini", "qwen"}:
+                options = ({"extra_body": {"enable_thinking": False},
+                            "response_format": {"type": "json_object"}}
+                           if selected == "qwen" else {})
+                response = client.chat.completions.create(
+                    model=chosen_model, messages=messages, **options)
             else:
                 response = client.responses.create(
                     model=chosen_model,
@@ -194,12 +211,13 @@ def call_inverse_design_llm(
                     reasoning={"effort": "none"},
                 )
         except Exception as error:
-            kind = _failure_kind(error)
+            kind = (qwen_failure_kind(error) if selected == "qwen"
+                    else _failure_kind(error))
             if kind == "quota":
                 raise LLMQuotaExceededError(
                     f"{selected} quota is exhausted for model {chosen_model}; no retry attempted"
                 ) from error
-            if kind is None:
+            if kind is None or kind == "terminal":
                 raise
             if attempt == max_attempts:
                 raise LLMTransientError(
