@@ -158,13 +158,19 @@ class QwenClientTests(unittest.TestCase):
         def fake_llm(_prompt, **kwargs):
             calls.append(kwargs)
             return '{}'
+        profile = {"anchor": {"gain": 0.5},
+                   "valid_candidate_metrics": [
+                       {"sample_id": "mock_candidate", "metrics": {"gain": 1.0}}
+                   ]}
         with patch.object(auto_target, "build_target_prompt", return_value="Return JSON"), \
                 patch.object(auto_target, "parse_target_response", return_value={}), \
                 patch.object(auto_target, "validate_target_recommendation",
                              return_value={"valid": True, "target_specs": {"gain": 1},
-                                           "errors": []}):
+                                           "errors": []}) as validator:
             result = auto_target.recommend_target(
-                object(), {}, {}, llm_client=fake_llm, provider="qwen")
+                object(), {}, profile, llm_client=fake_llm, provider="qwen")
+        validator.assert_called_once_with({}, {}, profile["anchor"],
+                                          profile["valid_candidate_metrics"])
         self.assertEqual(result["status"], "TARGET_VALIDATED")
         self.assertEqual(calls[0]["provider"], "qwen")
         self.assertEqual(calls[0]["model"], QWEN_FLASH_MODEL)
