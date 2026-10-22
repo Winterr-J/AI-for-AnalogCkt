@@ -217,7 +217,7 @@ class PerformancePredictorTests(unittest.TestCase):
         )
         self.assertEqual(result[0]["committee_attempt_counts"], [1, 1, 1, 1, 1])
 
-    def test_short_round_is_retried_with_same_prompt(self) -> None:
+    def test_short_round_uses_error_driven_correction_with_all_ids(self) -> None:
         candidates = [_candidate(index) for index in range(10)]
         short = json.loads(_round_response(candidates, 0))
         short["predictions"].pop()
@@ -238,7 +238,62 @@ class PerformancePredictorTests(unittest.TestCase):
 
         self.assertEqual(client.call_count, 6)
         self.assertEqual(result[0]["committee_attempt_counts"], [2, 1, 1, 1, 1])
-        self.assertEqual(client.call_args_list[0].args[0], client.call_args_list[1].args[0])
+        original = client.call_args_list[0].args[0]
+        corrected = client.call_args_list[1].args[0]
+        self.assertTrue(corrected.startswith(original.rstrip()))
+        self.assertIn("prediction count mismatch", corrected)
+        self.assertIn('"expected_prediction_count": 10', corrected)
+        self.assertIn('"candidate_ids": [', corrected)
+        for candidate in candidates:
+            self.assertIn(f'"{candidate["candidate_id"]}"', corrected)
+        self.assertIn('"required_metric_names": [', corrected)
+        self.assertEqual(client.call_args_list[2].args[0], original)
+
+    def test_third_attempt_uses_both_actual_errors_and_keeps_full_committee(self):
+        candidates = [_candidate(index) for index in range(10)]
+        short = json.loads(_round_response(candidates, 0))
+        short["predictions"].pop()
+        unknown = json.loads(_round_response(candidates, 0))
+        unknown["predictions"][-1]["candidate_id"] = "not_a_candidate"
+        client = MagicMock(side_effect=[
+            json.dumps(short), json.dumps(unknown),
+            *[_round_response(candidates, index) for index in range(5)],
+        ])
+
+        result = predict_candidate_performance(
+            candidates, [_record(index) for index in range(3)],
+            _CIRCUIT_INFO, _performance_template(), llm_client=client,
+        )
+
+        self.assertEqual(client.call_count, 7)
+        self.assertEqual(result[0]["committee_attempt_counts"], [3, 1, 1, 1, 1])
+        second = client.call_args_list[1].args[0]
+        third = client.call_args_list[2].args[0]
+        self.assertIn("prediction count mismatch", second)
+        self.assertNotIn("unknown candidate_id", second)
+        self.assertIn("prediction count mismatch", third)
+        self.assertIn("unknown candidate_id: not_a_candidate", third)
+        for candidate in candidates:
+            self.assertIn(f'"{candidate["candidate_id"]}"', third)
+
+    def test_fifth_round_correction_does_not_restart_prior_rounds(self):
+        candidates = [_candidate(index) for index in range(10)]
+        short = json.loads(_round_response(candidates, 4))
+        short["predictions"].pop()
+        client = MagicMock(side_effect=[
+            *[_round_response(candidates, index) for index in range(4)],
+            json.dumps(short), _round_response(candidates, 4),
+        ])
+
+        result = predict_candidate_performance(
+            candidates, [_record(index) for index in range(3)],
+            _CIRCUIT_INFO, _performance_template(), llm_client=client,
+        )
+
+        self.assertEqual(client.call_count, 6)
+        self.assertEqual(result[0]["committee_attempt_counts"], [1, 1, 1, 1, 2])
+        self.assertIn("prediction count mismatch", client.call_args_list[5].args[0])
+        self.assertEqual(len(result[0]["raw_predictions"]), 5)
 
     def test_extra_prediction_round_is_retried(self) -> None:
         candidates = [_candidate(index) for index in range(10)]
@@ -317,6 +372,14 @@ class PerformancePredictorTests(unittest.TestCase):
             )
 
         self.assertEqual(client.call_count, 3)
+        first, second, third = [call.args[0] for call in client.call_args_list]
+        self.assertIn("prediction count mismatch", second)
+        self.assertIn("prediction count mismatch", third)
+        self.assertIn('"candidate_ids": [', second)
+        self.assertIn('"candidate_ids": [', third)
+        self.assertIn('"attempt": 1', second)
+        self.assertIn('"attempt": 2', third)
+        self.assertNotIn("PREVIOUS RESPONSE VALIDATION FEEDBACK", first)
 
     def test_retrieval_vectors_use_stable_sorted_normalized_parameter_order(self) -> None:
         candidate = _candidate(0, normalized={"B": 0.8, "A": 0.2})

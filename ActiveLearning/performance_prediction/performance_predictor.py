@@ -297,6 +297,24 @@ def _aggregate_predictions(
     return results
 
 
+def _build_correction_prompt(prompt, candidate_ids, metric_names, validation_errors):
+    """Give the next attempt its actual validation failures and full ID contract."""
+    feedback = {
+        "expected_prediction_count": len(candidate_ids),
+        "candidate_ids": list(candidate_ids),
+        "required_metric_names": list(metric_names),
+        "validation_errors": validation_errors,
+    }
+    return (
+        prompt.rstrip()
+        + "\n\nPREVIOUS RESPONSE VALIDATION FEEDBACK\n"
+        + json.dumps(feedback, indent=2, ensure_ascii=False)
+        + "\nCorrect the listed errors. Return one valid JSON prediction for "
+          "each listed candidate_id exactly once, with every required metric. "
+          "Do not omit, invent, or duplicate candidates. Output JSON only.\n"
+    )
+
+
 def _collect_committee_rounds(
     client,
     prompt,
@@ -308,8 +326,13 @@ def _collect_committee_rounds(
     attempt_counts = []
     for round_index in range(1, committee_size + 1):
         last_error = None
+        validation_errors = []
         for attempt in range(1, _MAX_ROUND_ATTEMPTS + 1):
-            raw_response = client(prompt)
+            attempt_prompt = (
+                prompt if attempt == 1 else _build_correction_prompt(
+                    prompt, candidate_ids, metric_names, validation_errors)
+            )
+            raw_response = client(attempt_prompt)
             try:
                 parsed = _parse_predictions(
                     raw_response,
@@ -318,6 +341,11 @@ def _collect_committee_rounds(
                 )
             except (AttributeError, KeyError, TypeError, ValueError) as error:
                 last_error = error
+                validation_errors.append({
+                    "attempt": attempt,
+                    "error_type": type(error).__name__,
+                    "message": str(error),
+                })
                 continue
             rounds.append(parsed)
             attempt_counts.append(attempt)
