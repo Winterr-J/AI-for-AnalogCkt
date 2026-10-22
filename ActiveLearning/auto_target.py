@@ -416,6 +416,7 @@ def _prompt_rows(rows: Sequence[Mapping[str, Any]], contract: Mapping[str, Any],
 def build_target_prompt(
     runtime: Any, performance_template: Mapping[str, Any],
     profile: Mapping[str, Any], *, correction_reasons: Sequence[str] = (),
+    correction_context: Mapping[str, Any] | None = None,
 ) -> str:
     contract = metric_contract(performance_template)
     anchor = profile["anchor"]
@@ -435,15 +436,31 @@ def build_target_prompt(
             "joint_candidate_rows": _prompt_rows(profile["valid_candidate_metrics"], contract),
         },
         "rules": [
+            "First choose one functionally valid profiling row as the feasibility witness.",
+            "Derive the complete joint target from that same row; name its exact sample_id.",
+            "The named row must satisfy every target threshold simultaneously.",
+            "At least one target must be a meaningful improvement over the anchor; "
+            "do not make the other metrics arbitrarily lax to manufacture an improvement.",
             "Use only active metrics, exact operator directions and matching units.",
             "At least one single observed row must meet every threshold jointly.",
             "The anchor must fail at least one threshold.",
             "Do not combine independent per-metric best values into a fictional row.",
             "Return one JSON object with target_specs, reason, supporting_sample_ids, confidence.",
             "Each target_specs item must have operator, finite numeric value, and unit.",
+            "If no meaningful jointly supported target is justified by these rows, "
+            "return only {\"insufficient_evidence\": true, \"reason\": \"...\"}; "
+            "do not invent a target or a supporting sample.",
         ],
         "previous_validation_errors": list(correction_reasons),
     }
+    if correction_context is not None:
+        payload.update(correction_context)
+        payload["correction_instruction"] = (
+            "Repair the previous proposal using the listed validation errors and measured "
+            "rows. Preserve valid constraints where possible, but ensure the declared IDs "
+            "are actual joint supporters and the anchor fails at least one threshold. "
+            "If no meaningful repair is supported, report insufficient_evidence."
+        )
     return json.dumps(payload, ensure_ascii=False, allow_nan=False, default=str)
 
 
@@ -461,6 +478,21 @@ def validate_target_recommendation(
     anchor: Mapping[str, Any], valid_candidate_metrics: Sequence[Mapping[str, Any]],
 ) -> dict[str, Any]:
     contract = metric_contract(performance_template)
+    if payload.get("insufficient_evidence") is True:
+        reason = payload.get("reason")
+        if not isinstance(reason, str) or not reason.strip() or payload.get("target_specs"):
+            return {
+                "valid": False, "insufficient_evidence": False,
+                "errors": ["insufficient_evidence requires a non-empty reason and no target_specs"],
+                "target_specs": {}, "joint_supporting_sample_ids": [],
+                "anchor_satisfaction_by_metric": {name: None for name in contract},
+            }
+        return {
+            "valid": False, "insufficient_evidence": True,
+            "errors": [f"Insufficient observed target evidence: {reason.strip()}"],
+            "target_specs": {}, "joint_supporting_sample_ids": [],
+            "anchor_satisfaction_by_metric": {name: None for name in contract},
+        }
     errors: list[str] = []
     raw = payload.get("target_specs")
     if not isinstance(raw, Mapping) or set(raw) != set(contract):
@@ -481,6 +513,11 @@ def validate_target_recommendation(
             errors.append(f"{name}: value must be finite numeric")
         else:
             normalized[name] = {"operator": definition["operator"], "value": value}
+    anchor_satisfaction = {
+        name: (check_meets_spec({name: anchor.get(name)}, {name: normalized[name]})["meets_spec"]
+               if name in normalized else None)
+        for name in contract
+    }
     supporters: list[str] = []
     if not errors:
         for row in valid_candidate_metrics:
@@ -501,7 +538,45 @@ def validate_target_recommendation(
     if not isinstance(payload.get("reason"), str) or not payload["reason"].strip():
         errors.append("reason must be non-empty text")
     return {"valid": not errors, "errors": errors, "target_specs": normalized,
-            "joint_supporting_sample_ids": supporters}
+            "joint_supporting_sample_ids": supporters,
+            "anchor_satisfaction_by_metric": anchor_satisfaction,
+            "insufficient_evidence": False}
+
+
+def _token_usage_audit(entries: Sequence[Mapping[str, Any]]) -> list[dict[str, Any]]:
+    """Retain only provider identity and token counts, never credentials."""
+
+    allowed = ("stage", "round", "provider", "model",
+               "input_tokens", "output_tokens", "total_tokens")
+    return [{key: entry[key] for key in allowed if key in entry} for entry in entries]
+
+
+def _relevant_profile_samples(
+    rows: Sequence[Mapping[str, Any]], target_specs: Mapping[str, Any],
+    declared_ids: Any, supporter_ids: Sequence[str], *, limit: int = 20,
+) -> list[dict[str, Any]]:
+    """Show the actual/declared witnesses first, then the closest joint rows."""
+
+    selected_ids = set(supporter_ids)
+    if isinstance(declared_ids, list):
+        selected_ids.update(item for item in declared_ids if isinstance(item, str))
+    scored = []
+    for row in rows:
+        metrics = row["metrics"]
+        satisfaction = {
+            name: check_meets_spec({name: metrics.get(name)}, {name: spec})["meets_spec"]
+            for name, spec in target_specs.items()
+        }
+        scored.append({
+            "sample_id": str(row["sample_id"]), "metrics": metrics,
+            "target_satisfaction_by_metric": satisfaction,
+        })
+    scored.sort(key=lambda item: (
+        item["sample_id"] not in selected_ids,
+        -sum(value is True for value in item["target_satisfaction_by_metric"].values()),
+        item["sample_id"],
+    ))
+    return scored[:limit]
 
 
 def recommend_target(
@@ -526,13 +601,17 @@ def recommend_target(
     last_error = "No target was produced"
     failure_status = "TARGET_GENERATION_FAILED"
     last_validation: dict[str, Any] | None = None
+    round_audit: list[dict[str, Any]] = []
+    correction_context: dict[str, Any] | None = None
     for round_index in range(2):
         if attempts >= max_llm_calls:
             break
         prompt = build_target_prompt(
             runtime, performance_template, profile,
             correction_reasons=correction_reasons,
+            correction_context=correction_context,
         )
+        usage_start, attempts_start = len(usage), attempts
         raw = None
         for transport_attempt in range(2):
             if attempts >= max_llm_calls:
@@ -556,6 +635,13 @@ def recommend_target(
                 last_error = f"{type(error).__name__}: provider request failed"
                 break
         if raw is None:
+            round_audit.append({
+                "round": round_index + 1, "status": "provider_failed",
+                "provider": selected_provider, "model": selected_model,
+                "physical_calls": attempts - attempts_start,
+                "token_usage": _token_usage_audit(usage[usage_start:]),
+                "validation_errors": [last_error],
+            })
             break
         try:
             parsed = parse_target_response(raw)
@@ -565,17 +651,43 @@ def recommend_target(
             )
         except (ValueError, TypeError, json.JSONDecodeError) as error:
             validation = {"valid": False, "errors": [f"{type(error).__name__}: {error}"],
-                          "target_specs": {}, "joint_supporting_sample_ids": []}
+                          "target_specs": {}, "joint_supporting_sample_ids": [],
+                          "anchor_satisfaction_by_metric": {},
+                          "insufficient_evidence": False}
             parsed = {}
             failure_status = "TARGET_GENERATION_FAILED"
         else:
             if not validation["valid"]:
                 failure_status = "TARGET_VALIDATION_FAILED"
+        round_audit.append({
+            "round": round_index + 1,
+            "status": ("validated" if validation["valid"] else
+                       "insufficient_evidence" if validation.get("insufficient_evidence")
+                       else "invalid"),
+            "provider": selected_provider, "model": selected_model,
+            "physical_calls": attempts - attempts_start,
+            "token_usage": _token_usage_audit(usage[usage_start:]),
+            "parsed_target_specs": parsed.get("target_specs"),
+            "declared_supporting_sample_ids": parsed.get("supporting_sample_ids"),
+            "normalized_target_specs": validation["target_specs"],
+            "actual_joint_supporting_sample_ids": validation.get("joint_supporting_sample_ids", []),
+            "anchor_satisfaction_by_metric": validation.get("anchor_satisfaction_by_metric", {}),
+            "validation_errors": list(validation["errors"]),
+        })
+        if validation.get("insufficient_evidence"):
+            return {
+                "status": "TARGET_EVIDENCE_INSUFFICIENT",
+                "reason": "; ".join(validation["errors"]), "validation": validation,
+                "attempts": attempts, "correction_attempts": round_index,
+                "usage": usage, "rounds": round_audit,
+                "elapsed_seconds": perf_counter() - started,
+                "provider": selected_provider, "model": selected_model,
+            }
         if validation["valid"]:
             return {
                 "status": "TARGET_VALIDATED", "proposal": parsed,
                 "validation": validation, "attempts": attempts,
-                "correction_attempts": round_index, "usage": usage,
+                "correction_attempts": round_index, "usage": usage, "rounds": round_audit,
                 "elapsed_seconds": perf_counter() - started,
                 "provider": usage[-1].get("provider", selected_provider) if usage else selected_provider,
                 "model": usage[-1].get("model", selected_model) if usage else selected_model,
@@ -583,11 +695,23 @@ def recommend_target(
         last_validation = validation
         correction_reasons = list(validation["errors"])
         last_error = "; ".join(correction_reasons)
+        correction_context = {
+            "previous_target_specs": parsed.get("target_specs"),
+            "previous_declared_supporting_sample_ids": parsed.get("supporting_sample_ids"),
+            "actual_joint_supporting_sample_ids": validation["joint_supporting_sample_ids"],
+            "anchor_satisfaction_by_metric": validation["anchor_satisfaction_by_metric"],
+            "validation_errors": list(validation["errors"]),
+            "relevant_profile_samples": _relevant_profile_samples(
+                profile["valid_candidate_metrics"], validation["target_specs"],
+                parsed.get("supporting_sample_ids"), validation["joint_supporting_sample_ids"],
+            ),
+        }
     return {
         "status": failure_status, "reason": last_error,
         "validation": last_validation,
         "attempts": attempts, "correction_attempts": min(1, int(bool(correction_reasons))),
         "usage": usage, "elapsed_seconds": perf_counter() - started,
+        "rounds": round_audit,
         "provider": usage[-1].get("provider", selected_provider) if usage else selected_provider,
         "model": usage[-1].get("model", selected_model) if usage else selected_model,
     }
