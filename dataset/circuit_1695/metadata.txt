@@ -1,0 +1,8 @@
+circuit_id: circuit_1695
+circuit_number: 1695
+analoggenie_folder_id: 1855
+circuit_type: opamp
+circuit_name: CMOS differential operational amplifier (AnalogGenie 1855)
+circuit_function: Implements an operational-amplifier gain, bias, compensation, output, or common-mode-control topology using the cmos differential operational amplifier topology.
+source_ports: VDD, VSS, VIN1, VIN2, VOUT1, VB1, VB2
+device_summary: nmos=10, pmos=10
