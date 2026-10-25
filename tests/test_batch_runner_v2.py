@@ -82,6 +82,66 @@ class BatchRunnerV2Tests(unittest.TestCase):
         attempts = [row["attempts"][0]["attempt_id"] for row in status_batch("offline_batch_1", self.output)["jobs"].values()]
         self.assertEqual(len(set(attempts)), 3)
 
+    def test_current_mirror_numeric_joint_and_unverified_counts_do_not_overlap(self):
+        for job in self.jobs:
+            job["circuit_type"] = "CurrentMirror"
+        self.write_manifest()
+        outcomes = {
+            "job_0": {
+                "stop_reason": "meets_spec", "meets_spec": True,
+                "parameter_valid": True, "simulation_valid": True,
+                "functional_valid": True, "joint_success": True,
+                "iterations_completed": 1,
+            },
+            "job_1": {
+                "stop_reason": "max_iterations", "meets_spec": True,
+                "parameter_valid": True, "simulation_valid": True,
+                "functional_valid": False, "joint_success": False,
+                "iterations_completed": 2,
+            },
+            # Historical-style result: numeric evidence exists, but the
+            # functional fields do not. It must remain unverified.
+            "job_2": {
+                "stop_reason": "max_iterations", "meets_spec": True,
+                "simulation_valid": True, "iterations_completed": 2,
+            },
+        }
+        result = run_mock_batch(
+            self.manifest, self.output,
+            lambda job, _attempt: outcomes[job["job_id"]],
+        )
+        self.assertEqual(result["completed"], 3)
+        self.assertEqual(result["performance_success"], 3)
+        self.assertEqual(result["numerical_spec_success"], 3)
+        self.assertEqual(result["current_mirror_completed"], 3)
+        self.assertEqual(result["functional_joint_success"], 1)
+        self.assertEqual(result["functional_joint_failure"], 1)
+        self.assertEqual(result["functional_unverified"], 1)
+        self.assertIs(
+            result["jobs"]["job_2"]["functional_unverified"], True,
+        )
+        self.assertIsNone(
+            result["jobs"]["job_2"]["functional_joint_success"],
+        )
+
+    def test_inconsistent_current_mirror_joint_success_is_not_completed(self):
+        self.jobs = self.jobs[:1]
+        self.payload["jobs"] = self.jobs
+        self.jobs[0]["circuit_type"] = "CurrentMirror"
+        self.write_manifest()
+        result = run_mock_batch(
+            self.manifest, self.output,
+            lambda *_: {
+                "stop_reason": "meets_spec", "meets_spec": True,
+                "parameter_valid": True, "simulation_valid": True,
+                "functional_valid": False, "joint_success": True,
+                "iterations_completed": 1,
+            },
+        )
+        self.assertEqual(result["completed"], 0)
+        self.assertEqual(result["interrupted_uncertain"], 1)
+        self.assertEqual(result["functional_joint_success"], 0)
+
     def test_terminal_second_job_does_not_block_third(self):
         order = []
 

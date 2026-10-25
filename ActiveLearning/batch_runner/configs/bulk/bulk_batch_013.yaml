@@ -1,0 +1,26 @@
+batch:
+  name: bulk_batch_013
+  execution_mode: sequential
+  workflow_mode: prepare_then_al
+  pause_after_preparation: false
+  max_iterations: 5
+  committee_size: 5
+  continue_on_circuit_failure: true
+  per_circuit_timeout_seconds: 3600
+execution:
+  dry_run: false
+  allow_spice: true
+  allow_llm: true
+budget:
+  max_batch_llm_tokens: 60000000
+  max_circuit_llm_tokens: 10000000
+  max_batch_llm_calls: 400
+preparation:
+  max_anchor_evaluations: 80
+  max_profile_evaluations: 40
+  max_llm_calls: 3
+  seed: 42
+candidate_manifest:
+  path: ../../manifests/bulk_batch_013_manifest.json
+  statuses:
+  - STATIC_READY

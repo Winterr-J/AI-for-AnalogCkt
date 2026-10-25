@@ -4,10 +4,38 @@ from ActiveLearning.InitializeD0.evaluator import evaluate_current_mirror
 from ActiveLearning.InitializeD0.validation import (
     check_current_mirror_functionality,
     check_meets_spec,
+    validate_parameters,
 )
 
 
 __all__ = ["evaluate_selected_candidate"]
+
+
+def _empty_record(candidate):
+    return {
+        "sample_id": candidate["candidate_id"],
+        "source": "active_learning_query",
+        "params": candidate["params"],
+        "normalized_params": candidate.get("normalized_params"),
+        "metrics": {
+            "current_error": None,
+            "output_resistance": None,
+        },
+        "functional_metrics": {
+            "compliance_relative_variation": None,
+            "tracking_max_error": None,
+        },
+        "functional_checks": {},
+        "failure_reasons": [],
+        "status": {
+            "parameter_valid": True,
+            "simulation_valid": None,
+            "functional_valid": None,
+            "functional_status": None,
+            "functional_feasible": None,
+            "meets_spec": None,
+        },
+    }
 
 
 def _evaluate_structured_runtime(candidate, runtime, target_specs):
@@ -56,6 +84,18 @@ def evaluate_selected_candidate(
     functional_config=None,
 ):
     """Return one measured record ready for the caller to add to Dt."""
+    record = _empty_record(candidate)
+    parameter_template = getattr(runtime, "param_template", None)
+    if parameter_template is not None:
+        parameter_validation = validate_parameters(
+            candidate["params"], parameter_template,
+        )
+        if parameter_validation["parameter_valid"] is not True:
+            record["status"]["parameter_valid"] = False
+            record["failure_reasons"] = list(
+                parameter_validation.get("violations") or []
+            )
+            return record
     structured_record = _evaluate_structured_runtime(
         candidate,
         runtime,
@@ -65,26 +105,6 @@ def evaluate_selected_candidate(
         return structured_record
 
     params = candidate["params"]
-    record = {
-        "sample_id": candidate["candidate_id"],
-        "source": "active_learning_query",
-        "params": params,
-        "normalized_params": candidate.get("normalized_params"),
-        "metrics": {
-            "current_error": None,
-            "output_resistance": None,
-        },
-        "functional_metrics": {
-            "compliance_relative_variation": None,
-            "tracking_max_error": None,
-        },
-        "status": {
-            "parameter_valid": True,
-            "simulation_valid": None,
-            "functional_feasible": None,
-            "meets_spec": None,
-        },
-    }
 
     current_error, output_resistance, simulation_valid = evaluate_current_mirror(
         params,
@@ -109,9 +129,12 @@ def evaluate_selected_candidate(
             adapter=adapter,
             **(functional_config or {}),
         )
-        record["status"]["functional_feasible"] = functional[
-            "functional_feasible"
-        ]
+        functional_valid = functional["functional_feasible"] is True
+        record["status"]["functional_valid"] = functional_valid
+        record["status"]["functional_feasible"] = functional_valid
+        record["status"]["functional_status"] = functional["functional_status"]
+        record["failure_reasons"] = list(functional.get("failure_reasons") or [])
+        record["functional_checks"] = dict(functional.get("basic_behavior") or {})
         record["functional_metrics"] = {
             "compliance_relative_variation": functional["compliance"][
                 "relative_variation"

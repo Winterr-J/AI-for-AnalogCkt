@@ -62,7 +62,8 @@ def _selected():
     }
 
 
-def _record(iteration, *, simulation_valid=True, meets_spec=False):
+def _record(iteration, *, simulation_valid=True, meets_spec=False,
+            functional_feasible=None):
     return {
         "sample_id": f"candidate_{iteration}",
         "source": "active_learning_query",
@@ -73,7 +74,8 @@ def _record(iteration, *, simulation_valid=True, meets_spec=False):
         "status": {
             "parameter_valid": True,
             "simulation_valid": simulation_valid,
-            "functional_feasible": None,
+            "functional_valid": functional_feasible,
+            "functional_feasible": functional_feasible,
             "meets_spec": meets_spec if simulation_valid else None,
         },
     }
@@ -147,6 +149,80 @@ def _run_with_mocks(real_results, *, max_iterations, output_dir=None, run_id=Non
 
 
 class ActiveLearningTests(unittest.TestCase):
+    def test_current_mirror_initial_requires_functional_and_parameter_evidence(self):
+        unverified = _record(1, meets_spec=True)
+        unverified["status"]["functional_valid"] = None
+        unverified["status"]["functional_feasible"] = True
+        invalid = _record(2, meets_spec=True, functional_feasible=False)
+        invalid["status"]["functional_valid"] = False
+        parameter_invalid = _record(3, meets_spec=True, functional_feasible=True)
+        parameter_invalid["status"]["parameter_valid"] = False
+        records = [unverified, invalid, parameter_invalid]
+
+        selected = active_learning._recompute_initial_meets_spec(
+            records, _TARGETS, circuit_type="CurrentMirror"
+        )
+        self.assertIsNone(selected)
+        self.assertEqual([row["status"]["meets_spec"] for row in records],
+                         [True, True, True])
+        self.assertEqual([row["status"]["joint_success"] for row in records],
+                         [None, False, False])
+        self.assertIsNone(unverified["status"]["functional_valid"])
+        self.assertIs(invalid["status"]["functional_valid"], False)
+
+        verified_d0 = _record(4, meets_spec=True, functional_feasible=True)
+        selected = active_learning._recompute_initial_meets_spec(
+            [*records, verified_d0], _TARGETS, circuit_type="CurrentMirror"
+        )
+        self.assertIs(selected, verified_d0)
+        self.assertIs(verified_d0["status"]["joint_success"], True)
+
+    def test_current_mirror_iteration_stops_only_on_joint_success(self):
+        def measured(iteration, *, meets_spec, functional_valid):
+            row = _record(iteration, meets_spec=meets_spec,
+                          functional_feasible=functional_valid)
+            row["status"]["functional_valid"] = functional_valid
+            if not meets_spec:
+                row["metrics"]["metric"] = 1.2
+            return row
+
+        result, records, events, _, mocks = _run_with_mocks(
+            [
+                measured(1, meets_spec=True, functional_valid=None),
+                measured(2, meets_spec=True, functional_valid=False),
+                measured(3, meets_spec=False, functional_valid=True),
+                measured(4, meets_spec=True, functional_valid=True),
+            ],
+            max_iterations=5,
+        )
+        self.assertEqual(result["iterations_completed"], 4)
+        self.assertEqual(result["stop_reason"], "meets_spec")
+        self.assertEqual(events.count("evaluation"), 4)
+        self.assertEqual([row["status"]["joint_success"] for row in records[1:]],
+                         [None, False, False, True])
+        self.assertEqual([row["joint_success"] for row in result["iteration_log"]],
+                         [None, False, False, True])
+        self.assertEqual([row["meets_spec"] for row in result["iteration_log"]],
+                         [True, True, False, True])
+        self.assertIsNone(records[1]["status"]["functional_valid"])
+        self.assertIs(records[2]["status"]["functional_valid"], False)
+        self.assertEqual(mocks[-1].call_args.kwargs, {"run_functional": True, "functional_config": {}})
+
+    def test_other_circuit_retains_numeric_stop_and_skips_legacy_validator(self):
+        initial = _record(0, meets_spec=True)
+        result = run_active_learning(
+            [initial], {"circuit_type": "OpAmp"}, _PARAMETER_TEMPLATE,
+            _PERFORMANCE_TEMPLATE, _TARGETS, adapter="adapter",
+            max_iterations=0, llm_client=_CLIENT,
+        )
+        self.assertEqual(result["stop_reason"], "initial_d0_meets_spec")
+        self.assertNotIn("joint_success", initial["status"])
+        with patch(__name__ + "._CIRCUIT_INFO", {"circuit_type": "OpAmp"}):
+            _, _, _, _, mocks = _run_with_mocks(
+                [_record(1)], max_iterations=1
+            )
+        self.assertEqual(mocks[-1].call_args.kwargs, {"run_functional": False})
+
     def test_optional_deadline_guard_blocks_new_iteration_and_spice(self):
         def expired_at_start():
             raise RuntimeError("synthetic job deadline")
@@ -192,7 +268,7 @@ class ActiveLearningTests(unittest.TestCase):
     def test_initial_d0_feasible_stops_before_all_pipeline_stages(self):
         first = _record(0)
         first["metrics"]["metric"] = 1.2
-        feasible = _record(1, meets_spec=True)
+        feasible = _record(1, meets_spec=True, functional_feasible=True)
         records = [first, feasible]
 
         with (
@@ -238,8 +314,8 @@ class ActiveLearningTests(unittest.TestCase):
             stage_mock.assert_not_called()
 
     def test_initial_d0_selects_first_of_multiple_feasible_records(self):
-        first = _record(1, meets_spec=True)
-        second = _record(2, meets_spec=True)
+        first = _record(1, meets_spec=True, functional_feasible=True)
+        second = _record(2, meets_spec=True, functional_feasible=True)
 
         result = run_active_learning(
             [first, second],
@@ -379,7 +455,7 @@ class ActiveLearningTests(unittest.TestCase):
         evaluation.assert_called_once()
 
     def test_stale_false_is_recomputed_true_without_llm_or_spice(self):
-        stale = _record(0, meets_spec=False)
+        stale = _record(0, meets_spec=False, functional_feasible=True)
 
         with (
             patch.object(active_learning, "propose_inverse_design_seed") as inverse,
@@ -405,7 +481,7 @@ class ActiveLearningTests(unittest.TestCase):
             stage_mock.assert_not_called()
 
     def test_matching_stored_value_remains_true_after_recomputation(self):
-        record = _record(0, meets_spec=True)
+        record = _record(0, meets_spec=True, functional_feasible=True)
 
         result = run_active_learning(
             [record],
@@ -521,7 +597,7 @@ class ActiveLearningTests(unittest.TestCase):
             "candidate_0000",
             acquisition.call_args.kwargs["validity_by_candidate_id"],
         )
-        self.assertEqual(evaluation.call_args.kwargs, {"run_functional": False})
+        self.assertEqual(evaluation.call_args.kwargs, {"run_functional": True, "functional_config": {}})
         evaluation_candidate = evaluation.call_args.args[0]
         self.assertEqual(
             evaluation_candidate["candidate_id"],
@@ -749,7 +825,7 @@ class ActiveLearningTests(unittest.TestCase):
 
     def test_meets_spec_on_second_iteration_stops(self):
         result, records, _, _, _ = _run_with_mocks(
-            [_record(1), _record(2, meets_spec=True), _record(3)],
+            [_record(1), _record(2, meets_spec=True, functional_feasible=True), _record(3)],
             max_iterations=3,
         )
 
@@ -771,6 +847,7 @@ class ActiveLearningTests(unittest.TestCase):
     def test_failed_real_evaluation_updates_next_iteration_validity_memory(self):
         d0 = _record(0)
         d0["metrics"]["metric"] = 1.2  # usable, but not target-feasible
+        d0["status"]["functional_valid"] = True
         d0["status"]["functional_feasible"] = True
         failed = _record(1, simulation_valid=False)
         failed["sample_id"] = "failed_real_query"
@@ -997,7 +1074,7 @@ class ActiveLearningTests(unittest.TestCase):
 
     def test_real_spice_counter_counts_one_mocked_success_at_call_boundary(self):
         result, records, events, _, mocks = _run_with_mocks(
-            [_record(1, meets_spec=True)], max_iterations=3
+            [_record(1, meets_spec=True, functional_feasible=True)], max_iterations=3
         )
 
         self.assertEqual(events.count("evaluation"), 1)

@@ -323,6 +323,250 @@ class B2AIntegrationTests(unittest.TestCase):
         self.assertEqual(captured["expected_d0_sha256"], job["d0_sha256"])
         self.assertTrue(Path(captured["runs_root"]).resolve().is_relative_to(attempt))
 
+    def test_current_mirror_nonempty_functional_config_full_mock_chain(self):
+        from ActiveLearning.onboarding import build_active_learning_circuit_config
+
+        code_root = self.code_root
+        runtime = build_active_learning_circuit_config(
+            "CurrentMirror", "circuit_0472", repository_root=code_root,
+        )
+        variables = set(runtime.param_template["optimization_space"]["variables"])
+        params = {
+            item["name"]: item["nominal_value"]
+            for item in runtime.param_template["parameters"]
+            if item["name"] in variables
+        }
+        functional_config = {
+            "compliance_vout_start": 0.4,
+            "compliance_vout_stop": 2.2,
+            "compliance_points": 7,
+            "reference_scales": [0.75, 1.0, 1.25],
+        }
+        with tempfile.TemporaryDirectory(
+                prefix=".cm_batch_mock_", dir=code_root) as directory:
+            fixture = Path(directory)
+            config_path = fixture / "active_learning_config.json"
+            d0_path = fixture / "d0.jsonl"
+            targets = {
+                "current_error": {"operator": "<=", "value": 0.02},
+                "output_resistance": {"operator": ">=", "value": 26e6},
+            }
+            config_path.write_text(json.dumps({
+                "configuration_id": "cm0472_joint_mock_v1",
+                "circuit_info": {
+                    "circuit_type": "CurrentMirror",
+                    "circuit_id": "circuit_0472",
+                },
+                "target_specs": targets,
+                "active_learning": {
+                    "max_iterations": 1,
+                    "data_expansion_seed": 42,
+                },
+                "validity": {"enabled": False},
+                "data": {
+                    "d0_mode": "reuse",
+                    "d0_path_relative_to": "config",
+                    "d0_path": d0_path.name,
+                    "initialize_if_missing": False,
+                    "functional_config": functional_config,
+                },
+            }), encoding="utf-8")
+            d0_path.write_text(json.dumps({
+                "sample_id": "d0_0",
+                "params": params,
+                "normalized_params": {name: 0.5 for name in params},
+                "metrics": {
+                    "current_error": 0.5,
+                    "output_resistance": 1e3,
+                },
+                "status": {
+                    "parameter_valid": True,
+                    "simulation_valid": True,
+                    "functional_valid": False,
+                    "meets_spec": False,
+                },
+            }) + "\n", encoding="utf-8")
+            source_path = (
+                code_root / "dataset/circuit_0472/topology/circuit_0472.py"
+            )
+            job = {
+                "job_id": "cm_job",
+                "circuit_type": "CurrentMirror",
+                "circuit_id": "circuit_0472",
+                "configuration_id": "cm0472_joint_mock_v1",
+                "config_path": config_path.relative_to(code_root).as_posix(),
+                "config_sha256": sha256_file(config_path),
+                "d0_path": d0_path.relative_to(code_root).as_posix(),
+                "d0_sha256": sha256_file(d0_path),
+                "source_path": source_path.relative_to(code_root).as_posix(),
+                "source_sha256": sha256_file(source_path),
+                "target_spec_sha256": canonical_sha256(targets),
+                "max_iterations": 1,
+                "seed": 42,
+                "execution_mode": "al_only",
+            }
+            manifest = {
+                "batch_id": "cm_batch_mock",
+                "manifest_sha256": "a" * 64,
+                "source_revision": self.revision,
+                "repository_root": str(code_root),
+                "code_root": str(code_root),
+                "provider": "gemini",
+                "model": "gemini-test",
+                "credential_scope": "offline-only",
+                "resource_limits": {
+                    "max_physical_attempts": 10,
+                    "worker_timeout_seconds": 10,
+                },
+                "retry_policy": {
+                    "request_timeout_seconds": 5,
+                    "max_attempts": 1,
+                    "max_elapsed_seconds": 5,
+                },
+            }
+            approval = {
+                "authorization_id": "cm_mock_approval",
+                "authorization_sha256": "b" * 64,
+            }
+            attempt = (
+                self.root / "cm_direct_batch" / "jobs" / job["job_id"]
+                / "attempts" / ("c" * 32)
+            )
+            attempt.mkdir(parents=True)
+            invocation = {
+                "batch_id": manifest["batch_id"],
+                "job_id": job["job_id"],
+                "attempt_id": attempt.name,
+            }
+            candidate = {
+                "candidate_id": "candidate_0000",
+                "params": params,
+                "normalized_params": {name: 0.5 for name in params},
+            }
+            selected = {
+                "candidate_id": candidate["candidate_id"],
+                "params": params,
+                "violation_score": 0.0,
+                "uncertainty_score": 0.0,
+                "acquisition_score": 0.0,
+                "metric_scores": {},
+            }
+            prediction = {
+                "candidate_id": candidate["candidate_id"],
+                "params": params,
+                "prediction": {
+                    "current_error": {"mean": 0.01, "std": 0.0},
+                    "output_resistance": {"mean": 30e6, "std": 0.0},
+                },
+            }
+            observed_functional_config = []
+            functional_outcomes = [True, False]
+
+            def functional_validator(_params, *, adapter, **kwargs):
+                self.assertIsInstance(adapter, type(runtime.adapter))
+                self.assertEqual(adapter.name, runtime.adapter.name)
+                observed_functional_config.append(kwargs)
+                valid = functional_outcomes.pop(0)
+                return {
+                    "functional_feasible": valid,
+                    "functional_status": "valid" if valid else "invalid",
+                    "failure_reasons": [] if valid else ["mock compliance failure"],
+                    "basic_behavior": {"mirror_response_valid": valid},
+                    "compliance": {"relative_variation": 0.02},
+                    "reference_tracking": {"max_tracking_error": 0.03},
+                }
+
+            with patch.dict(os.environ, {
+                    "BATCH_RUNNER_V2_PRODUCTION_AUTHORIZATION_SHA256":
+                    approval["authorization_sha256"]}), \
+                 patch(
+                    "ActiveLearning.batch_runner_v2.real_al_child."
+                    "build_gemini_chat_transport",
+                    return_value=lambda *_: self.fail("provider transport called"),
+                 ), \
+                 patch(
+                    "ActiveLearning.active_learning.propose_inverse_design_seed",
+                    return_value={
+                        "x_seed": params, "inverse_context": [],
+                        "parameter_valid": True,
+                    },
+                 ), \
+                 patch(
+                    "ActiveLearning.active_learning.expand_candidates",
+                    return_value=([candidate], {
+                        "filtered_historical_duplicates": 0,
+                        "filtered_within_pool_duplicates": 0,
+                    }),
+                 ), \
+                 patch(
+                    "ActiveLearning.active_learning.predict_candidate_performance",
+                    return_value=[prediction],
+                 ), \
+                 patch(
+                    "ActiveLearning.active_learning.select_next_candidate",
+                    return_value=(selected, [selected]),
+                 ), \
+                 patch(
+                    "ActiveLearning.real_evaluation.real_evaluator."
+                    "evaluate_current_mirror",
+                    return_value=(0.01, 30e6, True),
+                 ), \
+                 patch(
+                    "ActiveLearning.real_evaluation.real_evaluator."
+                    "check_current_mirror_functionality",
+                    side_effect=functional_validator,
+                 ), \
+                 patch(
+                    "socket.socket.connect",
+                    side_effect=AssertionError("network call"),
+                 ), \
+                 patch(
+                    "subprocess.Popen",
+                    side_effect=AssertionError("external process"),
+                 ):
+                result = _production_run(
+                    invocation, manifest, job, approval, attempt,
+                )
+                numeric_attempt = (
+                    self.root / "cm_direct_batch" / "jobs" / job["job_id"]
+                    / "attempts" / ("d" * 32)
+                )
+                numeric_attempt.mkdir(parents=True)
+                numeric_invocation = {**invocation, "attempt_id": numeric_attempt.name}
+                numeric_only = _production_run(
+                    numeric_invocation, manifest, job, approval, numeric_attempt,
+                )
+            self.assertEqual(observed_functional_config,
+                             [functional_config, functional_config])
+            self.assertIs(result["parameter_valid"], True)
+            self.assertIs(result["simulation_valid"], True)
+            self.assertIs(result["functional_valid"], True)
+            self.assertIs(result["meets_spec"], True)
+            self.assertIs(result["joint_success"], True)
+            self.assertIs(result["numerical_spec_success"], True)
+            self.assertIs(result["functional_joint_success"], True)
+            self.assertIs(result["functional_unverified"], False)
+            summary = json.loads(
+                Path(result["result_path"]).read_text(encoding="utf-8")
+            )
+            self.assertEqual(summary["success_schema_version"],
+                             "al_success_status_v2")
+            self.assertIs(summary["joint_success"], True)
+            self.assertIs(numeric_only["parameter_valid"], True)
+            self.assertIs(numeric_only["simulation_valid"], True)
+            self.assertIs(numeric_only["functional_valid"], False)
+            self.assertIs(numeric_only["meets_spec"], True)
+            self.assertIs(numeric_only["joint_success"], False)
+            self.assertIs(numeric_only["numerical_spec_success"], True)
+            self.assertIs(numeric_only["functional_joint_success"], False)
+            self.assertIs(numeric_only["functional_unverified"], False)
+            self.assertEqual(numeric_only["stop_reason"], "max_iterations")
+            numeric_summary = json.loads(
+                Path(numeric_only["result_path"]).read_text(encoding="utf-8")
+            )
+            self.assertIs(numeric_summary["functional_valid"], False)
+            self.assertIs(numeric_summary["joint_success"], False)
+
 
     def test_optin_offline_child_proves_safe_429_deadline(self):
         self.jobs = self.jobs[:1]

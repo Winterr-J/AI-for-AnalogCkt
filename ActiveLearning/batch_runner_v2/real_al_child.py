@@ -20,6 +20,10 @@ from .llm_bridge import (
     GeminiALClient, QwenALClient, build_gemini_chat_transport,
     build_qwen_chat_transport,
 )
+from .runner import (
+    COMPLETION_STOP_REASONS, classify_batch_success,
+    _current_mirror_stop_is_consistent,
+)
 from .schema import _load_config, load_manifest, verify_job
 from .storage import atomic_json, read_json, sha256_file
 
@@ -233,11 +237,23 @@ def _offline_fixture(
     target_specs = config["target_specs"]
     metrics = {name: float(spec["value"]) for name, spec in target_specs.items()}
     run_id = f"offline_{attempt.name}"
+    success_status = (
+        {
+            "parameter_valid": True,
+            "functional_valid": True,
+            "joint_success": True,
+            "numerical_spec_success": True,
+            "functional_joint_success": True,
+            "functional_unverified": False,
+        }
+        if job["circuit_type"] == "CurrentMirror" else {}
+    )
     summary = {
         "run_id": run_id,
         "al_completed": True,
         "simulation_valid": True,
         "meets_spec": True,
+        **success_status,
         "stop_reason": "meets_spec",
         "iterations_completed": 1,
         "final_metrics": metrics,
@@ -312,13 +328,35 @@ def _production_run(
         raise RuntimeError("AL completion summary is invalid")
     final_record = result.get("best_or_final_record") or {}
     status = final_record.get("status") or {}
+    status_payload = {
+        "parameter_valid": status.get("parameter_valid"),
+        "simulation_valid": status.get("simulation_valid"),
+        "functional_valid": status.get("functional_valid"),
+        "meets_spec": status.get("meets_spec"),
+        "joint_success": status.get("joint_success"),
+    }
+    classification = classify_batch_success(job["circuit_type"], status_payload)
+    stop_reason = result.get("stop_reason")
+    if stop_reason not in COMPLETION_STOP_REASONS:
+        raise RuntimeError("AL returned an unsupported stop_reason")
+    if job["circuit_type"] == "CurrentMirror":
+        expected_summary = {**status_payload, **classification}
+        if any(completed.get(name) != value
+               for name, value in expected_summary.items()):
+            raise RuntimeError(
+                "CurrentMirror AL summary contradicts the final record status"
+            )
+        if not _current_mirror_stop_is_consistent(stop_reason, classification):
+            raise RuntimeError(
+                "CurrentMirror stop_reason contradicts functional joint success"
+            )
     return {
         **_identity(invocation, manifest, job, approval),
         "state": "COMPLETED", "run_id": run_context["run_id"],
         "al_completed": True,
-        "simulation_valid": status.get("simulation_valid") is True,
-        "meets_spec": status.get("meets_spec") is True,
-        "stop_reason": result.get("stop_reason"),
+        **status_payload,
+        **classification,
+        "stop_reason": stop_reason,
         "iterations_completed": result.get("iterations_completed"),
         "final_metrics": final_record.get("metrics") or {},
         "d0_record_count": d0_record_count,

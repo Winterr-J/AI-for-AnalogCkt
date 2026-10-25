@@ -9,6 +9,7 @@ from pathlib import Path
 from ActiveLearning.acquisition import select_next_candidate
 from ActiveLearning.acquisition.acquisition import SEMANTIC_NEAR_TIE_TAU
 from ActiveLearning.data_expansion import expand_candidates
+from ActiveLearning.d0_initialization import _functional_config
 from ActiveLearning.experiment_logging import append_jsonl_record
 from ActiveLearning.inverse_design import (
     call_inverse_design_llm,
@@ -50,7 +51,22 @@ def _sum_token_usage(entries):
     }
 
 
-def _recompute_initial_meets_spec(records, target_specs):
+def _current_mirror_joint_success(status):
+    """Require explicit functional evidence in addition to numeric targets."""
+    if not isinstance(status, Mapping):
+        return None
+    required = (
+        status.get("parameter_valid"),
+        status.get("simulation_valid"),
+        status.get("functional_valid"),
+        status.get("meets_spec"),
+    )
+    if not all(type(value) is bool for value in required):
+        return None
+    return all(required)
+
+
+def _recompute_initial_meets_spec(records, target_specs, circuit_type=None):
     """Refresh initial-record feasibility for the current experiment targets."""
     first_feasible = None
     for record in records:
@@ -76,7 +92,14 @@ def _recompute_initial_meets_spec(records, target_specs):
         if "meets_spec" in record or not isinstance(status, Mapping):
             record["meets_spec"] = meets_spec
 
-        if first_feasible is None and meets_spec is True:
+        if circuit_type == "CurrentMirror":
+            joint_success = _current_mirror_joint_success(status)
+            if isinstance(status, dict):
+                status["joint_success"] = joint_success
+            verified_success = joint_success
+        else:
+            verified_success = meets_spec is True
+        if first_feasible is None and verified_success:
             first_feasible = record
     return first_feasible
 
@@ -143,6 +166,7 @@ def run_active_learning(
     run_id=None,
     llm_client=None,
     validity_config=None,
+    functional_config=None,
     deadline_check=None,
 ):
     """Run the V1 loop and return records, logs, timing, and token usage."""
@@ -183,7 +207,10 @@ def run_active_learning(
         else None
     )
 
-    initial_feasible_record = _recompute_initial_meets_spec(records, target_specs)
+    is_current_mirror = circuit_info.get("circuit_type") == "CurrentMirror"
+    initial_feasible_record = _recompute_initial_meets_spec(
+        records, target_specs, circuit_type=circuit_info.get("circuit_type"),
+    )
     if initial_feasible_record is not None:
         return {
             "records": records,
@@ -352,7 +379,14 @@ def run_active_learning(
         if deadline_check is not None:
             deadline_check()
         start = time.perf_counter()
-        evaluation_options = {"run_functional": False}
+        evaluation_options = {"run_functional": is_current_mirror}
+        if is_current_mirror:
+            resolved_functional_config = (
+                _functional_config({}, adapter)
+                if functional_config is None
+                else dict(functional_config)
+            )
+            evaluation_options["functional_config"] = resolved_functional_config
         if runtime is not None:
             evaluation_options["runtime"] = runtime
         # Count a new logical evaluator call, including one that returns invalid.
@@ -367,6 +401,10 @@ def run_active_learning(
             **evaluation_options,
         )
         timing["real_spice_seconds"] = time.perf_counter() - start
+        if is_current_mirror:
+            new_record["status"]["joint_success"] = _current_mirror_joint_success(
+                new_record["status"]
+            )
         new_record["iteration"] = iteration
         records.append(new_record)
         new_validity_entry = (
@@ -503,6 +541,8 @@ def run_active_learning(
                 "timing": timing,
                 "tokens": tokens,
             }
+        if is_current_mirror:
+            iteration_entry["joint_success"] = new_record["status"]["joint_success"]
         if run_id is not None:
             iteration_entry = {"run_id": run_id, **iteration_entry}
         iteration_log.append(iteration_entry)
@@ -517,7 +557,12 @@ def run_active_learning(
             )
             _save_jsonl(llm_usage_log, output_dir, "llm_usage.jsonl")
 
-        if new_record["status"]["meets_spec"] is True:
+        verified_success = (
+            new_record["status"]["joint_success"] is True
+            if is_current_mirror
+            else new_record["status"]["meets_spec"] is True
+        )
+        if verified_success:
             stop_reason = "meets_spec"
             break
 

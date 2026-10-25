@@ -16,6 +16,54 @@ class UnverifiedOrphanError(RuntimeError):
     """The child (or one of its descendants) may still be doing work."""
 
 
+COMPLETION_STOP_REASONS = {
+    "meets_spec", "max_iterations", "initial_d0_meets_spec",
+}
+_CURRENT_MIRROR_STATUS_FIELDS = (
+    "parameter_valid", "simulation_valid", "functional_valid", "meets_spec",
+)
+
+
+def classify_batch_success(circuit_type: str, payload: dict) -> dict:
+    """Classify numeric and CurrentMirror functional success without guessing."""
+    numerical = payload.get("meets_spec") is True
+    if circuit_type != "CurrentMirror":
+        return {
+            "numerical_spec_success": numerical,
+            "functional_joint_success": None,
+            "functional_unverified": False,
+        }
+    values = tuple(payload.get(name) for name in _CURRENT_MIRROR_STATUS_FIELDS)
+    joint = payload.get("joint_success")
+    if not all(type(value) is bool for value in values) or type(joint) is not bool:
+        if joint is True:
+            raise ValueError(
+                "CurrentMirror joint_success lacks explicit validity evidence"
+            )
+        return {
+            "numerical_spec_success": numerical,
+            "functional_joint_success": None,
+            "functional_unverified": True,
+        }
+    expected = all(values)
+    if joint is not expected:
+        raise ValueError(
+            "CurrentMirror joint_success contradicts explicit validity fields"
+        )
+    return {
+        "numerical_spec_success": numerical,
+        "functional_joint_success": joint,
+        "functional_unverified": False,
+    }
+
+
+def _current_mirror_stop_is_consistent(stop_reason: object, classification: dict) -> bool:
+    claims_success = stop_reason in {"meets_spec", "initial_d0_meets_spec"}
+    return claims_success is (
+        classification["functional_joint_success"] is True
+    )
+
+
 def plan_batch(manifest_path: str | Path) -> dict:
     """Pure read-only preflight; no AL, SPICE, D0, or LLM calls."""
     manifest = load_manifest(manifest_path)
@@ -70,6 +118,11 @@ def _initial_state(
                 "max_iterations": job["max_iterations"], "seed": job["seed"],
                 "provider": manifest["provider"], "model": manifest["model"],
                 "pipeline_success": None, "meets_spec": None,
+                "parameter_valid": None, "simulation_valid": None,
+                "functional_valid": None, "joint_success": None,
+                "numerical_spec_success": None,
+                "functional_joint_success": None,
+                "functional_unverified": None,
             } for job in manifest["jobs"]}}
 
 
@@ -94,12 +147,29 @@ def _verify_completion(directory: Path, job_id: str, row: dict) -> bool:
                 return False
         except (OSError, ValueError):
             return False
+    try:
+        classification = classify_batch_success(row["circuit_type"], result)
+    except ValueError:
+        return False
+    if row["circuit_type"] == "CurrentMirror" and not (
+            _current_mirror_stop_is_consistent(
+                result.get("stop_reason"), classification)):
+        return False
+    status_matches = all(
+        result.get(name) == row.get(name)
+        for name in (
+            "parameter_valid", "simulation_valid", "functional_valid",
+            "meets_spec", "joint_success", "numerical_spec_success",
+            "functional_joint_success", "functional_unverified",
+        )
+        if name in result or name in row
+    )
     return (result.get("attempt_id") == attempt["attempt_id"]
             and result.get("pipeline_success") is True
-            and result.get("stop_reason") in {
-                "meets_spec", "max_iterations", "initial_d0_meets_spec"
-            } and type(result.get("meets_spec")) is bool
-            and result.get("meets_spec") == row.get("meets_spec"))
+            and result.get("stop_reason") in COMPLETION_STOP_REASONS
+            and type(result.get("meets_spec")) is bool
+            and result.get("meets_spec") == row.get("meets_spec")
+            and status_matches)
 
 
 def _verify_safe_skip(directory: Path, job_id: str, row: dict) -> bool:
@@ -317,9 +387,20 @@ def _run_batch(
                 _save(directory, state)
                 _event(directory, job_id, "BLOCKED", row["error_code"])
                 continue
-            if not isinstance(outcome, dict) or outcome.get("stop_reason") not in {
-                "meets_spec", "max_iterations", "initial_d0_meets_spec"
-            } or type(outcome.get("meets_spec")) is not bool:
+            try:
+                classification = (
+                    classify_batch_success(job["circuit_type"], outcome)
+                    if isinstance(outcome, dict) else None
+                )
+            except ValueError:
+                classification = None
+            if (not isinstance(outcome, dict)
+                    or outcome.get("stop_reason") not in COMPLETION_STOP_REASONS
+                    or type(outcome.get("meets_spec")) is not bool
+                    or classification is None
+                    or (job["circuit_type"] == "CurrentMirror"
+                        and not _current_mirror_stop_is_consistent(
+                            outcome.get("stop_reason"), classification))):
                 row["state"] = "INTERRUPTED_UNCERTAIN"
                 row["error_code"] = "INVALID_WORKER_RESULT"
                 _save(directory, state)
@@ -330,7 +411,11 @@ def _run_batch(
             try:
                 result = {"attempt_id": attempt_id, "run_id": outcome.get("run_id") or attempt_id,
                           "pipeline_success": True, "meets_spec": outcome["meets_spec"],
+                          "parameter_valid": outcome.get("parameter_valid"),
                           "simulation_valid": outcome.get("simulation_valid"),
+                          "functional_valid": outcome.get("functional_valid"),
+                          "joint_success": outcome.get("joint_success"),
+                          **classification,
                           "stop_reason": outcome["stop_reason"],
                           "iterations_completed": outcome.get("iterations_completed"),
                           "final_metrics": outcome.get("final_metrics"),
@@ -343,7 +428,11 @@ def _run_batch(
                 row["state"] = "COMPLETED"
                 row["pipeline_success"] = True
                 row["meets_spec"] = outcome["meets_spec"]
+                row["parameter_valid"] = outcome.get("parameter_valid")
                 row["simulation_valid"] = outcome.get("simulation_valid")
+                row["functional_valid"] = outcome.get("functional_valid")
+                row["joint_success"] = outcome.get("joint_success")
+                row.update(classification)
                 row["stop_reason"] = outcome["stop_reason"]
                 row["final_metrics"] = outcome.get("final_metrics")
                 row["d0_record_count"] = outcome.get("d0_record_count")
@@ -438,6 +527,33 @@ def report_batch(batch_id: str, output_root: str | Path) -> dict:
     usage_unknown = (len(started) != len(finished)
                      or any(item.get("usage_unknown") is True for item in finished)
                      or any(row["state"] == "INTERRUPTED_UNCERTAIN" for row in rows.values()))
+
+    def report_classification(row: dict) -> dict:
+        """Derive V2 reporting fields without rewriting historical state."""
+        if row["state"] != "COMPLETED":
+            return {
+                "numerical_spec_success": row.get("numerical_spec_success"),
+                "functional_joint_success": row.get("functional_joint_success"),
+                "functional_unverified": row.get("functional_unverified"),
+                "success_evidence_inconsistent": False,
+            }
+        try:
+            classified = classify_batch_success(row["circuit_type"], row)
+            classified["success_evidence_inconsistent"] = False
+            return classified
+        except ValueError:
+            # Old records can contain partial or contradictory derived fields.
+            # Never promote those to functional success; report them separately.
+            return {
+                "numerical_spec_success": row.get("meets_spec") is True,
+                "functional_joint_success": None,
+                "functional_unverified": row["circuit_type"] == "CurrentMirror",
+                "success_evidence_inconsistent": True,
+            }
+
+    classifications = {key: report_classification(row)
+                       for key, row in rows.items()}
+
     def per_job_usage(job_id: str) -> dict:
         own_started = [item for item in started if item.get("job_id") == job_id]
         own_finished = [item for item in finished if item.get("job_id") == job_id]
@@ -457,6 +573,32 @@ def report_batch(batch_id: str, output_root: str | Path) -> dict:
             "authorization_id": state.get("authorization_id"),
             "completed": sum(row["state"] == "COMPLETED" for row in rows.values()),
             "performance_success": sum(row.get("meets_spec") is True for row in rows.values()),
+            "numerical_spec_success": sum(
+                item["numerical_spec_success"] is True
+                for item in classifications.values()),
+            "current_mirror_completed": sum(
+                row["state"] == "COMPLETED"
+                and row["circuit_type"] == "CurrentMirror"
+                for row in rows.values()),
+            "functional_joint_success": sum(
+                row["state"] == "COMPLETED"
+                and row["circuit_type"] == "CurrentMirror"
+                and classifications[key]["functional_joint_success"] is True
+                for key, row in rows.items()),
+            "functional_joint_failure": sum(
+                row["state"] == "COMPLETED"
+                and row["circuit_type"] == "CurrentMirror"
+                and classifications[key]["functional_unverified"] is False
+                and classifications[key]["functional_joint_success"] is False
+                for key, row in rows.items()),
+            "functional_unverified": sum(
+                row["state"] == "COMPLETED"
+                and row["circuit_type"] == "CurrentMirror"
+                and classifications[key]["functional_unverified"] is True
+                for key, row in rows.items()),
+            "success_evidence_inconsistent": sum(
+                item["success_evidence_inconsistent"] is True
+                for item in classifications.values()),
             "failed_terminal": sum(row["state"] == "FAILED_TERMINAL" for row in rows.values()),
             "blocked": sum(row["state"] == "BLOCKED" for row in rows.values()),
             "interrupted_uncertain": sum(row["state"] == "INTERRUPTED_UNCERTAIN" for row in rows.values()),
@@ -474,7 +616,16 @@ def report_batch(batch_id: str, output_root: str | Path) -> dict:
                           "usage_unknown": usage_unknown,
                           "total_tokens": None if usage_unknown else sum(item["total_tokens"] for item in reported)},
             "jobs": {key: {"state": row["state"], "pipeline_success": row["pipeline_success"],
-                           "meets_spec": row["meets_spec"], "attempts": len(row["attempts"]),
+                           "parameter_valid": row.get("parameter_valid"),
+                           "simulation_valid": row.get("simulation_valid"),
+                           "functional_valid": row.get("functional_valid"),
+                           "meets_spec": row["meets_spec"],
+                           "joint_success": row.get("joint_success"),
+                           "numerical_spec_success": classifications[key]["numerical_spec_success"],
+                           "functional_joint_success": classifications[key]["functional_joint_success"],
+                           "functional_unverified": classifications[key]["functional_unverified"],
+                           "success_evidence_inconsistent": classifications[key]["success_evidence_inconsistent"],
+                           "attempts": len(row["attempts"]),
                            "final_metrics": row.get("final_metrics"),
                            "d0_record_count": row.get("d0_record_count"),
                            "api_usage": per_job_usage(key)}

@@ -10,7 +10,10 @@ import yaml
 
 from ActiveLearning.active_learning import run_active_learning
 from ActiveLearning.validity.validity_memory import VALIDITY_V1_DEFAULTS
-from ActiveLearning.d0_initialization import initialize_configured_d0
+from ActiveLearning.d0_initialization import (
+    _functional_config,
+    initialize_configured_d0,
+)
 from ActiveLearning.experiment_logging import (
     create_run_directory,
     write_completed_run,
@@ -346,6 +349,11 @@ def run_configured_active_learning(
         run_id=run_context["run_id"],
         llm_client=llm_client,
         validity_config=validity_settings,
+        functional_config=(
+            _functional_config(config.get("data") or {}, runtime.adapter)
+            if circuit_type == "CurrentMirror"
+            else None
+        ),
         deadline_check=deadline_check,
     )
     write_completed_run(

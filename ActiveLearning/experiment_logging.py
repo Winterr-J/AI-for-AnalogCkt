@@ -17,7 +17,14 @@ RUN_INDEX_FIELDS = (
     "acquisition_mode",
     "iterations_completed",
     "stop_reason",
+    "parameter_valid",
+    "simulation_valid",
+    "functional_valid",
     "meets_spec",
+    "joint_success",
+    "numerical_spec_success",
+    "functional_joint_success",
+    "functional_unverified",
     "current_error",
     "output_resistance",
     "total_seconds",
@@ -27,6 +34,27 @@ RUN_INDEX_FIELDS = (
     "llm_calls",
     "run_directory",
 )
+
+
+def _success_classification(circuit_type, status):
+    numerical = status.get("meets_spec") is True
+    if circuit_type != "CurrentMirror":
+        return numerical, None, False
+    required = (
+        status.get("parameter_valid"),
+        status.get("simulation_valid"),
+        status.get("functional_valid"),
+        status.get("meets_spec"),
+    )
+    joint = status.get("joint_success")
+    if not all(type(value) is bool for value in required) or type(joint) is not bool:
+        if joint is True:
+            raise ValueError("CurrentMirror joint_success lacks explicit validity evidence")
+        return numerical, None, True
+    expected = all(required)
+    if joint is not expected:
+        raise ValueError("CurrentMirror joint_success contradicts explicit validity fields")
+    return numerical, joint, False
 
 
 def _safe_label(value):
@@ -113,12 +141,16 @@ def write_completed_run(
     final_record = result.get("best_or_final_record")
     status = final_record.get("status", {}) if final_record else {}
     functional_valid = status.get("functional_valid")
-    if functional_valid is None:
+    if functional_valid is None and circuit_type != "CurrentMirror":
         functional_valid = status.get("functional_feasible")
     metrics = final_record.get("metrics", {}) if final_record else {}
     total_timing = result.get("total_timing", {})
     total_tokens = result.get("total_tokens", {})
+    numerical_success, functional_joint_success, functional_unverified = (
+        _success_classification(circuit_type, status)
+    )
     summary = {
+        "success_schema_version": "al_success_status_v2",
         "run_id": run_context["run_id"],
         "timestamp": run_context["timestamp"],
         "circuit_type": circuit_type,
@@ -128,15 +160,26 @@ def write_completed_run(
         "data_expansion_mode": data_expansion_mode,
         "iterations_completed": result.get("iterations_completed"),
         "stop_reason": result.get("stop_reason"),
+        "parameter_valid": status.get("parameter_valid"),
         "simulation_valid": status.get("simulation_valid"),
         "functional_valid": functional_valid,
         "meets_spec": status.get("meets_spec"),
+        "joint_success": (
+            functional_joint_success if circuit_type == "CurrentMirror" else None
+        ),
+        "numerical_spec_success": numerical_success,
+        "functional_joint_success": functional_joint_success,
+        "functional_unverified": functional_unverified,
         "final_metrics": metrics,
         "total_timing": total_timing,
         "total_tokens": total_tokens,
         "llm_calls": result.get("llm_calls"),
         "evaluation_counts": result.get("evaluation_counts", {}),
     }
+    if circuit_type != "CurrentMirror":
+        summary.pop("joint_success")
+        summary.pop("functional_joint_success")
+        summary.pop("functional_unverified")
     _write_json(Path(run_context["run_directory"]) / "summary.json", summary)
 
     row = {
@@ -147,7 +190,16 @@ def write_completed_run(
         "acquisition_mode": acquisition_mode,
         "iterations_completed": result.get("iterations_completed"),
         "stop_reason": result.get("stop_reason"),
+        "parameter_valid": status.get("parameter_valid"),
+        "simulation_valid": status.get("simulation_valid"),
+        "functional_valid": functional_valid,
         "meets_spec": status.get("meets_spec"),
+        "joint_success": functional_joint_success,
+        "numerical_spec_success": numerical_success,
+        "functional_joint_success": functional_joint_success,
+        "functional_unverified": (
+            functional_unverified if circuit_type == "CurrentMirror" else None
+        ),
         "current_error": metrics.get("current_error"),
         "output_resistance": metrics.get("output_resistance"),
         "total_seconds": total_timing.get("total_seconds"),
@@ -160,11 +212,19 @@ def write_completed_run(
     index_path = Path(runs_root) / "run_index.csv"
     index_path.parent.mkdir(parents=True, exist_ok=True)
     needs_header = not index_path.exists() or index_path.stat().st_size == 0
+    fieldnames = RUN_INDEX_FIELDS
+    if not needs_header:
+        with index_path.open(encoding="utf-8", newline="") as stream:
+            existing_header = next(csv.reader(stream), [])
+        if existing_header:
+            # Never rewrite or backfill a historical index. New roots use V2
+            # columns; existing roots retain their original append-only schema.
+            fieldnames = tuple(existing_header)
     with index_path.open("a", encoding="utf-8", newline="") as stream:
-        writer = csv.DictWriter(stream, fieldnames=RUN_INDEX_FIELDS)
+        writer = csv.DictWriter(stream, fieldnames=fieldnames, extrasaction="ignore")
         if needs_header:
             writer.writeheader()
-        writer.writerow(row)
+        writer.writerow({name: row.get(name) for name in fieldnames})
         stream.flush()
         os.fsync(stream.fileno())
     return summary

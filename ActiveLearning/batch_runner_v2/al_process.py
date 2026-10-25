@@ -12,7 +12,10 @@ import sys
 import time
 from pathlib import Path
 
-from .runner import UnverifiedOrphanError
+from .runner import (
+    COMPLETION_STOP_REASONS, UnverifiedOrphanError, classify_batch_success,
+    _current_mirror_stop_is_consistent,
+)
 from .storage import atomic_json, read_json, sha256_file
 
 
@@ -374,17 +377,25 @@ def run_real_al_child(
                 "error_code": str(result.get("error_code") or "REAL_AL_TERMINAL")}
     if code != 0 or result.get("state") != "COMPLETED":
         raise RuntimeError(f"real AL child exited without verified completion: {code}")
+    try:
+        classification = classify_batch_success(job["circuit_type"], result)
+    except ValueError as error:
+        raise RuntimeError("real AL child success status is inconsistent") from error
     if result.get("al_completed") is not True \
             or type(result.get("simulation_valid")) is not bool \
             or type(result.get("meets_spec")) is not bool \
-            or result.get("stop_reason") not in {
-                "meets_spec", "max_iterations", "initial_d0_meets_spec"
-            } \
+            or result.get("stop_reason") not in COMPLETION_STOP_REASONS \
             or type(result.get("iterations_completed")) is not int \
             or result["iterations_completed"] < 0 \
             or result["iterations_completed"] > job["max_iterations"] \
             or not isinstance(result.get("final_metrics"), dict):
         raise RuntimeError("real AL child completion evidence is invalid")
+    if job["circuit_type"] == "CurrentMirror" and not (
+            _current_mirror_stop_is_consistent(
+                result.get("stop_reason"), classification)):
+        raise RuntimeError(
+            "CurrentMirror completion stop_reason is not joint-success consistent"
+        )
     al_path = Path(result["result_path"])
     if al_path.is_symlink() or not al_path.resolve(strict=True).is_relative_to(attempt_dir) \
             or sha256_file(al_path) != result.get("al_result_sha256"):
@@ -392,8 +403,13 @@ def run_real_al_child(
     return {
         "run_id": result["run_id"], "result_path": str(al_path),
         "al_result_sha256": result["al_result_sha256"],
+        "parameter_valid": result.get("parameter_valid"),
         "simulation_valid": result["simulation_valid"],
-        "meets_spec": result["meets_spec"], "stop_reason": result["stop_reason"],
+        "functional_valid": result.get("functional_valid"),
+        "meets_spec": result["meets_spec"],
+        "joint_success": result.get("joint_success"),
+        **classification,
+        "stop_reason": result["stop_reason"],
         "iterations_completed": result["iterations_completed"],
         "final_metrics": result["final_metrics"],
         "d0_record_count": result.get("d0_record_count"),

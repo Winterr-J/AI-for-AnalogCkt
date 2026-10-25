@@ -36,7 +36,12 @@ _B2A_MANIFEST_KEYS = _V2A_MANIFEST_KEYS | {"source_revision", "source_closure"}
 _REQUIRED_REAL_AL_CLOSURE = {
     "ActiveLearning/main.py",
     "ActiveLearning/active_learning.py",
+    "ActiveLearning/d0_initialization.py",
     "ActiveLearning/experiment_logging.py",
+    "ActiveLearning/real_evaluation/real_evaluator.py",
+    "ActiveLearning/InitializeD0/evaluator/current_mirror_evaluator.py",
+    "ActiveLearning/InitializeD0/validation/current_mirror_functional_validator.py",
+    "ActiveLearning/InitializeD0/validation/parameter_validator.py",
     "ActiveLearning/inverse_design/llm_client.py",
     "ActiveLearning/inverse_design/qwen_provider.py",
     "ActiveLearning/batch_runner_v2/al_process.py",
