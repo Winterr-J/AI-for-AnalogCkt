@@ -129,7 +129,7 @@ def _usage_counts(response: Any, provider: str) -> dict[str, int] | None:
     usage = _value(response, "usage")
     if usage is None:
         return None
-    if provider in {"gemini", "qwen"}:
+    if provider in {"gemini", "qwen", "chat_completions"}:
         input_count = _value(usage, "prompt_tokens")
         output_count = _value(usage, "completion_tokens")
     else:
@@ -188,6 +188,9 @@ def call_inverse_design_llm(
     if request_timeout <= 0 or max_attempts < 1:
         raise ValueError("request_timeout and max_attempts must be positive")
     messages = _messages(prompt)
+    transport = os.getenv("AL_OPENAI_TRANSPORT", "responses").strip().lower()
+    if selected == "openai" and transport not in {"responses", "chat_completions"}:
+        raise ValueError(f"Unsupported OpenAI transport: {transport!r}")
 
     try:
         from openai import OpenAI
@@ -198,7 +201,9 @@ def call_inverse_design_llm(
     client = OpenAI(api_key=key, base_url=url, timeout=request_timeout, max_retries=0)
     for attempt in range(1, max_attempts + 1):
         try:
-            if selected in {"gemini", "qwen"}:
+            if selected in {"gemini", "qwen"} or (
+                selected == "openai" and transport == "chat_completions"
+            ):
                 options = ({"extra_body": {"enable_thinking": False},
                             "response_format": {"type": "json_object"}}
                            if selected == "qwen" else {})
@@ -226,8 +231,13 @@ def call_inverse_design_llm(
             time.sleep(min(2 ** (attempt - 1), 8))
             continue
 
-        output_text = _response_text(response, selected)
-        counts = _usage_counts(response, selected)
+        parser_provider = (
+            "chat_completions"
+            if selected == "openai" and transport == "chat_completions"
+            else selected
+        )
+        output_text = _response_text(response, parser_provider)
+        counts = _usage_counts(response, parser_provider)
         if usage_log is not None and counts is not None:
             usage_log.append({
                 **dict(usage_context or {}),

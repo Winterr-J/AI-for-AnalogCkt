@@ -33,7 +33,7 @@
     "ActiveLearning/batch_runner_v2/llm_bridge.py": "1241e0d89a79fe0119c68548106a13aaa03d2d4ab4013baaf515a45013be8942",
     "ActiveLearning/batch_runner_v2/storage.py": "ffb81925908c574bdf7c7ced331d5fceeabbe0bfb1b850a2f8616ac42716d932",
     "ActiveLearning/batch_runner_v2/time_recovery.py": "ad4cd9cf04d5d51c4b93183e98268c2495f00c1ad52135f0929244e1debf287e",
-    "ActiveLearning/inverse_design/llm_client.py": "0f6404e46ef2db034b44dac48dc4182e52a664c2e0a124200f588f0c01b89edd"
+    "ActiveLearning/inverse_design/llm_client.py": "21753a138b9b1d10a687b61dcc917f3dc7b9e5f303cbe938f70da3c9a27af836"
   },
   "batch_013": {
     "config": {
