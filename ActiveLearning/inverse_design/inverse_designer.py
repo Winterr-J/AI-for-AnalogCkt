@@ -38,6 +38,17 @@ def _parse_x_seed(raw_response: str) -> dict[str, Any]:
     return dict(payload["x_seed"])
 
 
+def _json_correction_prompt(original_prompt: str, error: json.JSONDecodeError) -> str:
+    """Request a complete replacement; never salvage part of invalid JSON."""
+    return (
+        original_prompt.rstrip()
+        + "\n\nPREVIOUS RESPONSE FORMAT ERROR\n"
+        + f"JSON parsing failed: {error.msg} at line {error.lineno}, column {error.colno}.\n"
+        + "Regenerate the complete answer as exactly one valid JSON object containing "
+        + "an x_seed object. Do not append a second object, Markdown, or commentary.\n"
+    )
+
+
 def validate_parameters(
     params: Mapping[str, Any],
     parameter_template: Mapping[str, Any],
@@ -119,15 +130,25 @@ def propose_inverse_design_seed(
         best_known_anchor=best_known_anchor,
     )
     prompt = build_inverse_design_prompt(inverse_input)
-    if llm_client is None:
-        raw_response = call_inverse_design_llm(
-            prompt,
-            api_key=api_key,
-            model=model,
-        )
-    else:
-        raw_response = llm_client(prompt)
-    x_seed = _parse_x_seed(raw_response)
+    request_prompt = prompt
+    for correction_count in range(3):
+        if llm_client is None:
+            raw_response = call_inverse_design_llm(
+                request_prompt,
+                api_key=api_key,
+                model=model,
+            )
+        else:
+            raw_response = llm_client(request_prompt)
+        try:
+            x_seed = _parse_x_seed(raw_response)
+            break
+        except json.JSONDecodeError as error:
+            if correction_count == 2:
+                raise ValueError(
+                    "Inverse Design JSON invalid after two format correction requests"
+                ) from error
+            request_prompt = _json_correction_prompt(prompt, error)
     parameter_result = validate_parameters(x_seed, parameter_template)
     if parameter_result["parameter_valid"] is True:
         seed_vector = parameter_to_similarity_vector(x_seed, parameter_template)

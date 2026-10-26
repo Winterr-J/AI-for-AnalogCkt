@@ -141,6 +141,51 @@ class InverseDesignerTests(unittest.TestCase):
         )
         validator.assert_called_once_with(x_seed, _PARAMETER_TEMPLATE)
 
+    def _propose_with_mock_client(self, client):
+        with (
+            patch.object(
+                inverse_designer, "select_inverse_design_context",
+                return_value=([{"sample_id": "selected"}], []),
+            ),
+            patch.object(inverse_designer, "select_best_known_anchor", return_value=_ANCHOR),
+            patch.object(inverse_designer, "build_inverse_design_input", return_value={}),
+            patch.object(inverse_designer, "build_inverse_design_prompt", return_value="PROMPT"),
+            patch.object(
+                inverse_designer, "validate_parameters",
+                return_value={"parameter_valid": True, "violations": []},
+            ) as validator,
+        ):
+            result = propose_inverse_design_seed(
+                [], _CIRCUIT_INFO, _PARAMETER_TEMPLATE, _TARGETS, llm_client=client,
+            )
+        return result, validator
+
+    def test_extra_data_gets_one_format_correction_without_partial_acceptance(self) -> None:
+        bad = '{"x_seed": {"A": 9.0, "B": 9.0}}{"x_seed": {"A": 8.0, "B": 8.0}}'
+        good = '{"x_seed": {"A": 2.0, "B": 3.0}}'
+        client = MagicMock(side_effect=[bad, good])
+        result, validator = self._propose_with_mock_client(client)
+        self.assertEqual(result["x_seed"], {"A": 2.0, "B": 3.0})
+        self.assertEqual(client.call_count, 2)
+        self.assertEqual(client.call_args_list[0].args, ("PROMPT",))
+        self.assertIn("Extra data", client.call_args_list[1].args[0])
+        validator.assert_called_once_with({"A": 2.0, "B": 3.0}, _PARAMETER_TEMPLATE)
+
+    def test_json_corrections_exhaust_after_two_extra_requests(self) -> None:
+        bad = '{"x_seed": {"A": 9.0, "B": 9.0}}{}'
+        client = MagicMock(return_value=bad)
+        with self.assertRaisesRegex(ValueError, "after two format correction requests"):
+            self._propose_with_mock_client(client)
+        self.assertEqual(client.call_count, 3)
+        self.assertTrue(all("Extra data" in call.args[0]
+                            for call in client.call_args_list[1:]))
+
+    def test_valid_json_wrong_shape_does_not_trigger_format_correction(self) -> None:
+        client = MagicMock(return_value='{"x_seed": []}')
+        with self.assertRaisesRegex(ValueError, "x_seed must be a mapping"):
+            self._propose_with_mock_client(client)
+        self.assertEqual(client.call_count, 1)
+
     def test_target_specs_are_required_before_selection_or_llm(self) -> None:
         for target_specs in (None, {}):
             with self.subTest(target_specs=target_specs):

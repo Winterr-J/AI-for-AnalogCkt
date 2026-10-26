@@ -31,6 +31,10 @@ class LLMTransientError(RuntimeError):
     """A transient provider failure persisted through bounded retries."""
 
 
+class LLMEmptyResponseError(RuntimeError):
+    """A completed request returned no usable text."""
+
+
 def _value(obj: Any, name: str) -> Any:
     return obj.get(name) if isinstance(obj, Mapping) else getattr(obj, name, None)
 
@@ -121,7 +125,7 @@ def _response_text(response: Any, provider: str) -> str:
         else:
             result = None
     if not isinstance(result, str) or not result.strip():
-        raise RuntimeError("LLM response did not contain text output")
+        raise LLMEmptyResponseError("LLM response did not contain text output")
     return result
 
 
@@ -156,6 +160,11 @@ def _failure_kind(error: Exception) -> str | None:
     detail = _value(body, "error") or body
     code = str(getattr(error, "code", "") or _value(detail, "code") or "").lower()
     message = str(_value(detail, "message") or "").lower()
+    if status == 403 and (
+        code in {"insufficient_balance", "insufficient_account_balance"}
+        or "insufficient account balance" in message
+    ):
+        return "quota"
     if status == 429:
         if code in {"insufficient_quota", "quota_exceeded", "billing_hard_limit_reached"} or any(
             phrase in message for phrase in ("daily quota", "quota exhausted", "billing limit")
@@ -219,8 +228,12 @@ def call_inverse_design_llm(
             kind = (qwen_failure_kind(error) if selected == "qwen"
                     else _failure_kind(error))
             if kind == "quota":
+                reason = (
+                    "account balance is insufficient" if getattr(error, "status_code", None) == 403
+                    else "quota is exhausted"
+                )
                 raise LLMQuotaExceededError(
-                    f"{selected} quota is exhausted for model {chosen_model}; no retry attempted"
+                    f"{selected} {reason} for model {chosen_model}; no retry attempted"
                 ) from error
             if kind is None or kind == "terminal":
                 raise
@@ -236,8 +249,25 @@ def call_inverse_design_llm(
             if selected == "openai" and transport == "chat_completions"
             else selected
         )
-        output_text = _response_text(response, parser_provider)
         counts = _usage_counts(response, parser_provider)
+        try:
+            output_text = _response_text(response, parser_provider)
+        except LLMEmptyResponseError as error:
+            if usage_log is not None and counts is not None:
+                usage_log.append({
+                    **dict(usage_context or {}),
+                    "provider": selected,
+                    "model": chosen_model,
+                    **counts,
+                    "attempt": attempt,
+                    "response_status": "empty",
+                })
+            if attempt == max_attempts:
+                raise LLMTransientError(
+                    f"{selected} empty response for model {chosen_model} after {attempt} attempts"
+                ) from error
+            time.sleep(min(2 ** (attempt - 1), 8))
+            continue
         if usage_log is not None and counts is not None:
             usage_log.append({
                 **dict(usage_context or {}),

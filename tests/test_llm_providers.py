@@ -141,18 +141,86 @@ class LLMProviderTests(unittest.TestCase):
                 call_inverse_design_llm("PROMPT", provider="unknown", api_key="mock-key")
         constructor.assert_not_called()
 
-    def test_malformed_response_is_not_logged_or_retried(self) -> None:
-        response = _gemini_response()
-        response.choices = []
-        fake, _, _, chat_create = _fake_openai(response)
+    def test_empty_response_retries_and_records_available_usage(self) -> None:
+        fake, _, _, chat_create = _fake_openai(
+            side_effect=[_gemini_response("  "), _gemini_response()]
+        )
         usage_log = []
-        with patch.dict(sys.modules, {"openai": fake}):
-            with self.assertRaisesRegex(RuntimeError, "did not contain text"):
+        with (patch.dict(sys.modules, {"openai": fake}), patch(
+            "ActiveLearning.inverse_design.llm_client.time.sleep"
+        ) as sleep):
+            text = call_inverse_design_llm(
+                "PROMPT", provider="gemini", api_key="mock-key", usage_log=usage_log,
+            )
+        self.assertEqual(inverse_designer._parse_x_seed(text), {"A": 1.0})
+        self.assertEqual(chat_create.call_count, 2)
+        self.assertEqual(len(usage_log), 2)
+        self.assertEqual(usage_log[0]["response_status"], "empty")
+        self.assertEqual(usage_log[0]["attempt"], 1)
+        self.assertEqual([entry["total_tokens"] for entry in usage_log], [13, 13])
+        sleep.assert_called_once_with(1)
+
+    def test_empty_response_exhaustion_is_bounded_and_fail_closed(self) -> None:
+        fake, _, _, chat_create = _fake_openai(_gemini_response(""))
+        usage_log = []
+        with (patch.dict(sys.modules, {"openai": fake}), patch(
+            "ActiveLearning.inverse_design.llm_client.time.sleep"
+        ) as sleep):
+            with self.assertRaisesRegex(LLMTransientError, "empty response.*3 attempts"):
                 call_inverse_design_llm(
-                    "PROMPT", provider="gemini", api_key="mock-key", usage_log=usage_log,
+                    "PROMPT", provider="gemini", api_key="mock-key",
+                    max_attempts=3, usage_log=usage_log,
                 )
-        self.assertEqual(chat_create.call_count, 1)
-        self.assertEqual(usage_log, [])
+        self.assertEqual(chat_create.call_count, 3)
+        self.assertEqual(len(usage_log), 3)
+        self.assertTrue(all(entry["response_status"] == "empty" for entry in usage_log))
+        self.assertEqual([call.args[0] for call in sleep.call_args_list], [1, 2])
+
+    def test_openai_compatible_chat_empty_response_retries_without_new_client(self) -> None:
+        fake, constructor, _, chat_create = _fake_openai(
+            side_effect=[_gemini_response(""), _gemini_response()]
+        )
+        usage_log = []
+        with (patch.dict(os.environ, {"AL_OPENAI_TRANSPORT": "chat_completions"}),
+              patch.dict(sys.modules, {"openai": fake}), patch(
+                  "ActiveLearning.inverse_design.llm_client.time.sleep"
+              )):
+            text = call_inverse_design_llm(
+                "PROMPT", provider="openai", api_key="mock-key",
+                model="gpt-6.1-sol", base_url="https://example.invalid/v1",
+                usage_log=usage_log,
+            )
+        self.assertEqual(inverse_designer._parse_x_seed(text), {"A": 1.0})
+        self.assertEqual(chat_create.call_count, 2)
+        self.assertEqual(constructor.call_count, 1)
+        self.assertEqual(constructor.call_args.kwargs["max_retries"], 0)
+        self.assertEqual(len(usage_log), 2)
+        self.assertEqual(usage_log[0]["response_status"], "empty")
+
+    def test_balance_403_is_terminal_but_other_403_is_not_reclassified(self) -> None:
+        for body, expected in (
+            ({"error": {"message": "Insufficient account balance",
+                         "code": "bad_response_status_code"}}, LLMQuotaExceededError),
+            ({"error": {"message": "Permission denied", "code": "forbidden"}},
+             FakeHTTPError),
+        ):
+            with self.subTest(body=body):
+                fake, _, _, chat_create = _fake_openai(
+                    side_effect=FakeHTTPError(403, body)
+                )
+                with (patch.dict(os.environ, {"AL_OPENAI_TRANSPORT": "chat_completions"}),
+                      patch.dict(sys.modules, {"openai": fake}), patch(
+                          "ActiveLearning.inverse_design.llm_client.time.sleep"
+                      ) as sleep):
+                    with self.assertRaises(expected) as raised:
+                        call_inverse_design_llm(
+                            "PROMPT", provider="openai", api_key="mock-key",
+                            model="gpt-6.1-sol", base_url="https://example.invalid/v1",
+                        )
+                if expected is LLMQuotaExceededError:
+                    self.assertIn("account balance", str(raised.exception))
+                self.assertEqual(chat_create.call_count, 1)
+                sleep.assert_not_called()
 
     def test_temporary_429_retries_same_provider_and_model(self) -> None:
         fake, _, responses_create, chat_create = _fake_openai(

@@ -741,6 +741,22 @@ class PerformancePredictorTests(unittest.TestCase):
             {"current_error": 1, "output_resistance": 1},
         )
 
+    def test_single_member_format_correction_is_not_another_committee_member(self) -> None:
+        candidate = _candidate(0)
+        client = MagicMock(side_effect=["not json", _round_response([candidate], 0)])
+        result = predict_candidate_performance(
+            [candidate],
+            [_record(0)],
+            _CIRCUIT_INFO,
+            _performance_template(),
+            committee_size=1,
+            llm_client=client,
+        )[0]
+        self.assertEqual(client.call_count, 2)
+        self.assertEqual(result["committee_attempt_counts"], [2])
+        self.assertEqual(len(result["raw_predictions"]), 1)
+        self.assertEqual(result["prediction"]["current_error"]["std"], 0.0)
+
     def test_identical_five_rounds_log_collapse_without_changing_aggregation(self):
         candidate = _candidate(0)
         response = _round_response([candidate], 0)
