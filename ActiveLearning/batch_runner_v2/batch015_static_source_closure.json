@@ -1,0 +1,117 @@
+{
+  "batch": "bulk_batch_015",
+  "circuit_ids": [
+    "circuit_1701",
+    "circuit_1702",
+    "circuit_1703",
+    "circuit_1704",
+    "circuit_1705",
+    "circuit_1706",
+    "circuit_1707",
+    "circuit_1708",
+    "circuit_1709",
+    "circuit_1710"
+  ],
+  "files": {
+    "circuit_1701": {
+      "metadata.txt": "c765c47ac02a78fdcff191e9eb6959c16190492025fa9a62a0c86fd757c40714",
+      "parameters/ideal_design_space.yaml": "b1ce525cd4b45d535ad07ce030483f77696f06f2ae2a32f11d75c31277fba8b3",
+      "parameters/operating_space.yaml": "77b3134f9a9336646330845385a99954ae6c9969bc08cef48841a394bde83199",
+      "parameters/tunable_parameters.yaml": "4476d3fdc3e512cd440e4a69d43ad18aaf32855876002d08270095460dac5d62",
+      "simulation/parameter/ideal_param.yaml": "ccc0b7c984d300670b8260fbec65d65ef876bdae3f84f52859cd342010c74c51",
+      "simulation/results/ideal/op_results.yaml": "f34ad9633d915f74bbb81b1ee29fbab41dac6feebb254d031b58e3fb6635d2d0",
+      "topology/circuit_1701.cir": "cd8397d8d56391dc45a1049f642169b332ee3581980806953a8557088b628c48",
+      "topology/circuit_1701.py": "afe3f161c002064a8f98cf48a5e668bd8a423503bea15ba9e4399461f8d6f4cd"
+    },
+    "circuit_1702": {
+      "metadata.txt": "aec79f3a72b4b49291d684bf8e173f2e12b27e8e4fdb4c1fdead2576c330ddab",
+      "parameters/ideal_design_space.yaml": "eae5fc52f12683448bc3b75c38af8a344afe99798b015cc99dd07f47f8255f08",
+      "parameters/operating_space.yaml": "753212108483c88ee27dd063fd7744e988a2df61f3da1833e60dca6c79bfce51",
+      "parameters/tunable_parameters.yaml": "5a98814d36c77e3e623b7192a908e0045983170fc7b68e9fa20865a9c835b60c",
+      "simulation/parameter/ideal_param.yaml": "1c1121bc6ce6d000dacd806e6add5c39d6494a34771a59eff82d2c7ed5647f88",
+      "simulation/results/ideal/op_results.yaml": "cf71bac80d7a546ccb5166793ecb99cdb00c736299c2a4a6e82991163bf5bbf7",
+      "topology/circuit_1702.cir": "ba5f97cff5313f0c4e787755f8c4a8ea797cd18c130b158c983252ac6efe3a33",
+      "topology/circuit_1702.py": "d3d5237c0d9472e591adb4ba8880644bd35683f61fadf078d50a744d73feca52"
+    },
+    "circuit_1703": {
+      "metadata.txt": "710d129bda9b4394a7ae73d57a43c6a53ab65632fdc7c97bbee0794e1b003bbb",
+      "parameters/ideal_design_space.yaml": "d802db3801600bc7553362e806f2da9a7e95f8ed923d70b597daa2ff63bde5eb",
+      "parameters/operating_space.yaml": "0dcc5d30d559d13c658c8edbb28a44ac7c7b591b7bcf33962f3b667353c584a3",
+      "parameters/tunable_parameters.yaml": "fe6cfb251cf03effebbe4b17d796718b761e66e2e4e5196f4cc8f5a7e4cac216",
+      "simulation/parameter/ideal_param.yaml": "564e8ec9cfedd192073ee9421224cf8d1a8973a8f747ed14a1c75dc3791cb9de",
+      "simulation/results/ideal/op_results.yaml": "58dfdd07b1fa1f9038b0d5ae9dd9c1878b8b61ff1a1b6374c73b2424c66df563",
+      "topology/circuit_1703.cir": "1456451ca5d1ecbb31a09a244f82bc390ead9e68a1a640d31fe6c04c7fc7ed43",
+      "topology/circuit_1703.py": "c83586a532df3994a57c1073f7e40832aa6b3f341d5818abf553d216761fcbd6"
+    },
+    "circuit_1704": {
+      "metadata.txt": "a63ceebffb69d652251b520fdb1a74efbb0a57f8d70a0aa4a788aade1667b1b5",
+      "parameters/ideal_design_space.yaml": "3cdac83f6b608a7b208c3abba156d4dd1e2479af23a4c5bcf63c728a8c04c365",
+      "parameters/operating_space.yaml": "de525200cc2de6898b3e9b77ff6a5d1fc75fbc3c01a785250853cb2383762b10",
+      "parameters/tunable_parameters.yaml": "e1fa4fe2da94131ecc00df52415d99bcb8a5c5cb2885015c72e3042915b6394f",
+      "simulation/parameter/ideal_param.yaml": "9ea482834ce42bb8e95a4e26c945bfca7db6b49812634046c712a403459951b9",
+      "simulation/results/ideal/op_results.yaml": "033c97f9cf9b19ec4d726d664ece7e85445ea547a3f0d5898852ac9610913076",
+      "topology/circuit_1704.cir": "60e78b42625afa1ffe8587d8440e36cf301224c98b2281f2ab5b1a3f5b4825c2",
+      "topology/circuit_1704.py": "f6e857df0a5b755a9c97bfe8ca024dbd294f941e9f46c4f728dbb509fe63b7bf"
+    },
+    "circuit_1705": {
+      "metadata.txt": "35d4a4b55c81d37df6f9bfa5d3051da3a8c25eecc9cef5323ed740ceb400fd1d",
+      "parameters/ideal_design_space.yaml": "89d07615d480c884eee578bc5b08bd1337fc775654c4983b7921cc2fa24e7798",
+      "parameters/operating_space.yaml": "3b14857425e83e5f5666d32aeaba9a1b8d04cd0c6934f733bea402384b5d4414",
+      "parameters/tunable_parameters.yaml": "804fbb76a72cb2ddab1eed4c9effd79fcbca3bca9357bf4cebd7b8d864951d91",
+      "simulation/parameter/ideal_param.yaml": "418238071f2afed9d0319f1a69727ed422c883407a08ec0cb6dbd2596cd80dfa",
+      "simulation/results/ideal/op_results.yaml": "a4e6f1bb5f479add69e9d9017fc2241c28b8c569356e6330c1949568f45a2179",
+      "topology/circuit_1705.cir": "7bcf45c722ad05ef586113dcab37a98f34ac184e92b4d9885894ee6f13041c81",
+      "topology/circuit_1705.py": "a3fee1574d44a2a8ab943aaa2a79f41fb159909445caabdb36565e09d3122932"
+    },
+    "circuit_1706": {
+      "metadata.txt": "59bf34661fa09628aec894d7f7c27e6b2b6e0dea3b343084eaf91702f86baa3e",
+      "parameters/ideal_design_space.yaml": "65691e632092364a8043102e836fc4efc079e7ac064aee2b913c5c8d7ef708f6",
+      "parameters/operating_space.yaml": "c248dd11799647c373777a20b9dce7162374cca301302cb3a68862b0271a08ef",
+      "parameters/tunable_parameters.yaml": "36f084878a2bb84beaf92f99be62b7bdb7dfecb6fac47e8f868e1cf9af29afd0",
+      "simulation/parameter/ideal_param.yaml": "7e7c9552aa2575e2bf6043e2755ca3b0d36f37684d011d57d6eb0bc903b8646b",
+      "simulation/results/ideal/op_results.yaml": "600de36e757ae0c0040b75ee3b9a938fe8286eeec417723afeebd4fbf4a91e0b",
+      "topology/circuit_1706.cir": "775d8204eca9302d86f787ef732918f1af9d89cff45df2aa8825229c68b5960d",
+      "topology/circuit_1706.py": "d05e5106b01fe4d7df01a12452b4b4bdd8e6113f1a1828fb7059637f3b313563"
+    },
+    "circuit_1707": {
+      "metadata.txt": "ed9f18d25d87d8e3784e6ad72e06ed2b08036e55709db14659bb3e2e54eb65fe",
+      "parameters/ideal_design_space.yaml": "52b31a5ab2138fa6fdc3dbfe4f89648fc109546aace2ec79ebd25237d3491041",
+      "parameters/operating_space.yaml": "b604d7ad770c0ba929e0632844df7e94d8f89f7997942b57c55244bd206b3b17",
+      "parameters/tunable_parameters.yaml": "c265a07b705765c8f7c6474eb028f3345224e986c3408397f905e11f8ef96712",
+      "simulation/parameter/ideal_param.yaml": "47cd7c53fa65cba1e973f02831bba191c4ab7a08fa17ab533195ad2cf4e64e3f",
+      "simulation/results/ideal/op_results.yaml": "9d3b4270bcecbc57c2ea873d6582bc41e729c7b0faf7a8616cb139ab57c8f00a",
+      "topology/circuit_1707.cir": "05a41071e5d769e58cf7a72b409d988cbd4bf50fb7f5c3372aac493526fa2410",
+      "topology/circuit_1707.py": "82745d2e27f22054dcb0a476d6c1169c0d8623f9471cad12055a8f34b3ff319f"
+    },
+    "circuit_1708": {
+      "metadata.txt": "516553a47c7272700755b845c7a5bf43723e31595f86ebcdf631f4330243f281",
+      "parameters/ideal_design_space.yaml": "ddf24b138dbc96951c2807350e502c78f1fba9c7ac955e80006c9854beebee06",
+      "parameters/operating_space.yaml": "769d5a6742dbc449f726b88d997444d0a9f0cee5fd56d84b0e57914ada4101ed",
+      "parameters/tunable_parameters.yaml": "870e2786db16bd2302331dd457869c2f322ed04b9d658290a9b6285dc1b13f82",
+      "simulation/parameter/ideal_param.yaml": "7606adc099862dcb7680a1df19d41c66b7e24c2a6f8569bcbf01a1d461335db0",
+      "simulation/results/ideal/op_results.yaml": "4d1ea8100667ae38c3a1ea4cc73e8c9bf427fdc76d60f9a0339c815d1d280203",
+      "topology/circuit_1708.cir": "a5df1610d99653ffb9ceea13a03da7200767241860b64a4ed77f0c211520cab4",
+      "topology/circuit_1708.py": "8c0d944ce31f9a2e6167a730a855c9873d79d703a30ce3f53b422463a2c3ac78"
+    },
+    "circuit_1709": {
+      "metadata.txt": "2d46907c213ff9703f4fb0719e7b2e0937009480773dcbb385169098a4ac3cbd",
+      "parameters/ideal_design_space.yaml": "07524550f1c9615eccc741115cf4f92cebf93df9a2281abb11519ca3e1722475",
+      "parameters/operating_space.yaml": "542442127c5c1511aed7a85d650f0f3375e04ba88ca00bf282026c7c1e7b81c5",
+      "parameters/tunable_parameters.yaml": "2f6fb79ada96c41ef25034b19f5c0dbf0b36d4c89521e512498e74f157cb27eb",
+      "simulation/parameter/ideal_param.yaml": "47331107701772c0bee60e80535b6b93e01cf6628cee3945ba979bf84155f140",
+      "simulation/results/ideal/op_results.yaml": "ec2234e23e7f754ddd629924753837bdb8e4efbb2bd09ad1f6b24bc20f46346e",
+      "topology/circuit_1709.cir": "b117560734534f9698c146aad100318460efd989f2a3e06ede2ad3a259412115",
+      "topology/circuit_1709.py": "a54bee8621dffc671df168f4800d96ac4f9a871d80d37009d34365459c02bb0c"
+    },
+    "circuit_1710": {
+      "metadata.txt": "f92f1ef37f149f8094e863300aa2b3d98657b658d1f689727b3c738975a6a658",
+      "parameters/ideal_design_space.yaml": "86753acc654970c7d3856e1bc6ca4eb5facd0bbd996fd54143e9b7f5388d6152",
+      "parameters/operating_space.yaml": "f54ce57b23c1a14a64d901afc24baf4a6522fe6f32d1a3f019e4ab7ea8313050",
+      "parameters/tunable_parameters.yaml": "978846f9d2921b8aca3ba08a20a1714e33614a9cf64beb9db8b65501e3d5a30a",
+      "simulation/parameter/ideal_param.yaml": "2922630b1d9686f825d4afc51710ddf3b717e46d0fa26f5504fff268315243ac",
+      "simulation/results/ideal/op_results.yaml": "e3ac3da9f99de8a5525e6922b77ddb732d4d080038945b75e84b1802f68b887d",
+      "topology/circuit_1710.cir": "1afe44d201908d686ac1d865cefbab2f8234fe883c94065ecc643fb451d3c011",
+      "topology/circuit_1710.py": "2c1cacd23db75f2173db225913d9bb53da0df9f959e37b453569cb25fdae7a9f"
+    }
+  }
+}
