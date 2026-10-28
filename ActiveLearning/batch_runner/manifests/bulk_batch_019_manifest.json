@@ -1,0 +1,1117 @@
+[
+  {
+    "circuit_id": "circuit_1741",
+    "original_category": "UNAVAILABLE_AGGREGATE_ONLY",
+    "requested_circuit_type": "OpAmp",
+    "inferred_circuit_type": "OpAmp",
+    "type_confidence": "MEDIUM",
+    "static_status": "STATIC_READY",
+    "deployment_eligible": true,
+    "topology_exists": true,
+    "raw_cir_exists": true,
+    "ideal_param_exists": true,
+    "ideal_param_parseable": true,
+    "ideal_design_space_exists": true,
+    "ideal_design_space_parseable": true,
+    "operating_space_exists": true,
+    "operating_space_parseable": true,
+    "historical_op_exists": true,
+    "historical_op_parseable": true,
+    "metadata_exists": true,
+    "topology_ast_valid": true,
+    "build_circuit_exists": true,
+    "nominal_static_valid": true,
+    "nominal_operating_point_valid": "UNKNOWN_STATIC_AUDIT",
+    "parameter_binding_status": "STATICALLY_RESOLVED",
+    "estimated_parameter_count": 26,
+    "estimated_parameter_count_confidence": "STATIC_ESTIMATE",
+    "device_types": [
+      "MOSFET",
+      "R",
+      "V"
+    ],
+    "device_count": 17,
+    "source_ports": [
+      "VDD",
+      "VIN1",
+      "VIN2",
+      "VOUT1",
+      "VSS",
+      "net10",
+      "net1004",
+      "net1005",
+      "net1007",
+      "net16"
+    ],
+    "input_ports": [
+      "VIN1",
+      "VIN2"
+    ],
+    "output_ports": [
+      "VOUT1"
+    ],
+    "port_semantics_status": "RESOLVED",
+    "external_dependency_status": "NONE_DETECTED",
+    "external_dependencies": [],
+    "multi_output": false,
+    "global_feedback_status": "NOT_DETECTED",
+    "duplicate_instances": [],
+    "undefined_names": [],
+    "unresolved_build_arguments": [],
+    "invalid_physical_nominals": [],
+    "nominals_outside_design_space": [],
+    "design_space_missing_parameters": [],
+    "missing_required_assets": [],
+    "blocking_issues": [],
+    "warning_codes": [
+      "TYPE_CONFIDENCE_MEDIUM"
+    ],
+    "recommended_action": "deploy_to_preparation_queue",
+    "runtime_required_paths": [
+      "D:\\analogCkt\\AG_simulation\\dataset\\circuit_1741\\topology\\circuit_1741.py",
+      "D:\\analogCkt\\AG_simulation\\dataset\\circuit_1741\\simulation\\parameter\\ideal_param.yaml"
+    ],
+    "runtime_optional_semantic_aid_paths": [
+      "D:\\analogCkt\\AG_simulation\\dataset\\circuit_1741\\simulation\\results\\ideal\\op_results.yaml"
+    ],
+    "auditable_bundle_paths": [
+      "D:\\analogCkt\\AG_simulation\\dataset\\circuit_1741\\topology\\circuit_1741.py",
+      "D:\\analogCkt\\AG_simulation\\dataset\\circuit_1741\\topology\\circuit_1741.cir",
+      "D:\\analogCkt\\AG_simulation\\dataset\\circuit_1741\\simulation\\parameter\\ideal_param.yaml",
+      "D:\\analogCkt\\AG_simulation\\dataset\\circuit_1741\\parameters\\ideal_design_space.yaml",
+      "D:\\analogCkt\\AG_simulation\\dataset\\circuit_1741\\parameters\\operating_space.yaml",
+      "D:\\analogCkt\\AG_simulation\\dataset\\circuit_1741\\parameters\\tunable_parameters.yaml",
+      "D:\\analogCkt\\AG_simulation\\dataset\\circuit_1741\\metadata.txt",
+      "D:\\analogCkt\\AG_simulation\\dataset\\circuit_1741\\simulation\\results\\ideal\\op_results.yaml"
+    ],
+    "runtime_required_file_count": 2,
+    "runtime_required_bytes": 5515,
+    "runtime_optional_semantic_aid_file_count": 1,
+    "runtime_optional_semantic_aid_bytes": 566,
+    "auditable_bundle_file_count": 8,
+    "auditable_bundle_bytes": 29840,
+    "source_paths": {
+      "dataset": "D:\\analogCkt\\AG_simulation\\dataset\\circuit_1741",
+      "topology_py": "D:\\analogCkt\\AG_simulation\\dataset\\circuit_1741\\topology\\circuit_1741.py",
+      "raw_cir": "D:\\analogCkt\\AG_simulation\\dataset\\circuit_1741\\topology\\circuit_1741.cir",
+      "ideal_param": "D:\\analogCkt\\AG_simulation\\dataset\\circuit_1741\\simulation\\parameter\\ideal_param.yaml",
+      "ideal_design_space": "D:\\analogCkt\\AG_simulation\\dataset\\circuit_1741\\parameters\\ideal_design_space.yaml",
+      "operating_space": "D:\\analogCkt\\AG_simulation\\dataset\\circuit_1741\\parameters\\operating_space.yaml",
+      "tunable_parameters": "D:\\analogCkt\\AG_simulation\\dataset\\circuit_1741\\parameters\\tunable_parameters.yaml",
+      "historical_op": "D:\\analogCkt\\AG_simulation\\dataset\\circuit_1741\\simulation\\results\\ideal\\op_results.yaml",
+      "metadata": "D:\\analogCkt\\AG_simulation\\dataset\\circuit_1741\\metadata.txt"
+    },
+    "evidence": {
+      "metadata_circuit_type": "opamp",
+      "metadata_circuit_name": "CMOS differential operational amplifier (AnalogGenie 1901)",
+      "ideal_functional_status": "PASS",
+      "ast_error": null,
+      "resolved_argument_count": 31,
+      "build_argument_count": 31
+    }
+  },
+  {
+    "circuit_id": "circuit_1742",
+    "original_category": "UNAVAILABLE_AGGREGATE_ONLY",
+    "requested_circuit_type": "OpAmp",
+    "inferred_circuit_type": "OpAmp",
+    "type_confidence": "MEDIUM",
+    "static_status": "STATIC_READY",
+    "deployment_eligible": true,
+    "topology_exists": true,
+    "raw_cir_exists": true,
+    "ideal_param_exists": true,
+    "ideal_param_parseable": true,
+    "ideal_design_space_exists": true,
+    "ideal_design_space_parseable": true,
+    "operating_space_exists": true,
+    "operating_space_parseable": true,
+    "historical_op_exists": true,
+    "historical_op_parseable": true,
+    "metadata_exists": true,
+    "topology_ast_valid": true,
+    "build_circuit_exists": true,
+    "nominal_static_valid": true,
+    "nominal_operating_point_valid": "UNKNOWN_STATIC_AUDIT",
+    "parameter_binding_status": "STATICALLY_RESOLVED",
+    "estimated_parameter_count": 26,
+    "estimated_parameter_count_confidence": "STATIC_ESTIMATE",
+    "device_types": [
+      "MOSFET",
+      "V"
+    ],
+    "device_count": 17,
+    "source_ports": [
+      "VB1",
+      "VDD",
+      "VIN1",
+      "VIN2",
+      "VOUT1",
+      "VSS",
+      "net1004",
+      "net1005",
+      "net1007",
+      "net16"
+    ],
+    "input_ports": [
+      "VIN1",
+      "VIN2"
+    ],
+    "output_ports": [
+      "VOUT1"
+    ],
+    "port_semantics_status": "RESOLVED",
+    "external_dependency_status": "NONE_DETECTED",
+    "external_dependencies": [],
+    "multi_output": false,
+    "global_feedback_status": "NOT_DETECTED",
+    "duplicate_instances": [],
+    "undefined_names": [],
+    "unresolved_build_arguments": [],
+    "invalid_physical_nominals": [],
+    "nominals_outside_design_space": [],
+    "design_space_missing_parameters": [],
+    "missing_required_assets": [],
+    "blocking_issues": [],
+    "warning_codes": [
+      "TYPE_CONFIDENCE_MEDIUM"
+    ],
+    "recommended_action": "deploy_to_preparation_queue",
+    "runtime_required_paths": [
+      "D:\\analogCkt\\AG_simulation\\dataset\\circuit_1742\\topology\\circuit_1742.py",
+      "D:\\analogCkt\\AG_simulation\\dataset\\circuit_1742\\simulation\\parameter\\ideal_param.yaml"
+    ],
+    "runtime_optional_semantic_aid_paths": [
+      "D:\\analogCkt\\AG_simulation\\dataset\\circuit_1742\\simulation\\results\\ideal\\op_results.yaml"
+    ],
+    "auditable_bundle_paths": [
+      "D:\\analogCkt\\AG_simulation\\dataset\\circuit_1742\\topology\\circuit_1742.py",
+      "D:\\analogCkt\\AG_simulation\\dataset\\circuit_1742\\topology\\circuit_1742.cir",
+      "D:\\analogCkt\\AG_simulation\\dataset\\circuit_1742\\simulation\\parameter\\ideal_param.yaml",
+      "D:\\analogCkt\\AG_simulation\\dataset\\circuit_1742\\parameters\\ideal_design_space.yaml",
+      "D:\\analogCkt\\AG_simulation\\dataset\\circuit_1742\\parameters\\operating_space.yaml",
+      "D:\\analogCkt\\AG_simulation\\dataset\\circuit_1742\\parameters\\tunable_parameters.yaml",
+      "D:\\analogCkt\\AG_simulation\\dataset\\circuit_1742\\metadata.txt",
+      "D:\\analogCkt\\AG_simulation\\dataset\\circuit_1742\\simulation\\results\\ideal\\op_results.yaml"
+    ],
+    "runtime_required_file_count": 2,
+    "runtime_required_bytes": 5528,
+    "runtime_optional_semantic_aid_file_count": 1,
+    "runtime_optional_semantic_aid_bytes": 600,
+    "auditable_bundle_file_count": 8,
+    "auditable_bundle_bytes": 27932,
+    "source_paths": {
+      "dataset": "D:\\analogCkt\\AG_simulation\\dataset\\circuit_1742",
+      "topology_py": "D:\\analogCkt\\AG_simulation\\dataset\\circuit_1742\\topology\\circuit_1742.py",
+      "raw_cir": "D:\\analogCkt\\AG_simulation\\dataset\\circuit_1742\\topology\\circuit_1742.cir",
+      "ideal_param": "D:\\analogCkt\\AG_simulation\\dataset\\circuit_1742\\simulation\\parameter\\ideal_param.yaml",
+      "ideal_design_space": "D:\\analogCkt\\AG_simulation\\dataset\\circuit_1742\\parameters\\ideal_design_space.yaml",
+      "operating_space": "D:\\analogCkt\\AG_simulation\\dataset\\circuit_1742\\parameters\\operating_space.yaml",
+      "tunable_parameters": "D:\\analogCkt\\AG_simulation\\dataset\\circuit_1742\\parameters\\tunable_parameters.yaml",
+      "historical_op": "D:\\analogCkt\\AG_simulation\\dataset\\circuit_1742\\simulation\\results\\ideal\\op_results.yaml",
+      "metadata": "D:\\analogCkt\\AG_simulation\\dataset\\circuit_1742\\metadata.txt"
+    },
+    "evidence": {
+      "metadata_circuit_type": "opamp",
+      "metadata_circuit_name": "CMOS differential operational amplifier (AnalogGenie 1902)",
+      "ideal_functional_status": "PASS",
+      "ast_error": null,
+      "resolved_argument_count": 32,
+      "build_argument_count": 32
+    }
+  },
+  {
+    "circuit_id": "circuit_1743",
+    "original_category": "UNAVAILABLE_AGGREGATE_ONLY",
+    "requested_circuit_type": "OpAmp",
+    "inferred_circuit_type": "OpAmp",
+    "type_confidence": "MEDIUM",
+    "static_status": "STATIC_READY",
+    "deployment_eligible": true,
+    "topology_exists": true,
+    "raw_cir_exists": true,
+    "ideal_param_exists": true,
+    "ideal_param_parseable": true,
+    "ideal_design_space_exists": true,
+    "ideal_design_space_parseable": true,
+    "operating_space_exists": true,
+    "operating_space_parseable": true,
+    "historical_op_exists": true,
+    "historical_op_parseable": true,
+    "metadata_exists": true,
+    "topology_ast_valid": true,
+    "build_circuit_exists": true,
+    "nominal_static_valid": true,
+    "nominal_operating_point_valid": "UNKNOWN_STATIC_AUDIT",
+    "parameter_binding_status": "STATICALLY_RESOLVED",
+    "estimated_parameter_count": 27,
+    "estimated_parameter_count_confidence": "STATIC_ESTIMATE",
+    "device_types": [
+      "MOSFET",
+      "R",
+      "V"
+    ],
+    "device_count": 18,
+    "source_ports": [
+      "VB1",
+      "VDD",
+      "VIN1",
+      "VIN2",
+      "VOUT1",
+      "VSS",
+      "net010",
+      "net1004",
+      "net1005",
+      "net1007",
+      "net16"
+    ],
+    "input_ports": [
+      "VIN1",
+      "VIN2"
+    ],
+    "output_ports": [
+      "VOUT1"
+    ],
+    "port_semantics_status": "RESOLVED",
+    "external_dependency_status": "NONE_DETECTED",
+    "external_dependencies": [],
+    "multi_output": false,
+    "global_feedback_status": "NOT_DETECTED",
+    "duplicate_instances": [],
+    "undefined_names": [],
+    "unresolved_build_arguments": [],
+    "invalid_physical_nominals": [],
+    "nominals_outside_design_space": [],
+    "design_space_missing_parameters": [],
+    "missing_required_assets": [],
+    "blocking_issues": [],
+    "warning_codes": [
+      "TYPE_CONFIDENCE_MEDIUM"
+    ],
+    "recommended_action": "deploy_to_preparation_queue",
+    "runtime_required_paths": [
+      "D:\\analogCkt\\AG_simulation\\dataset\\circuit_1743\\topology\\circuit_1743.py",
+      "D:\\analogCkt\\AG_simulation\\dataset\\circuit_1743\\simulation\\parameter\\ideal_param.yaml"
+    ],
+    "runtime_optional_semantic_aid_paths": [
+      "D:\\analogCkt\\AG_simulation\\dataset\\circuit_1743\\simulation\\results\\ideal\\op_results.yaml"
+    ],
+    "auditable_bundle_paths": [
+      "D:\\analogCkt\\AG_simulation\\dataset\\circuit_1743\\topology\\circuit_1743.py",
+      "D:\\analogCkt\\AG_simulation\\dataset\\circuit_1743\\topology\\circuit_1743.cir",
+      "D:\\analogCkt\\AG_simulation\\dataset\\circuit_1743\\simulation\\parameter\\ideal_param.yaml",
+      "D:\\analogCkt\\AG_simulation\\dataset\\circuit_1743\\parameters\\ideal_design_space.yaml",
+      "D:\\analogCkt\\AG_simulation\\dataset\\circuit_1743\\parameters\\operating_space.yaml",
+      "D:\\analogCkt\\AG_simulation\\dataset\\circuit_1743\\parameters\\tunable_parameters.yaml",
+      "D:\\analogCkt\\AG_simulation\\dataset\\circuit_1743\\metadata.txt",
+      "D:\\analogCkt\\AG_simulation\\dataset\\circuit_1743\\simulation\\results\\ideal\\op_results.yaml"
+    ],
+    "runtime_required_file_count": 2,
+    "runtime_required_bytes": 5671,
+    "runtime_optional_semantic_aid_file_count": 1,
+    "runtime_optional_semantic_aid_bytes": 628,
+    "auditable_bundle_file_count": 8,
+    "auditable_bundle_bytes": 29952,
+    "source_paths": {
+      "dataset": "D:\\analogCkt\\AG_simulation\\dataset\\circuit_1743",
+      "topology_py": "D:\\analogCkt\\AG_simulation\\dataset\\circuit_1743\\topology\\circuit_1743.py",
+      "raw_cir": "D:\\analogCkt\\AG_simulation\\dataset\\circuit_1743\\topology\\circuit_1743.cir",
+      "ideal_param": "D:\\analogCkt\\AG_simulation\\dataset\\circuit_1743\\simulation\\parameter\\ideal_param.yaml",
+      "ideal_design_space": "D:\\analogCkt\\AG_simulation\\dataset\\circuit_1743\\parameters\\ideal_design_space.yaml",
+      "operating_space": "D:\\analogCkt\\AG_simulation\\dataset\\circuit_1743\\parameters\\operating_space.yaml",
+      "tunable_parameters": "D:\\analogCkt\\AG_simulation\\dataset\\circuit_1743\\parameters\\tunable_parameters.yaml",
+      "historical_op": "D:\\analogCkt\\AG_simulation\\dataset\\circuit_1743\\simulation\\results\\ideal\\op_results.yaml",
+      "metadata": "D:\\analogCkt\\AG_simulation\\dataset\\circuit_1743\\metadata.txt"
+    },
+    "evidence": {
+      "metadata_circuit_type": "opamp",
+      "metadata_circuit_name": "CMOS differential operational amplifier (AnalogGenie 1903)",
+      "ideal_functional_status": "PASS",
+      "ast_error": null,
+      "resolved_argument_count": 33,
+      "build_argument_count": 33
+    }
+  },
+  {
+    "circuit_id": "circuit_1744",
+    "original_category": "UNAVAILABLE_AGGREGATE_ONLY",
+    "requested_circuit_type": "OpAmp",
+    "inferred_circuit_type": "OpAmp",
+    "type_confidence": "MEDIUM",
+    "static_status": "STATIC_READY",
+    "deployment_eligible": true,
+    "topology_exists": true,
+    "raw_cir_exists": true,
+    "ideal_param_exists": true,
+    "ideal_param_parseable": true,
+    "ideal_design_space_exists": true,
+    "ideal_design_space_parseable": true,
+    "operating_space_exists": true,
+    "operating_space_parseable": true,
+    "historical_op_exists": true,
+    "historical_op_parseable": true,
+    "metadata_exists": true,
+    "topology_ast_valid": true,
+    "build_circuit_exists": true,
+    "nominal_static_valid": true,
+    "nominal_operating_point_valid": "UNKNOWN_STATIC_AUDIT",
+    "parameter_binding_status": "STATICALLY_RESOLVED",
+    "estimated_parameter_count": 21,
+    "estimated_parameter_count_confidence": "STATIC_ESTIMATE",
+    "device_types": [
+      "MOSFET",
+      "R",
+      "V"
+    ],
+    "device_count": 14,
+    "source_ports": [
+      "VDD",
+      "VIN1",
+      "VIN2",
+      "VOUT1",
+      "VSS",
+      "net1004",
+      "net1005",
+      "net1007",
+      "net16"
+    ],
+    "input_ports": [
+      "VIN1",
+      "VIN2"
+    ],
+    "output_ports": [
+      "VOUT1"
+    ],
+    "port_semantics_status": "RESOLVED",
+    "external_dependency_status": "NONE_DETECTED",
+    "external_dependencies": [],
+    "multi_output": false,
+    "global_feedback_status": "NOT_DETECTED",
+    "duplicate_instances": [],
+    "undefined_names": [],
+    "unresolved_build_arguments": [],
+    "invalid_physical_nominals": [],
+    "nominals_outside_design_space": [],
+    "design_space_missing_parameters": [],
+    "missing_required_assets": [],
+    "blocking_issues": [],
+    "warning_codes": [
+      "TYPE_CONFIDENCE_MEDIUM"
+    ],
+    "recommended_action": "deploy_to_preparation_queue",
+    "runtime_required_paths": [
+      "D:\\analogCkt\\AG_simulation\\dataset\\circuit_1744\\topology\\circuit_1744.py",
+      "D:\\analogCkt\\AG_simulation\\dataset\\circuit_1744\\simulation\\parameter\\ideal_param.yaml"
+    ],
+    "runtime_optional_semantic_aid_paths": [
+      "D:\\analogCkt\\AG_simulation\\dataset\\circuit_1744\\simulation\\results\\ideal\\op_results.yaml"
+    ],
+    "auditable_bundle_paths": [
+      "D:\\analogCkt\\AG_simulation\\dataset\\circuit_1744\\topology\\circuit_1744.py",
+      "D:\\analogCkt\\AG_simulation\\dataset\\circuit_1744\\topology\\circuit_1744.cir",
+      "D:\\analogCkt\\AG_simulation\\dataset\\circuit_1744\\simulation\\parameter\\ideal_param.yaml",
+      "D:\\analogCkt\\AG_simulation\\dataset\\circuit_1744\\parameters\\ideal_design_space.yaml",
+      "D:\\analogCkt\\AG_simulation\\dataset\\circuit_1744\\parameters\\operating_space.yaml",
+      "D:\\analogCkt\\AG_simulation\\dataset\\circuit_1744\\parameters\\tunable_parameters.yaml",
+      "D:\\analogCkt\\AG_simulation\\dataset\\circuit_1744\\metadata.txt",
+      "D:\\analogCkt\\AG_simulation\\dataset\\circuit_1744\\simulation\\results\\ideal\\op_results.yaml"
+    ],
+    "runtime_required_file_count": 2,
+    "runtime_required_bytes": 4797,
+    "runtime_optional_semantic_aid_file_count": 1,
+    "runtime_optional_semantic_aid_bytes": 540,
+    "auditable_bundle_file_count": 8,
+    "auditable_bundle_bytes": 24514,
+    "source_paths": {
+      "dataset": "D:\\analogCkt\\AG_simulation\\dataset\\circuit_1744",
+      "topology_py": "D:\\analogCkt\\AG_simulation\\dataset\\circuit_1744\\topology\\circuit_1744.py",
+      "raw_cir": "D:\\analogCkt\\AG_simulation\\dataset\\circuit_1744\\topology\\circuit_1744.cir",
+      "ideal_param": "D:\\analogCkt\\AG_simulation\\dataset\\circuit_1744\\simulation\\parameter\\ideal_param.yaml",
+      "ideal_design_space": "D:\\analogCkt\\AG_simulation\\dataset\\circuit_1744\\parameters\\ideal_design_space.yaml",
+      "operating_space": "D:\\analogCkt\\AG_simulation\\dataset\\circuit_1744\\parameters\\operating_space.yaml",
+      "tunable_parameters": "D:\\analogCkt\\AG_simulation\\dataset\\circuit_1744\\parameters\\tunable_parameters.yaml",
+      "historical_op": "D:\\analogCkt\\AG_simulation\\dataset\\circuit_1744\\simulation\\results\\ideal\\op_results.yaml",
+      "metadata": "D:\\analogCkt\\AG_simulation\\dataset\\circuit_1744\\metadata.txt"
+    },
+    "evidence": {
+      "metadata_circuit_type": "opamp",
+      "metadata_circuit_name": "CMOS differential operational amplifier (AnalogGenie 1904)",
+      "ideal_functional_status": "PASS",
+      "ast_error": null,
+      "resolved_argument_count": 26,
+      "build_argument_count": 26
+    }
+  },
+  {
+    "circuit_id": "circuit_1745",
+    "original_category": "UNAVAILABLE_AGGREGATE_ONLY",
+    "requested_circuit_type": "OpAmp",
+    "inferred_circuit_type": "OpAmp",
+    "type_confidence": "MEDIUM",
+    "static_status": "STATIC_READY",
+    "deployment_eligible": true,
+    "topology_exists": true,
+    "raw_cir_exists": true,
+    "ideal_param_exists": true,
+    "ideal_param_parseable": true,
+    "ideal_design_space_exists": true,
+    "ideal_design_space_parseable": true,
+    "operating_space_exists": true,
+    "operating_space_parseable": true,
+    "historical_op_exists": true,
+    "historical_op_parseable": true,
+    "metadata_exists": true,
+    "topology_ast_valid": true,
+    "build_circuit_exists": true,
+    "nominal_static_valid": true,
+    "nominal_operating_point_valid": "UNKNOWN_STATIC_AUDIT",
+    "parameter_binding_status": "STATICALLY_RESOLVED",
+    "estimated_parameter_count": 27,
+    "estimated_parameter_count_confidence": "STATIC_ESTIMATE",
+    "device_types": [
+      "MOSFET",
+      "R",
+      "V"
+    ],
+    "device_count": 18,
+    "source_ports": [
+      "VB1",
+      "VDD",
+      "VIN1",
+      "VIN2",
+      "VOUT1",
+      "VSS",
+      "net1004",
+      "net1005",
+      "net1007",
+      "net12",
+      "net16"
+    ],
+    "input_ports": [
+      "VIN1",
+      "VIN2"
+    ],
+    "output_ports": [
+      "VOUT1"
+    ],
+    "port_semantics_status": "RESOLVED",
+    "external_dependency_status": "NONE_DETECTED",
+    "external_dependencies": [],
+    "multi_output": false,
+    "global_feedback_status": "NOT_DETECTED",
+    "duplicate_instances": [],
+    "undefined_names": [],
+    "unresolved_build_arguments": [],
+    "invalid_physical_nominals": [],
+    "nominals_outside_design_space": [],
+    "design_space_missing_parameters": [],
+    "missing_required_assets": [],
+    "blocking_issues": [],
+    "warning_codes": [
+      "TYPE_CONFIDENCE_MEDIUM"
+    ],
+    "recommended_action": "deploy_to_preparation_queue",
+    "runtime_required_paths": [
+      "D:\\analogCkt\\AG_simulation\\dataset\\circuit_1745\\topology\\circuit_1745.py",
+      "D:\\analogCkt\\AG_simulation\\dataset\\circuit_1745\\simulation\\parameter\\ideal_param.yaml"
+    ],
+    "runtime_optional_semantic_aid_paths": [
+      "D:\\analogCkt\\AG_simulation\\dataset\\circuit_1745\\simulation\\results\\ideal\\op_results.yaml"
+    ],
+    "auditable_bundle_paths": [
+      "D:\\analogCkt\\AG_simulation\\dataset\\circuit_1745\\topology\\circuit_1745.py",
+      "D:\\analogCkt\\AG_simulation\\dataset\\circuit_1745\\topology\\circuit_1745.cir",
+      "D:\\analogCkt\\AG_simulation\\dataset\\circuit_1745\\simulation\\parameter\\ideal_param.yaml",
+      "D:\\analogCkt\\AG_simulation\\dataset\\circuit_1745\\parameters\\ideal_design_space.yaml",
+      "D:\\analogCkt\\AG_simulation\\dataset\\circuit_1745\\parameters\\operating_space.yaml",
+      "D:\\analogCkt\\AG_simulation\\dataset\\circuit_1745\\parameters\\tunable_parameters.yaml",
+      "D:\\analogCkt\\AG_simulation\\dataset\\circuit_1745\\metadata.txt",
+      "D:\\analogCkt\\AG_simulation\\dataset\\circuit_1745\\simulation\\results\\ideal\\op_results.yaml"
+    ],
+    "runtime_required_file_count": 2,
+    "runtime_required_bytes": 5667,
+    "runtime_optional_semantic_aid_file_count": 1,
+    "runtime_optional_semantic_aid_bytes": 622,
+    "auditable_bundle_file_count": 8,
+    "auditable_bundle_bytes": 29938,
+    "source_paths": {
+      "dataset": "D:\\analogCkt\\AG_simulation\\dataset\\circuit_1745",
+      "topology_py": "D:\\analogCkt\\AG_simulation\\dataset\\circuit_1745\\topology\\circuit_1745.py",
+      "raw_cir": "D:\\analogCkt\\AG_simulation\\dataset\\circuit_1745\\topology\\circuit_1745.cir",
+      "ideal_param": "D:\\analogCkt\\AG_simulation\\dataset\\circuit_1745\\simulation\\parameter\\ideal_param.yaml",
+      "ideal_design_space": "D:\\analogCkt\\AG_simulation\\dataset\\circuit_1745\\parameters\\ideal_design_space.yaml",
+      "operating_space": "D:\\analogCkt\\AG_simulation\\dataset\\circuit_1745\\parameters\\operating_space.yaml",
+      "tunable_parameters": "D:\\analogCkt\\AG_simulation\\dataset\\circuit_1745\\parameters\\tunable_parameters.yaml",
+      "historical_op": "D:\\analogCkt\\AG_simulation\\dataset\\circuit_1745\\simulation\\results\\ideal\\op_results.yaml",
+      "metadata": "D:\\analogCkt\\AG_simulation\\dataset\\circuit_1745\\metadata.txt"
+    },
+    "evidence": {
+      "metadata_circuit_type": "opamp",
+      "metadata_circuit_name": "CMOS differential operational amplifier (AnalogGenie 1905)",
+      "ideal_functional_status": "PASS",
+      "ast_error": null,
+      "resolved_argument_count": 33,
+      "build_argument_count": 33
+    }
+  },
+  {
+    "circuit_id": "circuit_1746",
+    "original_category": "UNAVAILABLE_AGGREGATE_ONLY",
+    "requested_circuit_type": "OpAmp",
+    "inferred_circuit_type": "OpAmp",
+    "type_confidence": "MEDIUM",
+    "static_status": "STATIC_READY",
+    "deployment_eligible": true,
+    "topology_exists": true,
+    "raw_cir_exists": true,
+    "ideal_param_exists": true,
+    "ideal_param_parseable": true,
+    "ideal_design_space_exists": true,
+    "ideal_design_space_parseable": true,
+    "operating_space_exists": true,
+    "operating_space_parseable": true,
+    "historical_op_exists": true,
+    "historical_op_parseable": true,
+    "metadata_exists": true,
+    "topology_ast_valid": true,
+    "build_circuit_exists": true,
+    "nominal_static_valid": true,
+    "nominal_operating_point_valid": "UNKNOWN_STATIC_AUDIT",
+    "parameter_binding_status": "STATICALLY_RESOLVED",
+    "estimated_parameter_count": 27,
+    "estimated_parameter_count_confidence": "STATIC_ESTIMATE",
+    "device_types": [
+      "MOSFET",
+      "R",
+      "V"
+    ],
+    "device_count": 18,
+    "source_ports": [
+      "VB1",
+      "VDD",
+      "VIN1",
+      "VIN2",
+      "VOUT1",
+      "VSS",
+      "net1004",
+      "net1005",
+      "net1007",
+      "net15",
+      "net16"
+    ],
+    "input_ports": [
+      "VIN1",
+      "VIN2"
+    ],
+    "output_ports": [
+      "VOUT1"
+    ],
+    "port_semantics_status": "RESOLVED",
+    "external_dependency_status": "NONE_DETECTED",
+    "external_dependencies": [],
+    "multi_output": false,
+    "global_feedback_status": "NOT_DETECTED",
+    "duplicate_instances": [],
+    "undefined_names": [],
+    "unresolved_build_arguments": [],
+    "invalid_physical_nominals": [],
+    "nominals_outside_design_space": [],
+    "design_space_missing_parameters": [],
+    "missing_required_assets": [],
+    "blocking_issues": [],
+    "warning_codes": [
+      "TYPE_CONFIDENCE_MEDIUM"
+    ],
+    "recommended_action": "deploy_to_preparation_queue",
+    "runtime_required_paths": [
+      "D:\\analogCkt\\AG_simulation\\dataset\\circuit_1746\\topology\\circuit_1746.py",
+      "D:\\analogCkt\\AG_simulation\\dataset\\circuit_1746\\simulation\\parameter\\ideal_param.yaml"
+    ],
+    "runtime_optional_semantic_aid_paths": [
+      "D:\\analogCkt\\AG_simulation\\dataset\\circuit_1746\\simulation\\results\\ideal\\op_results.yaml"
+    ],
+    "auditable_bundle_paths": [
+      "D:\\analogCkt\\AG_simulation\\dataset\\circuit_1746\\topology\\circuit_1746.py",
+      "D:\\analogCkt\\AG_simulation\\dataset\\circuit_1746\\topology\\circuit_1746.cir",
+      "D:\\analogCkt\\AG_simulation\\dataset\\circuit_1746\\simulation\\parameter\\ideal_param.yaml",
+      "D:\\analogCkt\\AG_simulation\\dataset\\circuit_1746\\parameters\\ideal_design_space.yaml",
+      "D:\\analogCkt\\AG_simulation\\dataset\\circuit_1746\\parameters\\operating_space.yaml",
+      "D:\\analogCkt\\AG_simulation\\dataset\\circuit_1746\\parameters\\tunable_parameters.yaml",
+      "D:\\analogCkt\\AG_simulation\\dataset\\circuit_1746\\metadata.txt",
+      "D:\\analogCkt\\AG_simulation\\dataset\\circuit_1746\\simulation\\results\\ideal\\op_results.yaml"
+    ],
+    "runtime_required_file_count": 2,
+    "runtime_required_bytes": 5669,
+    "runtime_optional_semantic_aid_file_count": 1,
+    "runtime_optional_semantic_aid_bytes": 623,
+    "auditable_bundle_file_count": 8,
+    "auditable_bundle_bytes": 29943,
+    "source_paths": {
+      "dataset": "D:\\analogCkt\\AG_simulation\\dataset\\circuit_1746",
+      "topology_py": "D:\\analogCkt\\AG_simulation\\dataset\\circuit_1746\\topology\\circuit_1746.py",
+      "raw_cir": "D:\\analogCkt\\AG_simulation\\dataset\\circuit_1746\\topology\\circuit_1746.cir",
+      "ideal_param": "D:\\analogCkt\\AG_simulation\\dataset\\circuit_1746\\simulation\\parameter\\ideal_param.yaml",
+      "ideal_design_space": "D:\\analogCkt\\AG_simulation\\dataset\\circuit_1746\\parameters\\ideal_design_space.yaml",
+      "operating_space": "D:\\analogCkt\\AG_simulation\\dataset\\circuit_1746\\parameters\\operating_space.yaml",
+      "tunable_parameters": "D:\\analogCkt\\AG_simulation\\dataset\\circuit_1746\\parameters\\tunable_parameters.yaml",
+      "historical_op": "D:\\analogCkt\\AG_simulation\\dataset\\circuit_1746\\simulation\\results\\ideal\\op_results.yaml",
+      "metadata": "D:\\analogCkt\\AG_simulation\\dataset\\circuit_1746\\metadata.txt"
+    },
+    "evidence": {
+      "metadata_circuit_type": "opamp",
+      "metadata_circuit_name": "CMOS differential operational amplifier (AnalogGenie 1906)",
+      "ideal_functional_status": "PASS",
+      "ast_error": null,
+      "resolved_argument_count": 33,
+      "build_argument_count": 33
+    }
+  },
+  {
+    "circuit_id": "circuit_1747",
+    "original_category": "UNAVAILABLE_AGGREGATE_ONLY",
+    "requested_circuit_type": "OpAmp",
+    "inferred_circuit_type": "OpAmp",
+    "type_confidence": "MEDIUM",
+    "static_status": "STATIC_READY",
+    "deployment_eligible": true,
+    "topology_exists": true,
+    "raw_cir_exists": true,
+    "ideal_param_exists": true,
+    "ideal_param_parseable": true,
+    "ideal_design_space_exists": true,
+    "ideal_design_space_parseable": true,
+    "operating_space_exists": true,
+    "operating_space_parseable": true,
+    "historical_op_exists": true,
+    "historical_op_parseable": true,
+    "metadata_exists": true,
+    "topology_ast_valid": true,
+    "build_circuit_exists": true,
+    "nominal_static_valid": true,
+    "nominal_operating_point_valid": "UNKNOWN_STATIC_AUDIT",
+    "parameter_binding_status": "STATICALLY_RESOLVED",
+    "estimated_parameter_count": 38,
+    "estimated_parameter_count_confidence": "STATIC_ESTIMATE",
+    "device_types": [
+      "MOSFET",
+      "V"
+    ],
+    "device_count": 23,
+    "source_ports": [
+      "VB1",
+      "VDD",
+      "VIN1",
+      "VIN2",
+      "VOUT1",
+      "VSS",
+      "net010",
+      "net023",
+      "net024",
+      "net025",
+      "net1004",
+      "net1005",
+      "net1007",
+      "net16"
+    ],
+    "input_ports": [
+      "VIN1",
+      "VIN2"
+    ],
+    "output_ports": [
+      "VOUT1"
+    ],
+    "port_semantics_status": "RESOLVED",
+    "external_dependency_status": "NONE_DETECTED",
+    "external_dependencies": [],
+    "multi_output": false,
+    "global_feedback_status": "NOT_DETECTED",
+    "duplicate_instances": [],
+    "undefined_names": [],
+    "unresolved_build_arguments": [],
+    "invalid_physical_nominals": [],
+    "nominals_outside_design_space": [],
+    "design_space_missing_parameters": [],
+    "missing_required_assets": [],
+    "blocking_issues": [],
+    "warning_codes": [
+      "TYPE_CONFIDENCE_MEDIUM"
+    ],
+    "recommended_action": "deploy_to_preparation_queue",
+    "runtime_required_paths": [
+      "D:\\analogCkt\\AG_simulation\\dataset\\circuit_1747\\topology\\circuit_1747.py",
+      "D:\\analogCkt\\AG_simulation\\dataset\\circuit_1747\\simulation\\parameter\\ideal_param.yaml"
+    ],
+    "runtime_optional_semantic_aid_paths": [
+      "D:\\analogCkt\\AG_simulation\\dataset\\circuit_1747\\simulation\\results\\ideal\\op_results.yaml"
+    ],
+    "auditable_bundle_paths": [
+      "D:\\analogCkt\\AG_simulation\\dataset\\circuit_1747\\topology\\circuit_1747.py",
+      "D:\\analogCkt\\AG_simulation\\dataset\\circuit_1747\\topology\\circuit_1747.cir",
+      "D:\\analogCkt\\AG_simulation\\dataset\\circuit_1747\\simulation\\parameter\\ideal_param.yaml",
+      "D:\\analogCkt\\AG_simulation\\dataset\\circuit_1747\\parameters\\ideal_design_space.yaml",
+      "D:\\analogCkt\\AG_simulation\\dataset\\circuit_1747\\parameters\\operating_space.yaml",
+      "D:\\analogCkt\\AG_simulation\\dataset\\circuit_1747\\parameters\\tunable_parameters.yaml",
+      "D:\\analogCkt\\AG_simulation\\dataset\\circuit_1747\\metadata.txt",
+      "D:\\analogCkt\\AG_simulation\\dataset\\circuit_1747\\simulation\\results\\ideal\\op_results.yaml"
+    ],
+    "runtime_required_file_count": 2,
+    "runtime_required_bytes": 7040,
+    "runtime_optional_semantic_aid_file_count": 1,
+    "runtime_optional_semantic_aid_bytes": 713,
+    "auditable_bundle_file_count": 8,
+    "auditable_bundle_bytes": 37996,
+    "source_paths": {
+      "dataset": "D:\\analogCkt\\AG_simulation\\dataset\\circuit_1747",
+      "topology_py": "D:\\analogCkt\\AG_simulation\\dataset\\circuit_1747\\topology\\circuit_1747.py",
+      "raw_cir": "D:\\analogCkt\\AG_simulation\\dataset\\circuit_1747\\topology\\circuit_1747.cir",
+      "ideal_param": "D:\\analogCkt\\AG_simulation\\dataset\\circuit_1747\\simulation\\parameter\\ideal_param.yaml",
+      "ideal_design_space": "D:\\analogCkt\\AG_simulation\\dataset\\circuit_1747\\parameters\\ideal_design_space.yaml",
+      "operating_space": "D:\\analogCkt\\AG_simulation\\dataset\\circuit_1747\\parameters\\operating_space.yaml",
+      "tunable_parameters": "D:\\analogCkt\\AG_simulation\\dataset\\circuit_1747\\parameters\\tunable_parameters.yaml",
+      "historical_op": "D:\\analogCkt\\AG_simulation\\dataset\\circuit_1747\\simulation\\results\\ideal\\op_results.yaml",
+      "metadata": "D:\\analogCkt\\AG_simulation\\dataset\\circuit_1747\\metadata.txt"
+    },
+    "evidence": {
+      "metadata_circuit_type": "opamp",
+      "metadata_circuit_name": "CMOS differential operational amplifier (AnalogGenie 1907)",
+      "ideal_functional_status": "PASS",
+      "ast_error": null,
+      "resolved_argument_count": 44,
+      "build_argument_count": 44
+    }
+  },
+  {
+    "circuit_id": "circuit_1748",
+    "original_category": "UNAVAILABLE_AGGREGATE_ONLY",
+    "requested_circuit_type": "OpAmp",
+    "inferred_circuit_type": "OpAmp",
+    "type_confidence": "MEDIUM",
+    "static_status": "STATIC_READY",
+    "deployment_eligible": true,
+    "topology_exists": true,
+    "raw_cir_exists": true,
+    "ideal_param_exists": true,
+    "ideal_param_parseable": true,
+    "ideal_design_space_exists": true,
+    "ideal_design_space_parseable": true,
+    "operating_space_exists": true,
+    "operating_space_parseable": true,
+    "historical_op_exists": true,
+    "historical_op_parseable": true,
+    "metadata_exists": true,
+    "topology_ast_valid": true,
+    "build_circuit_exists": true,
+    "nominal_static_valid": true,
+    "nominal_operating_point_valid": "UNKNOWN_STATIC_AUDIT",
+    "parameter_binding_status": "STATICALLY_RESOLVED",
+    "estimated_parameter_count": 32,
+    "estimated_parameter_count_confidence": "STATIC_ESTIMATE",
+    "device_types": [
+      "MOSFET",
+      "V"
+    ],
+    "device_count": 20,
+    "source_ports": [
+      "VB1",
+      "VDD",
+      "VIN1",
+      "VIN2",
+      "VOUT1",
+      "VSS",
+      "net014",
+      "net1004",
+      "net1005",
+      "net1007",
+      "net15",
+      "net16"
+    ],
+    "input_ports": [
+      "VIN1",
+      "VIN2"
+    ],
+    "output_ports": [
+      "VOUT1"
+    ],
+    "port_semantics_status": "RESOLVED",
+    "external_dependency_status": "NONE_DETECTED",
+    "external_dependencies": [],
+    "multi_output": false,
+    "global_feedback_status": "NOT_DETECTED",
+    "duplicate_instances": [],
+    "undefined_names": [],
+    "unresolved_build_arguments": [],
+    "invalid_physical_nominals": [],
+    "nominals_outside_design_space": [],
+    "design_space_missing_parameters": [],
+    "missing_required_assets": [],
+    "blocking_issues": [],
+    "warning_codes": [
+      "TYPE_CONFIDENCE_MEDIUM"
+    ],
+    "recommended_action": "deploy_to_preparation_queue",
+    "runtime_required_paths": [
+      "D:\\analogCkt\\AG_simulation\\dataset\\circuit_1748\\topology\\circuit_1748.py",
+      "D:\\analogCkt\\AG_simulation\\dataset\\circuit_1748\\simulation\\parameter\\ideal_param.yaml"
+    ],
+    "runtime_optional_semantic_aid_paths": [
+      "D:\\analogCkt\\AG_simulation\\dataset\\circuit_1748\\simulation\\results\\ideal\\op_results.yaml"
+    ],
+    "auditable_bundle_paths": [
+      "D:\\analogCkt\\AG_simulation\\dataset\\circuit_1748\\topology\\circuit_1748.py",
+      "D:\\analogCkt\\AG_simulation\\dataset\\circuit_1748\\topology\\circuit_1748.cir",
+      "D:\\analogCkt\\AG_simulation\\dataset\\circuit_1748\\simulation\\parameter\\ideal_param.yaml",
+      "D:\\analogCkt\\AG_simulation\\dataset\\circuit_1748\\parameters\\ideal_design_space.yaml",
+      "D:\\analogCkt\\AG_simulation\\dataset\\circuit_1748\\parameters\\operating_space.yaml",
+      "D:\\analogCkt\\AG_simulation\\dataset\\circuit_1748\\parameters\\tunable_parameters.yaml",
+      "D:\\analogCkt\\AG_simulation\\dataset\\circuit_1748\\metadata.txt",
+      "D:\\analogCkt\\AG_simulation\\dataset\\circuit_1748\\simulation\\results\\ideal\\op_results.yaml"
+    ],
+    "runtime_required_file_count": 2,
+    "runtime_required_bytes": 6279,
+    "runtime_optional_semantic_aid_file_count": 1,
+    "runtime_optional_semantic_aid_bytes": 656,
+    "auditable_bundle_file_count": 8,
+    "auditable_bundle_bytes": 32948,
+    "source_paths": {
+      "dataset": "D:\\analogCkt\\AG_simulation\\dataset\\circuit_1748",
+      "topology_py": "D:\\analogCkt\\AG_simulation\\dataset\\circuit_1748\\topology\\circuit_1748.py",
+      "raw_cir": "D:\\analogCkt\\AG_simulation\\dataset\\circuit_1748\\topology\\circuit_1748.cir",
+      "ideal_param": "D:\\analogCkt\\AG_simulation\\dataset\\circuit_1748\\simulation\\parameter\\ideal_param.yaml",
+      "ideal_design_space": "D:\\analogCkt\\AG_simulation\\dataset\\circuit_1748\\parameters\\ideal_design_space.yaml",
+      "operating_space": "D:\\analogCkt\\AG_simulation\\dataset\\circuit_1748\\parameters\\operating_space.yaml",
+      "tunable_parameters": "D:\\analogCkt\\AG_simulation\\dataset\\circuit_1748\\parameters\\tunable_parameters.yaml",
+      "historical_op": "D:\\analogCkt\\AG_simulation\\dataset\\circuit_1748\\simulation\\results\\ideal\\op_results.yaml",
+      "metadata": "D:\\analogCkt\\AG_simulation\\dataset\\circuit_1748\\metadata.txt"
+    },
+    "evidence": {
+      "metadata_circuit_type": "opamp",
+      "metadata_circuit_name": "CMOS differential operational amplifier (AnalogGenie 1908)",
+      "ideal_functional_status": "PASS",
+      "ast_error": null,
+      "resolved_argument_count": 38,
+      "build_argument_count": 38
+    }
+  },
+  {
+    "circuit_id": "circuit_1749",
+    "original_category": "UNAVAILABLE_AGGREGATE_ONLY",
+    "requested_circuit_type": "OpAmp",
+    "inferred_circuit_type": "OpAmp",
+    "type_confidence": "MEDIUM",
+    "static_status": "STATIC_READY",
+    "deployment_eligible": true,
+    "topology_exists": true,
+    "raw_cir_exists": true,
+    "ideal_param_exists": true,
+    "ideal_param_parseable": true,
+    "ideal_design_space_exists": true,
+    "ideal_design_space_parseable": true,
+    "operating_space_exists": true,
+    "operating_space_parseable": true,
+    "historical_op_exists": true,
+    "historical_op_parseable": true,
+    "metadata_exists": true,
+    "topology_ast_valid": true,
+    "build_circuit_exists": true,
+    "nominal_static_valid": true,
+    "nominal_operating_point_valid": "UNKNOWN_STATIC_AUDIT",
+    "parameter_binding_status": "STATICALLY_RESOLVED",
+    "estimated_parameter_count": 25,
+    "estimated_parameter_count_confidence": "STATIC_ESTIMATE",
+    "device_types": [
+      "MOSFET",
+      "R",
+      "V"
+    ],
+    "device_count": 17,
+    "source_ports": [
+      "VDD",
+      "VIN1",
+      "VIN2",
+      "VOUT1",
+      "VSS",
+      "net1004",
+      "net1005",
+      "net1007",
+      "net16",
+      "net7"
+    ],
+    "input_ports": [
+      "VIN1",
+      "VIN2"
+    ],
+    "output_ports": [
+      "VOUT1"
+    ],
+    "port_semantics_status": "RESOLVED",
+    "external_dependency_status": "NONE_DETECTED",
+    "external_dependencies": [],
+    "multi_output": false,
+    "global_feedback_status": "NOT_DETECTED",
+    "duplicate_instances": [],
+    "undefined_names": [],
+    "unresolved_build_arguments": [],
+    "invalid_physical_nominals": [],
+    "nominals_outside_design_space": [],
+    "design_space_missing_parameters": [],
+    "missing_required_assets": [],
+    "blocking_issues": [],
+    "warning_codes": [
+      "TYPE_CONFIDENCE_MEDIUM"
+    ],
+    "recommended_action": "deploy_to_preparation_queue",
+    "runtime_required_paths": [
+      "D:\\analogCkt\\AG_simulation\\dataset\\circuit_1749\\topology\\circuit_1749.py",
+      "D:\\analogCkt\\AG_simulation\\dataset\\circuit_1749\\simulation\\parameter\\ideal_param.yaml"
+    ],
+    "runtime_optional_semantic_aid_paths": [
+      "D:\\analogCkt\\AG_simulation\\dataset\\circuit_1749\\simulation\\results\\ideal\\op_results.yaml"
+    ],
+    "auditable_bundle_paths": [
+      "D:\\analogCkt\\AG_simulation\\dataset\\circuit_1749\\topology\\circuit_1749.py",
+      "D:\\analogCkt\\AG_simulation\\dataset\\circuit_1749\\topology\\circuit_1749.cir",
+      "D:\\analogCkt\\AG_simulation\\dataset\\circuit_1749\\simulation\\parameter\\ideal_param.yaml",
+      "D:\\analogCkt\\AG_simulation\\dataset\\circuit_1749\\parameters\\ideal_design_space.yaml",
+      "D:\\analogCkt\\AG_simulation\\dataset\\circuit_1749\\parameters\\operating_space.yaml",
+      "D:\\analogCkt\\AG_simulation\\dataset\\circuit_1749\\parameters\\tunable_parameters.yaml",
+      "D:\\analogCkt\\AG_simulation\\dataset\\circuit_1749\\metadata.txt",
+      "D:\\analogCkt\\AG_simulation\\dataset\\circuit_1749\\simulation\\results\\ideal\\op_results.yaml"
+    ],
+    "runtime_required_file_count": 2,
+    "runtime_required_bytes": 5353,
+    "runtime_optional_semantic_aid_file_count": 1,
+    "runtime_optional_semantic_aid_bytes": 567,
+    "auditable_bundle_file_count": 8,
+    "auditable_bundle_bytes": 30011,
+    "source_paths": {
+      "dataset": "D:\\analogCkt\\AG_simulation\\dataset\\circuit_1749",
+      "topology_py": "D:\\analogCkt\\AG_simulation\\dataset\\circuit_1749\\topology\\circuit_1749.py",
+      "raw_cir": "D:\\analogCkt\\AG_simulation\\dataset\\circuit_1749\\topology\\circuit_1749.cir",
+      "ideal_param": "D:\\analogCkt\\AG_simulation\\dataset\\circuit_1749\\simulation\\parameter\\ideal_param.yaml",
+      "ideal_design_space": "D:\\analogCkt\\AG_simulation\\dataset\\circuit_1749\\parameters\\ideal_design_space.yaml",
+      "operating_space": "D:\\analogCkt\\AG_simulation\\dataset\\circuit_1749\\parameters\\operating_space.yaml",
+      "tunable_parameters": "D:\\analogCkt\\AG_simulation\\dataset\\circuit_1749\\parameters\\tunable_parameters.yaml",
+      "historical_op": "D:\\analogCkt\\AG_simulation\\dataset\\circuit_1749\\simulation\\results\\ideal\\op_results.yaml",
+      "metadata": "D:\\analogCkt\\AG_simulation\\dataset\\circuit_1749\\metadata.txt"
+    },
+    "evidence": {
+      "metadata_circuit_type": "opamp",
+      "metadata_circuit_name": "CMOS differential operational amplifier (AnalogGenie 1909)",
+      "ideal_functional_status": "PASS",
+      "ast_error": null,
+      "resolved_argument_count": 30,
+      "build_argument_count": 30
+    }
+  },
+  {
+    "circuit_id": "circuit_1750",
+    "original_category": "UNAVAILABLE_AGGREGATE_ONLY",
+    "requested_circuit_type": "OpAmp",
+    "inferred_circuit_type": "OpAmp",
+    "type_confidence": "MEDIUM",
+    "static_status": "STATIC_READY",
+    "deployment_eligible": true,
+    "topology_exists": true,
+    "raw_cir_exists": true,
+    "ideal_param_exists": true,
+    "ideal_param_parseable": true,
+    "ideal_design_space_exists": true,
+    "ideal_design_space_parseable": true,
+    "operating_space_exists": true,
+    "operating_space_parseable": true,
+    "historical_op_exists": true,
+    "historical_op_parseable": true,
+    "metadata_exists": true,
+    "topology_ast_valid": true,
+    "build_circuit_exists": true,
+    "nominal_static_valid": true,
+    "nominal_operating_point_valid": "UNKNOWN_STATIC_AUDIT",
+    "parameter_binding_status": "STATICALLY_RESOLVED",
+    "estimated_parameter_count": 22,
+    "estimated_parameter_count_confidence": "STATIC_ESTIMATE",
+    "device_types": [
+      "MOSFET",
+      "R",
+      "V"
+    ],
+    "device_count": 15,
+    "source_ports": [
+      "VDD",
+      "VIN1",
+      "VIN2",
+      "VOUT1",
+      "VSS",
+      "net05",
+      "net1004",
+      "net1005",
+      "net1007",
+      "net16"
+    ],
+    "input_ports": [
+      "VIN1",
+      "VIN2"
+    ],
+    "output_ports": [
+      "VOUT1"
+    ],
+    "port_semantics_status": "RESOLVED",
+    "external_dependency_status": "NONE_DETECTED",
+    "external_dependencies": [],
+    "multi_output": false,
+    "global_feedback_status": "NOT_DETECTED",
+    "duplicate_instances": [],
+    "undefined_names": [],
+    "unresolved_build_arguments": [],
+    "invalid_physical_nominals": [],
+    "nominals_outside_design_space": [],
+    "design_space_missing_parameters": [],
+    "missing_required_assets": [],
+    "blocking_issues": [],
+    "warning_codes": [
+      "TYPE_CONFIDENCE_MEDIUM"
+    ],
+    "recommended_action": "deploy_to_preparation_queue",
+    "runtime_required_paths": [
+      "D:\\analogCkt\\AG_simulation\\dataset\\circuit_1750\\topology\\circuit_1750.py",
+      "D:\\analogCkt\\AG_simulation\\dataset\\circuit_1750\\simulation\\parameter\\ideal_param.yaml"
+    ],
+    "runtime_optional_semantic_aid_paths": [
+      "D:\\analogCkt\\AG_simulation\\dataset\\circuit_1750\\simulation\\results\\ideal\\op_results.yaml"
+    ],
+    "auditable_bundle_paths": [
+      "D:\\analogCkt\\AG_simulation\\dataset\\circuit_1750\\topology\\circuit_1750.py",
+      "D:\\analogCkt\\AG_simulation\\dataset\\circuit_1750\\topology\\circuit_1750.cir",
+      "D:\\analogCkt\\AG_simulation\\dataset\\circuit_1750\\simulation\\parameter\\ideal_param.yaml",
+      "D:\\analogCkt\\AG_simulation\\dataset\\circuit_1750\\parameters\\ideal_design_space.yaml",
+      "D:\\analogCkt\\AG_simulation\\dataset\\circuit_1750\\parameters\\operating_space.yaml",
+      "D:\\analogCkt\\AG_simulation\\dataset\\circuit_1750\\parameters\\tunable_parameters.yaml",
+      "D:\\analogCkt\\AG_simulation\\dataset\\circuit_1750\\metadata.txt",
+      "D:\\analogCkt\\AG_simulation\\dataset\\circuit_1750\\simulation\\results\\ideal\\op_results.yaml"
+    ],
+    "runtime_required_file_count": 2,
+    "runtime_required_bytes": 4938,
+    "runtime_optional_semantic_aid_file_count": 1,
+    "runtime_optional_semantic_aid_bytes": 566,
+    "auditable_bundle_file_count": 8,
+    "auditable_bundle_bytes": 26431,
+    "source_paths": {
+      "dataset": "D:\\analogCkt\\AG_simulation\\dataset\\circuit_1750",
+      "topology_py": "D:\\analogCkt\\AG_simulation\\dataset\\circuit_1750\\topology\\circuit_1750.py",
+      "raw_cir": "D:\\analogCkt\\AG_simulation\\dataset\\circuit_1750\\topology\\circuit_1750.cir",
+      "ideal_param": "D:\\analogCkt\\AG_simulation\\dataset\\circuit_1750\\simulation\\parameter\\ideal_param.yaml",
+      "ideal_design_space": "D:\\analogCkt\\AG_simulation\\dataset\\circuit_1750\\parameters\\ideal_design_space.yaml",
+      "operating_space": "D:\\analogCkt\\AG_simulation\\dataset\\circuit_1750\\parameters\\operating_space.yaml",
+      "tunable_parameters": "D:\\analogCkt\\AG_simulation\\dataset\\circuit_1750\\parameters\\tunable_parameters.yaml",
+      "historical_op": "D:\\analogCkt\\AG_simulation\\dataset\\circuit_1750\\simulation\\results\\ideal\\op_results.yaml",
+      "metadata": "D:\\analogCkt\\AG_simulation\\dataset\\circuit_1750\\metadata.txt"
+    },
+    "evidence": {
+      "metadata_circuit_type": "opamp",
+      "metadata_circuit_name": "CMOS differential operational amplifier (AnalogGenie 1910)",
+      "ideal_functional_status": "PASS",
+      "ast_error": null,
+      "resolved_argument_count": 27,
+      "build_argument_count": 27
+    }
+  }
+]
