@@ -1,0 +1,23 @@
+status: PASS
+analysis_mode: operating_point
+node_voltages:
+  net9: 1.2286493940503007
+  net1007: 2.092226853040859
+  neta: 1.2286493940503012
+  net1005: 2.0548674315466995
+  net1004: 1.6054928931943042
+  net16: 0.11768032502152341
+  vout1: 3.2187831941423104
+  vin2: 1.2000000000000002
+  vin1: 1.2000000000000002
+  vdd: 3.3000000000000003
+branch_currents:
+  vvdd: -0.010047893618258395
+  vvin1: -1.2000000000000001e-12
+  vvin2: -1.2000000000000001e-12
+key_output:
+  kind: voltage
+  nodes_or_branches:
+  - VOUT1
+  value: 3.2187831941423104
+warning_or_failure_reason: null

@@ -1,0 +1,151 @@
+schema_version: 1
+circuit:
+  id: circuit_1756
+  analoggenie_folder_id: 1916
+  category: opamp
+  actual_circuit_type: single_ended_opamp
+  base_topology: opamp
+simulation_stage: ideal_baseline
+functional_status: PASS
+model_defaults:
+  NMOS_IDEAL:
+    level: 1
+    VTO_V: 0.7
+    KP_uA_per_V2: 200.0
+    LAMBDA_per_V: 0.02
+  PMOS_IDEAL:
+    level: 1
+    VTO_V: -0.7
+    KP_uA_per_V2: 100.0
+    LAMBDA_per_V: 0.02
+  NPN_IDEAL:
+    IS: 1.0e-15
+    BF: 100.0
+    VAF: 100.0
+    EG: 1.11
+    XTI: 3.0
+  PNP_IDEAL:
+    IS: 1.0e-15
+    BF: 100.0
+    VAF: 100.0
+    EG: 1.11
+    XTI: 3.0
+device_parameters:
+  MM3:
+    device_type: nmos4
+    model: NMOS_IDEAL
+    W_um: 10.0
+    L_um: 1.0
+    m: 1
+  MM0:
+    device_type: nmos4
+    model: NMOS_IDEAL
+    W_um: 10.0
+    L_um: 1.0
+    m: 1
+  MM4:
+    device_type: nmos4
+    model: NMOS_IDEAL
+    W_um: 10.0
+    L_um: 1.0
+    m: 1
+  MM1:
+    device_type: pmos4
+    model: PMOS_IDEAL
+    W_um: 20.0
+    L_um: 1.0
+    m: 1
+  MM2:
+    device_type: pmos4
+    model: PMOS_IDEAL
+    W_um: 20.0
+    L_um: 1.0
+    m: 1
+  MM4_dup2:
+    device_type: nmos4
+    model: NMOS_IDEAL
+    W_um: 10.0
+    L_um: 1.0
+    m: 1
+  MM2_dup2:
+    device_type: nmos4
+    model: NMOS_IDEAL
+    W_um: 10.0
+    L_um: 1.0
+    m: 1
+  MM10:
+    device_type: nmos4
+    model: NMOS_IDEAL
+    W_um: 10.0
+    L_um: 1.0
+    m: 1
+  MM3_dup2:
+    device_type: pmos4
+    model: PMOS_IDEAL
+    W_um: 20.0
+    L_um: 1.0
+    m: 1
+  MM1_dup2:
+    device_type: pmos4
+    model: PMOS_IDEAL
+    W_um: 20.0
+    L_um: 1.0
+    m: 1
+  MM0_dup2:
+    device_type: pmos4
+    model: PMOS_IDEAL
+    W_um: 20.0
+    L_um: 1.0
+    m: 1
+  RR0:
+    device_type: resistor
+    model: ideal_resistor
+    R_ohm: 10000.0
+  MM2_dup3:
+    device_type: nmos4
+    model: NMOS_IDEAL
+    W_um: 10.0
+    L_um: 1.0
+    m: 1
+  MM0_dup3:
+    device_type: nmos4
+    model: NMOS_IDEAL
+    W_um: 10.0
+    L_um: 1.0
+    m: 1
+  MM3_dup3:
+    device_type: pmos4
+    model: PMOS_IDEAL
+    W_um: 20.0
+    L_um: 1.0
+    m: 1
+  MM1_dup3:
+    device_type: pmos4
+    model: PMOS_IDEAL
+    W_um: 20.0
+    L_um: 1.0
+    m: 1
+operating_parameters:
+  VDD: 3.3
+  VSS: 0.0
+  VIN1: 1.2
+  VIN2: 1.2
+  VB1: 1.65
+  VOUT1: 1.65
+adjusted_parameters: []
+search_policy: global ideal defaults -> operating bias sweep -> synchronized W/L groups;
+  first Functional PASS/WARN; no performance optimization
+required_simulations:
+- op
+- dc
+- ac
+- tran
+functional_check: first reasonable operating point demonstrating the actual topology
+  core function; no paper-performance optimization
+original_status: PASS
+performance_status: PASS
+numerical_status: PASS
+topology_limitation: false
+PDK_eligible: true
+classification_action: baseline classification retained
+remaining_issue: null
