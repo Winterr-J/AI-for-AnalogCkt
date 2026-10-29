@@ -621,6 +621,7 @@ def recommend_target(
                 raw = llm_client(
                     prompt, provider=selected_provider, model=selected_model, usage_log=usage,
                     usage_context={"stage": "auto_target", "round": round_index + 1},
+                    request_timeout=120.0,
                     max_attempts=1,
                 )
                 break
