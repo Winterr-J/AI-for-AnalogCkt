@@ -1,0 +1,358 @@
+{
+  "batch": "bulk_batch_027",
+  "circuit_ids": [
+    "circuit_1822",
+    "circuit_1823",
+    "circuit_1824",
+    "circuit_1825",
+    "circuit_1826",
+    "circuit_1827",
+    "circuit_1828",
+    "circuit_1829",
+    "circuit_1830",
+    "circuit_1831"
+  ],
+  "files": {
+    "circuit_1822": {
+      "metadata.txt": {
+        "sha256": "1198372ac236e40488e2712c70cccfb51c6a33c59f96904073b618300a0836a3",
+        "source_path": "/home/ubuntu/AG_simulation_deploy/dataset/circuit_1822/metadata.txt"
+      },
+      "parameters/ideal_design_space.yaml": {
+        "sha256": "18c2c3409ec2e639e91d361a4b6a52a4a90d65614674861e44307cd13319b47b",
+        "source_path": "/home/ubuntu/AG_simulation_deploy/dataset/circuit_1822/parameters/ideal_design_space.yaml"
+      },
+      "parameters/operating_space.yaml": {
+        "sha256": "d27cbe03fb814ac4ed1141138b4057d2c5803cbde975da3a8d92421eb4127c03",
+        "source_path": "/home/ubuntu/AG_simulation_deploy/dataset/circuit_1822/parameters/operating_space.yaml"
+      },
+      "parameters/tunable_parameters.yaml": {
+        "sha256": "ea81a02866c03b804b1386d93b611cb2ee158f6447dbc49c84bc39cade740e00",
+        "source_path": "/home/ubuntu/AG_simulation_deploy/dataset/circuit_1822/parameters/tunable_parameters.yaml"
+      },
+      "simulation/parameter/ideal_param.yaml": {
+        "sha256": "8f033e0dee69acd524a3c03b84a717dddc09992831b56d4e9a4f8fa05cd6af4c",
+        "source_path": "/home/ubuntu/AG_simulation_deploy/dataset/circuit_1822/simulation/parameter/ideal_param.yaml"
+      },
+      "simulation/results/ideal/op_results.yaml": {
+        "sha256": "e68c0e270890c89b0aa4e40d3aad5fe72f9e5476148b24f77d183f819f934d9a",
+        "source_path": "/home/ubuntu/AG_simulation_deploy/dataset/circuit_1822/simulation/results/ideal/op_results.yaml"
+      },
+      "topology/circuit_1822.cir": {
+        "sha256": "0c53c11e37cdf80624a0ffd688c5ba803dd77cf576ad6e5d70eb3b9bc45fe850",
+        "source_path": "/home/ubuntu/AG_simulation_deploy/dataset/circuit_1822/topology/circuit_1822.cir"
+      },
+      "topology/circuit_1822.py": {
+        "sha256": "b69fcb3a5537c1003ecd0e520952ed3432a4a1cfdf19378fea46d06365d5be1d",
+        "source_path": "/home/ubuntu/AG_simulation_deploy/dataset/circuit_1822/topology/circuit_1822.py"
+      }
+    },
+    "circuit_1823": {
+      "metadata.txt": {
+        "sha256": "b22a89fa08aafbcd25405f0162a276748f6192de647417d69f4e20d211a845d2",
+        "source_path": "/home/ubuntu/AG_simulation_deploy/dataset/circuit_1823/metadata.txt"
+      },
+      "parameters/ideal_design_space.yaml": {
+        "sha256": "66c2ce9efe0a09912c3b006d7500dd84aa7d1f53162ed888371dd2fa7d2ffe51",
+        "source_path": "/home/ubuntu/AG_simulation_deploy/dataset/circuit_1823/parameters/ideal_design_space.yaml"
+      },
+      "parameters/operating_space.yaml": {
+        "sha256": "5dfa671a02803944c0301f6c435cdf2befbabd545ca868e88efa650a0be8fec1",
+        "source_path": "/home/ubuntu/AG_simulation_deploy/dataset/circuit_1823/parameters/operating_space.yaml"
+      },
+      "parameters/tunable_parameters.yaml": {
+        "sha256": "eac4e6f483da7c0503aa10b9139e8f9a3f6cd0ce5676b9e1abe495dc6ded07df",
+        "source_path": "/home/ubuntu/AG_simulation_deploy/dataset/circuit_1823/parameters/tunable_parameters.yaml"
+      },
+      "simulation/parameter/ideal_param.yaml": {
+        "sha256": "f785fd8b9ea00e056fe059ca0a78a57c447fa4c156c578100c75e97cba1808a9",
+        "source_path": "/home/ubuntu/AG_simulation_deploy/dataset/circuit_1823/simulation/parameter/ideal_param.yaml"
+      },
+      "simulation/results/ideal/op_results.yaml": {
+        "sha256": "c7191e4177372b7a2a8f5260260941784e318ff0d7b7139fcb4c5f485d342cf4",
+        "source_path": "/home/ubuntu/AG_simulation_deploy/dataset/circuit_1823/simulation/results/ideal/op_results.yaml"
+      },
+      "topology/circuit_1823.cir": {
+        "sha256": "819a7eb25371159a7f9fa1221cde12bf42758476ed7e09dfc43c683d17eda53d",
+        "source_path": "/home/ubuntu/AG_simulation_deploy/dataset/circuit_1823/topology/circuit_1823.cir"
+      },
+      "topology/circuit_1823.py": {
+        "sha256": "e620af183b7976b546c75da87a8e28088774654b4a7004df7a68fadaaf555cbf",
+        "source_path": "/home/ubuntu/AG_simulation_deploy/dataset/circuit_1823/topology/circuit_1823.py"
+      }
+    },
+    "circuit_1824": {
+      "metadata.txt": {
+        "sha256": "53e959898357590041c11d387b56b4ace942df3285f13dfee3d5050f9dc13873",
+        "source_path": "/home/ubuntu/AG_simulation_deploy/dataset/circuit_1824/metadata.txt"
+      },
+      "parameters/ideal_design_space.yaml": {
+        "sha256": "bb274d4f703abe635f781f406309f42a2567538a4cfc6264a78eb6e0002da7d1",
+        "source_path": "/home/ubuntu/AG_simulation_deploy/dataset/circuit_1824/parameters/ideal_design_space.yaml"
+      },
+      "parameters/operating_space.yaml": {
+        "sha256": "065ed94c2f3e36c3541a646d2e0be1850985b04671903080ee8ea2e7b97144b3",
+        "source_path": "/home/ubuntu/AG_simulation_deploy/dataset/circuit_1824/parameters/operating_space.yaml"
+      },
+      "parameters/tunable_parameters.yaml": {
+        "sha256": "7bd89dcdb6894b6b39aa09438fd458f87555eae7fea53e7e8a6250009666da9c",
+        "source_path": "/home/ubuntu/AG_simulation_deploy/dataset/circuit_1824/parameters/tunable_parameters.yaml"
+      },
+      "simulation/parameter/ideal_param.yaml": {
+        "sha256": "cdecd86ed6a79fae68855142a9b7a1f7160bffd62b64f39e2e92bea69df9f731",
+        "source_path": "/home/ubuntu/AG_simulation_deploy/dataset/circuit_1824/simulation/parameter/ideal_param.yaml"
+      },
+      "simulation/results/ideal/op_results.yaml": {
+        "sha256": "d25b05993a9447f4ee38060affe2858d5ff05e1e0a1146ec157906587eb3406e",
+        "source_path": "/home/ubuntu/AG_simulation_deploy/dataset/circuit_1824/simulation/results/ideal/op_results.yaml"
+      },
+      "topology/circuit_1824.cir": {
+        "sha256": "9f2c36298d8227b0e8bd50c808ae0363677e9852876cfd67e6d674d6d1797b5c",
+        "source_path": "/home/ubuntu/AG_simulation_deploy/dataset/circuit_1824/topology/circuit_1824.cir"
+      },
+      "topology/circuit_1824.py": {
+        "sha256": "5536453d69f55694261ad7480aa87c75a2b77ad505abba88d6e89fe8d4aa661c",
+        "source_path": "/home/ubuntu/AG_simulation_deploy/dataset/circuit_1824/topology/circuit_1824.py"
+      }
+    },
+    "circuit_1825": {
+      "metadata.txt": {
+        "sha256": "149e329c8ba093f4626c11a732e10ced93492334a441ec226df3114ed1c4fcb7",
+        "source_path": "/home/ubuntu/AG_simulation_deploy/dataset/circuit_1825/metadata.txt"
+      },
+      "parameters/ideal_design_space.yaml": {
+        "sha256": "d4002a8a13418a537db67380487e1060cf8382a47c21151088866f96a6af528d",
+        "source_path": "/home/ubuntu/AG_simulation_deploy/dataset/circuit_1825/parameters/ideal_design_space.yaml"
+      },
+      "parameters/operating_space.yaml": {
+        "sha256": "f6331e48ec1631b0ef065cce4ba088f655bd20199f9d660201f8c2b3cc748579",
+        "source_path": "/home/ubuntu/AG_simulation_deploy/dataset/circuit_1825/parameters/operating_space.yaml"
+      },
+      "parameters/tunable_parameters.yaml": {
+        "sha256": "9594780f202395b0db20158694c6dffdc98a96700aa9a52d1b86a9c4de21a7c3",
+        "source_path": "/home/ubuntu/AG_simulation_deploy/dataset/circuit_1825/parameters/tunable_parameters.yaml"
+      },
+      "simulation/parameter/ideal_param.yaml": {
+        "sha256": "18c5674dad91b75be8d0d71d5bededdd1e7553308b42172747c937a0dd63cb6c",
+        "source_path": "/home/ubuntu/AG_simulation_deploy/dataset/circuit_1825/simulation/parameter/ideal_param.yaml"
+      },
+      "simulation/results/ideal/op_results.yaml": {
+        "sha256": "660ff65361a572ba6cfc11ce75fc4cf043db8c54e9971ae0d85a28c49e0736ad",
+        "source_path": "/home/ubuntu/AG_simulation_deploy/dataset/circuit_1825/simulation/results/ideal/op_results.yaml"
+      },
+      "topology/circuit_1825.cir": {
+        "sha256": "5fb830a372491be52cbeb509798775345abf6c4a6b1f04860884aedb12265dcd",
+        "source_path": "/home/ubuntu/AG_simulation_deploy/dataset/circuit_1825/topology/circuit_1825.cir"
+      },
+      "topology/circuit_1825.py": {
+        "sha256": "445e0e3c57c3a29dfa51ff2fb4130709e355dbf8b27c48e92ad3b47caeaee653",
+        "source_path": "/home/ubuntu/AG_simulation_deploy/dataset/circuit_1825/topology/circuit_1825.py"
+      }
+    },
+    "circuit_1826": {
+      "metadata.txt": {
+        "sha256": "a98cdb4622c55ad2ee4979bace803c785cd3f138704daf64fcf5e3a073902780",
+        "source_path": "/home/ubuntu/AG_simulation_deploy/dataset/circuit_1826/metadata.txt"
+      },
+      "parameters/ideal_design_space.yaml": {
+        "sha256": "13401c4f2a78425fdfac3c47a83502f99dfc681e668cd6862d9f54873a964dc0",
+        "source_path": "/home/ubuntu/AG_simulation_deploy/dataset/circuit_1826/parameters/ideal_design_space.yaml"
+      },
+      "parameters/operating_space.yaml": {
+        "sha256": "e81aebe14fb439402d1429501d36c61a19041d5e307281e3d7dabdf77da27102",
+        "source_path": "/home/ubuntu/AG_simulation_deploy/dataset/circuit_1826/parameters/operating_space.yaml"
+      },
+      "parameters/tunable_parameters.yaml": {
+        "sha256": "cab22ca54c518b99aa9d2aa4e2c5d715cad7ce579319d6afc8ed29014315c2fa",
+        "source_path": "/home/ubuntu/AG_simulation_deploy/dataset/circuit_1826/parameters/tunable_parameters.yaml"
+      },
+      "simulation/parameter/ideal_param.yaml": {
+        "sha256": "1fb8d547ecd49e2eecefad1ea913d6fd720e25b7536599425921cc40d76b16a1",
+        "source_path": "/home/ubuntu/AG_simulation_deploy/dataset/circuit_1826/simulation/parameter/ideal_param.yaml"
+      },
+      "simulation/results/ideal/op_results.yaml": {
+        "sha256": "588a93f242d6c4f21246ff57d77d7773ed2287a2529030b27803c6ce556117df",
+        "source_path": "/home/ubuntu/AG_simulation_deploy/dataset/circuit_1826/simulation/results/ideal/op_results.yaml"
+      },
+      "topology/circuit_1826.cir": {
+        "sha256": "e96ea668cd271441bf423ed959e76ed75a080a49b79b169d172911c20e2471d4",
+        "source_path": "/home/ubuntu/AG_simulation_deploy/dataset/circuit_1826/topology/circuit_1826.cir"
+      },
+      "topology/circuit_1826.py": {
+        "sha256": "2afe8a116cc80f8757fe2f007f1ff7dfeeb8fc09831b1c043dd160118d2a6f1b",
+        "source_path": "/home/ubuntu/AG_simulation_deploy/dataset/circuit_1826/topology/circuit_1826.py"
+      }
+    },
+    "circuit_1827": {
+      "metadata.txt": {
+        "sha256": "e57591f84259857dbd1e9ec1dec76a40a61380260bce5596b9064632f83627a5",
+        "source_path": "/home/ubuntu/AG_simulation_deploy/dataset/circuit_1827/metadata.txt"
+      },
+      "parameters/ideal_design_space.yaml": {
+        "sha256": "6c91cbe6105d1be6c4825c6984cda2b5321b536d8535ace0f5969bc4d8ef2431",
+        "source_path": "/home/ubuntu/AG_simulation_deploy/dataset/circuit_1827/parameters/ideal_design_space.yaml"
+      },
+      "parameters/operating_space.yaml": {
+        "sha256": "6617feab63c7402d684b107eb8b0e3861a53338da0409ae8fb09581b2dea6ce1",
+        "source_path": "/home/ubuntu/AG_simulation_deploy/dataset/circuit_1827/parameters/operating_space.yaml"
+      },
+      "parameters/tunable_parameters.yaml": {
+        "sha256": "bd09a2fc08bec30da222cbded10be10c381462db6b8cb5b6053e0b77e22898ad",
+        "source_path": "/home/ubuntu/AG_simulation_deploy/dataset/circuit_1827/parameters/tunable_parameters.yaml"
+      },
+      "simulation/parameter/ideal_param.yaml": {
+        "sha256": "95ec68d154e756ce041af7e22cb6f4a559f8d7d24bcc872e8e0c2a52b0bcc907",
+        "source_path": "/home/ubuntu/AG_simulation_deploy/dataset/circuit_1827/simulation/parameter/ideal_param.yaml"
+      },
+      "simulation/results/ideal/op_results.yaml": {
+        "sha256": "51ad0325442373ba2829bf84ff9c447cd7cc59ab56996c1dff190f8dc93f614d",
+        "source_path": "/home/ubuntu/AG_simulation_deploy/dataset/circuit_1827/simulation/results/ideal/op_results.yaml"
+      },
+      "topology/circuit_1827.cir": {
+        "sha256": "6afc25bc71d147a4199f1dd2b978b3d4d16ec5b44bd2d4925602c2b204a54f83",
+        "source_path": "/home/ubuntu/AG_simulation_deploy/dataset/circuit_1827/topology/circuit_1827.cir"
+      },
+      "topology/circuit_1827.py": {
+        "sha256": "1120d988655de454d1bf4618ba16f7ba1d3ffe8bd4d3b7ff564ab1d8957b6f03",
+        "source_path": "/home/ubuntu/AG_simulation_deploy/dataset/circuit_1827/topology/circuit_1827.py"
+      }
+    },
+    "circuit_1828": {
+      "metadata.txt": {
+        "sha256": "288947ff7485b324ffa6d3d62f7dac414ab87e97a732b7629b104045f8128502",
+        "source_path": "/home/ubuntu/AG_simulation_deploy/dataset/circuit_1828/metadata.txt"
+      },
+      "parameters/ideal_design_space.yaml": {
+        "sha256": "af8d3304f3fd1dc6270a594e3f3268424ceb2fc3466ea8c792bf18976d82b902",
+        "source_path": "/home/ubuntu/AG_simulation_deploy/dataset/circuit_1828/parameters/ideal_design_space.yaml"
+      },
+      "parameters/operating_space.yaml": {
+        "sha256": "886a94c5c3e69b54aa1d94b0dd89207ed8e084e6ee7b542c3824358f4f58c71e",
+        "source_path": "/home/ubuntu/AG_simulation_deploy/dataset/circuit_1828/parameters/operating_space.yaml"
+      },
+      "parameters/tunable_parameters.yaml": {
+        "sha256": "69e841d8882e9180f8e3b921ed980fc1f479ef5fe7cfeb275f220e32d517d492",
+        "source_path": "/home/ubuntu/AG_simulation_deploy/dataset/circuit_1828/parameters/tunable_parameters.yaml"
+      },
+      "simulation/parameter/ideal_param.yaml": {
+        "sha256": "2ce0158e3f71ef0cc3528d7a64da242db2b69de71168839eef6a8a9e1c80ddef",
+        "source_path": "/home/ubuntu/AG_simulation_deploy/dataset/circuit_1828/simulation/parameter/ideal_param.yaml"
+      },
+      "simulation/results/ideal/op_results.yaml": {
+        "sha256": "8a6d29c8b0712976bd14176ec1c8a3a864f2a7de23a64c5d5bc171cab531ca70",
+        "source_path": "/home/ubuntu/AG_simulation_deploy/dataset/circuit_1828/simulation/results/ideal/op_results.yaml"
+      },
+      "topology/circuit_1828.cir": {
+        "sha256": "fc565c55df2e65a70780dad594b2a494d41e32a758011296a98bf4dff039e036",
+        "source_path": "/home/ubuntu/AG_simulation_deploy/dataset/circuit_1828/topology/circuit_1828.cir"
+      },
+      "topology/circuit_1828.py": {
+        "sha256": "abbbd69e07835af433b000809d2d483578e2806e08cfd05717a1130b5778720a",
+        "source_path": "/home/ubuntu/AG_simulation_deploy/dataset/circuit_1828/topology/circuit_1828.py"
+      }
+    },
+    "circuit_1829": {
+      "metadata.txt": {
+        "sha256": "09d5118937a2468788d66bbd9fc40d9f35a8a2911cc0d4247936366cc518173b",
+        "source_path": "/home/ubuntu/AG_simulation_deploy/dataset/circuit_1829/metadata.txt"
+      },
+      "parameters/ideal_design_space.yaml": {
+        "sha256": "74ec85ebf181083ed10937efc2cda8e53cb0339d2521d94633384a6e08a9189f",
+        "source_path": "/home/ubuntu/AG_simulation_deploy/dataset/circuit_1829/parameters/ideal_design_space.yaml"
+      },
+      "parameters/operating_space.yaml": {
+        "sha256": "10751960243b35faa834493cf1c15fc8fca2907dd95b769856fc39a2083de125",
+        "source_path": "/home/ubuntu/AG_simulation_deploy/dataset/circuit_1829/parameters/operating_space.yaml"
+      },
+      "parameters/tunable_parameters.yaml": {
+        "sha256": "c6c6a69f1490c94bfd6248ba3c7f5c221b6eec3fc802cd2400fc963f0ab30eb4",
+        "source_path": "/home/ubuntu/AG_simulation_deploy/dataset/circuit_1829/parameters/tunable_parameters.yaml"
+      },
+      "simulation/parameter/ideal_param.yaml": {
+        "sha256": "250896a8e1c8d161a0df1d0bdde40907da904748f061e5925414586a70f4557c",
+        "source_path": "/home/ubuntu/AG_simulation_deploy/dataset/circuit_1829/simulation/parameter/ideal_param.yaml"
+      },
+      "simulation/results/ideal/op_results.yaml": {
+        "sha256": "0be88ca36fa1d52865a0ac202285e7dafba1ea184601ec92feadeb18f158c548",
+        "source_path": "/home/ubuntu/AG_simulation_deploy/dataset/circuit_1829/simulation/results/ideal/op_results.yaml"
+      },
+      "topology/circuit_1829.cir": {
+        "sha256": "243b38db68935cbfd8c4b23628e576bc52bd611219930875b56a48b2942a33f8",
+        "source_path": "/home/ubuntu/AG_simulation_deploy/dataset/circuit_1829/topology/circuit_1829.cir"
+      },
+      "topology/circuit_1829.py": {
+        "sha256": "982a4b10ffa8109d41e7d04a3c79c269b6ba7c8676e6c873d530c45361398bfb",
+        "source_path": "/home/ubuntu/AG_simulation_deploy/dataset/circuit_1829/topology/circuit_1829.py"
+      }
+    },
+    "circuit_1830": {
+      "metadata.txt": {
+        "sha256": "708993df6bdf42e87d0929b12e35a573e91ed6810244e725ac81751b1a8c69e7",
+        "source_path": "/home/ubuntu/AG_simulation_deploy/dataset/circuit_1830/metadata.txt"
+      },
+      "parameters/ideal_design_space.yaml": {
+        "sha256": "e7afc53d069be3dbafd89dc1054a2f6c1eb5f89fda0b0105d5720f3159171d32",
+        "source_path": "/home/ubuntu/AG_simulation_deploy/dataset/circuit_1830/parameters/ideal_design_space.yaml"
+      },
+      "parameters/operating_space.yaml": {
+        "sha256": "88bb9694e6f845c2714d52e8c94cf25ea8f7fe7c22d9d6ccb87ea37addf2eaff",
+        "source_path": "/home/ubuntu/AG_simulation_deploy/dataset/circuit_1830/parameters/operating_space.yaml"
+      },
+      "parameters/tunable_parameters.yaml": {
+        "sha256": "e96e9665db4e0416e5072e600ffbcf9a54c1342e8cb1b867e9767525d0db8176",
+        "source_path": "/home/ubuntu/AG_simulation_deploy/dataset/circuit_1830/parameters/tunable_parameters.yaml"
+      },
+      "simulation/parameter/ideal_param.yaml": {
+        "sha256": "95b2f57ae479c6c5626695b193a2571ed0e887480936be513b965fd0ea57439b",
+        "source_path": "/home/ubuntu/AG_simulation_deploy/dataset/circuit_1830/simulation/parameter/ideal_param.yaml"
+      },
+      "simulation/results/ideal/op_results.yaml": {
+        "sha256": "9b86e194ee6715b2b77f6c92dbb297d5eceb632900d730c8ffeaa25e4c991be7",
+        "source_path": "/home/ubuntu/AG_simulation_deploy/dataset/circuit_1830/simulation/results/ideal/op_results.yaml"
+      },
+      "topology/circuit_1830.cir": {
+        "sha256": "6f7f1489bc2f30f9aa0a53881f4e62f5d7115827cc319f7f6ad5c9a2efeb8931",
+        "source_path": "/home/ubuntu/AG_simulation_deploy/dataset/circuit_1830/topology/circuit_1830.cir"
+      },
+      "topology/circuit_1830.py": {
+        "sha256": "5e2470dcf4ab6d02bf87e517c2dffc832ef1e69cf6d1758a9e3bd4df5f8bda85",
+        "source_path": "/home/ubuntu/AG_simulation_deploy/dataset/circuit_1830/topology/circuit_1830.py"
+      }
+    },
+    "circuit_1831": {
+      "metadata.txt": {
+        "sha256": "21852690c3e701b86ca53b79a4ec5e169f8ade0582fb03f35d5fce03a9d5cb9d",
+        "source_path": "/home/ubuntu/AG_simulation_deploy/dataset/circuit_1831/metadata.txt"
+      },
+      "parameters/ideal_design_space.yaml": {
+        "sha256": "aa435d036f52005461d290d5d3fc262f97ca4454ee206000c4ba8533840b1830",
+        "source_path": "/home/ubuntu/AG_simulation_deploy/dataset/circuit_1831/parameters/ideal_design_space.yaml"
+      },
+      "parameters/operating_space.yaml": {
+        "sha256": "d926f50d1ccc6d040dcb2e5bdb47cd9b8dbf470fcd93061eb4f6c7108c9f9780",
+        "source_path": "/home/ubuntu/AG_simulation_deploy/dataset/circuit_1831/parameters/operating_space.yaml"
+      },
+      "parameters/tunable_parameters.yaml": {
+        "sha256": "38e32f0091c78dbcb840d8b99d37de62f5a9bdc73cdcf89a815128dc69be546e",
+        "source_path": "/home/ubuntu/AG_simulation_deploy/dataset/circuit_1831/parameters/tunable_parameters.yaml"
+      },
+      "simulation/parameter/ideal_param.yaml": {
+        "sha256": "eca3f55f57ea5b7bcf05c084d3e54e86b48bc6da2cfa257c8faffc7cd3ed07fc",
+        "source_path": "/home/ubuntu/AG_simulation_deploy/dataset/circuit_1831/simulation/parameter/ideal_param.yaml"
+      },
+      "simulation/results/ideal/op_results.yaml": {
+        "sha256": "de4dfe4f202f38d717a24cb4cd266fa9f86b31660ac167b9ca545fd22aa89197",
+        "source_path": "/home/ubuntu/AG_simulation_deploy/dataset/circuit_1831/simulation/results/ideal/op_results.yaml"
+      },
+      "topology/circuit_1831.cir": {
+        "sha256": "3dcbf73e8f7f3d4edd4de1bbbbc63e52edb44594c3e3d4ce93a5e87fd674dd63",
+        "source_path": "/home/ubuntu/AG_simulation_deploy/dataset/circuit_1831/topology/circuit_1831.cir"
+      },
+      "topology/circuit_1831.py": {
+        "sha256": "82daea66deb4b732f744b174ffd8c4cdbf2f8d7fce7b5b250098977549c49781",
+        "source_path": "/home/ubuntu/AG_simulation_deploy/dataset/circuit_1831/topology/circuit_1831.py"
+      }
+    }
+  },
+  "manifest_sha256": "b1a1028bb039a784387b3744ff717179ca32993bfb1eff3ecbe148198122150e"
+}
