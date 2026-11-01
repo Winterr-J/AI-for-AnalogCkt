@@ -1,0 +1,318 @@
+schema_version: 2
+circuit_id: circuit_1935
+circuit_type: opamp
+scope: device_parameters_only
+data_type_vocabulary:
+  - continuous
+  - categorial
+device_parameters:
+  MM13:
+    device_type: nmos
+    source_device_type: nmos4
+    tunable_parameters:
+      MM13_model:
+        parameter_category: model
+        data_type: categorial
+        optimizable: true
+        unit: unitless
+      W:
+        parameter_category: physical
+        data_type: continuous
+        optimizable: true
+        unit: um
+      L:
+        parameter_category: physical
+        data_type: continuous
+        optimizable: true
+        unit: um
+      m:
+        parameter_category: physical
+        data_type: continuous
+        optimizable: true
+        unit: unitless
+        integer_only: true
+  MM9:
+    device_type: nmos
+    source_device_type: nmos4
+    tunable_parameters:
+      MM9_model:
+        parameter_category: model
+        data_type: categorial
+        optimizable: true
+        unit: unitless
+      W:
+        parameter_category: physical
+        data_type: continuous
+        optimizable: true
+        unit: um
+      L:
+        parameter_category: physical
+        data_type: continuous
+        optimizable: true
+        unit: um
+      m:
+        parameter_category: physical
+        data_type: continuous
+        optimizable: true
+        unit: unitless
+        integer_only: true
+  MM8:
+    device_type: nmos
+    source_device_type: nmos4
+    tunable_parameters:
+      MM8_model:
+        parameter_category: model
+        data_type: categorial
+        optimizable: true
+        unit: unitless
+      W:
+        parameter_category: physical
+        data_type: continuous
+        optimizable: true
+        unit: um
+      L:
+        parameter_category: physical
+        data_type: continuous
+        optimizable: true
+        unit: um
+      m:
+        parameter_category: physical
+        data_type: continuous
+        optimizable: true
+        unit: unitless
+        integer_only: true
+  MM12:
+    device_type: pmos
+    source_device_type: pmos4
+    tunable_parameters:
+      MM12_model:
+        parameter_category: model
+        data_type: categorial
+        optimizable: true
+        unit: unitless
+      W:
+        parameter_category: physical
+        data_type: continuous
+        optimizable: true
+        unit: um
+      L:
+        parameter_category: physical
+        data_type: continuous
+        optimizable: true
+        unit: um
+      m:
+        parameter_category: physical
+        data_type: continuous
+        optimizable: true
+        unit: unitless
+        integer_only: true
+  MM11:
+    device_type: pmos
+    source_device_type: pmos4
+    tunable_parameters:
+      MM11_model:
+        parameter_category: model
+        data_type: categorial
+        optimizable: true
+        unit: unitless
+      W:
+        parameter_category: physical
+        data_type: continuous
+        optimizable: true
+        unit: um
+      L:
+        parameter_category: physical
+        data_type: continuous
+        optimizable: true
+        unit: um
+      m:
+        parameter_category: physical
+        data_type: continuous
+        optimizable: true
+        unit: unitless
+        integer_only: true
+  MM10:
+    device_type: pmos
+    source_device_type: pmos4
+    tunable_parameters:
+      MM10_model:
+        parameter_category: model
+        data_type: categorial
+        optimizable: true
+        unit: unitless
+      W:
+        parameter_category: physical
+        data_type: continuous
+        optimizable: true
+        unit: um
+      L:
+        parameter_category: physical
+        data_type: continuous
+        optimizable: true
+        unit: um
+      m:
+        parameter_category: physical
+        data_type: continuous
+        optimizable: true
+        unit: unitless
+        integer_only: true
+  MM7:
+    device_type: pmos
+    source_device_type: pmos4
+    tunable_parameters:
+      MM7_model:
+        parameter_category: model
+        data_type: categorial
+        optimizable: true
+        unit: unitless
+      W:
+        parameter_category: physical
+        data_type: continuous
+        optimizable: true
+        unit: um
+      L:
+        parameter_category: physical
+        data_type: continuous
+        optimizable: true
+        unit: um
+      m:
+        parameter_category: physical
+        data_type: continuous
+        optimizable: true
+        unit: unitless
+        integer_only: true
+  CC2:
+    device_type: capacitor
+    source_device_type: capacitor
+    tunable_parameters:
+      CC2_model:
+        parameter_category: model
+        data_type: categorial
+        optimizable: true
+        unit: unitless
+      C:
+        parameter_category: electrical
+        data_type: continuous
+        optimizable: true
+        unit: F
+      W:
+        parameter_category: physical
+        data_type: continuous
+        optimizable: true
+        unit: um
+      L:
+        parameter_category: physical
+        data_type: continuous
+        optimizable: true
+        unit: um
+      m:
+        parameter_category: physical
+        data_type: continuous
+        optimizable: true
+        unit: unitless
+        integer_only: true
+  MM10_dup2:
+    device_type: nmos
+    source_device_type: nmos4
+    tunable_parameters:
+      MM10_dup2_model:
+        parameter_category: model
+        data_type: categorial
+        optimizable: true
+        unit: unitless
+      W:
+        parameter_category: physical
+        data_type: continuous
+        optimizable: true
+        unit: um
+      L:
+        parameter_category: physical
+        data_type: continuous
+        optimizable: true
+        unit: um
+      m:
+        parameter_category: physical
+        data_type: continuous
+        optimizable: true
+        unit: unitless
+        integer_only: true
+  MM3:
+    device_type: pmos
+    source_device_type: pmos4
+    tunable_parameters:
+      MM3_model:
+        parameter_category: model
+        data_type: categorial
+        optimizable: true
+        unit: unitless
+      W:
+        parameter_category: physical
+        data_type: continuous
+        optimizable: true
+        unit: um
+      L:
+        parameter_category: physical
+        data_type: continuous
+        optimizable: true
+        unit: um
+      m:
+        parameter_category: physical
+        data_type: continuous
+        optimizable: true
+        unit: unitless
+        integer_only: true
+  RRF:
+    device_type: resistor
+    source_device_type: resistor
+    tunable_parameters:
+      RRF_model:
+        parameter_category: model
+        data_type: categorial
+        optimizable: true
+        unit: unitless
+      R:
+        parameter_category: electrical
+        data_type: continuous
+        optimizable: true
+        unit: Ohm
+      W:
+        parameter_category: physical
+        data_type: continuous
+        optimizable: true
+        unit: um
+      L:
+        parameter_category: physical
+        data_type: continuous
+        optimizable: true
+        unit: um
+      m:
+        parameter_category: physical
+        data_type: continuous
+        optimizable: true
+        unit: unitless
+        integer_only: true
+  MM0:
+    device_type: nmos
+    source_device_type: nmos4
+    tunable_parameters:
+      MM0_model:
+        parameter_category: model
+        data_type: categorial
+        optimizable: true
+        unit: unitless
+      W:
+        parameter_category: physical
+        data_type: continuous
+        optimizable: true
+        unit: um
+      L:
+        parameter_category: physical
+        data_type: continuous
+        optimizable: true
+        unit: um
+      m:
+        parameter_category: physical
+        data_type: continuous
+        optimizable: true
+        unit: unitless
+        integer_only: true
