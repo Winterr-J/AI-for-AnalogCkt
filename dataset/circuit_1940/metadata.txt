@@ -1,0 +1,8 @@
+circuit_id: circuit_1940
+circuit_number: 1940
+analoggenie_folder_id: 2100
+circuit_type: opamp
+circuit_name: CMOS differential operational amplifier (AnalogGenie 2100)
+circuit_function: Implements an operational-amplifier gain, bias, compensation, output, or common-mode-control topology using the cmos differential operational amplifier topology.
+source_ports: VDD, VSS, VIN1, VIN2, VOUT1
+device_summary: capacitor=1, nmos=6, pmos=5, resistor=3
