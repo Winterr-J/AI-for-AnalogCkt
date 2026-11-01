@@ -1,0 +1,26 @@
+status: WARN
+analysis_mode: operating_point
+node_voltages:
+  net1007: 0.6898383502954587
+  net1004: 2.599933384184284
+  net14: 1.7680337356431197
+  net10: 1.9002094297410386
+  net12: 1.6499999985058555
+  vout1: 1.0420765012491911e-09
+  vb2: 1.6500000000000001
+  vb1: 1.6500000000000001
+  vin2: 1.2000000000000002
+  vin1: 1.2000000000000002
+  vdd: 3.3000000000000003
+branch_currents:
+  vvdd: -0.001864565024072633
+  vvin1: -1.2000000000000001e-12
+  vvin2: -1.2000000000000001e-12
+  vvb1: -0.000932282497065889
+  vvb2: 0.000863298661930777
+key_output:
+  kind: voltage
+  nodes_or_branches:
+  - VOUT1
+  value: 1.0420765012491911e-09
+warning_or_failure_reason: operating point converged but the selected cell output is zero or unavailable
