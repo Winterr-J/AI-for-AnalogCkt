@@ -13,6 +13,7 @@ _GENERIC_PROMPT_PATH = _PROMPT_DIR / "generic_inverse_design_v1.txt"
 _CIRCUIT_TEMPLATE_FILES = {
     "currentmirror": "current_mirror_v1.txt",
     "opamp": "opamp_v1.txt",
+    "samplehold": "sample_hold_v1.txt",
 }
 _STRUCTURED_SECTIONS = (
     "circuit_info",
@@ -41,6 +42,17 @@ def _get_circuit_template(circuit_type: Any) -> str:
 
 def build_inverse_design_prompt(inverse_input: Mapping[str, Any]) -> str:
     """Serialize structured input and append its circuit-specific guidance."""
+
+    circuit_type = inverse_input["circuit_info"]["circuit_type"]
+    if str(circuit_type).casefold() == "samplehold":
+        prompt = _get_circuit_template(circuit_type)
+        for section in _STRUCTURED_SECTIONS:
+            prompt = prompt.replace(
+                f"{{{section}}}",
+                json.dumps(inverse_input[section], ensure_ascii=False,
+                           sort_keys=True, separators=(",", ":")),
+            )
+        return prompt.rstrip() + "\n"
 
     generic_prompt = _load_template(_GENERIC_PROMPT_PATH)
     for section in _STRUCTURED_SECTIONS:

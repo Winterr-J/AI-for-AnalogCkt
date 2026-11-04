@@ -1,0 +1,298 @@
+{
+  "schema": "sc5a3_independent_d0_preparation_v2",
+  "circuit_type": "SampleHold",
+  "circuit_id": "circuit_0605",
+  "experiment_id": "sc0605_independent_d0_v1",
+  "config_path": "ActiveLearning/InitializeD0/examples/SampleHold/circuit_0605/active_learning_config.yaml",
+  "config_sha256": "25216423f6f7153fd2459c92e1addc83ea43ee5cb646164f323f5f6fbcbc2fdb",
+  "topology_path": "dataset/circuit_0605/topology/circuit_0605.py",
+  "topology_sha256": "06a300834380249a2371f60d1b14e7d8dc4487357de6e37f3cf847ae5bbae563",
+  "model_identity": {
+    "LEVEL": 1,
+    "VTO": 0.7,
+    "KP": 0.0002,
+    "LAMBDA": 0.02
+  },
+  "stage_a_path": "dataset/circuit_0605/parameters/tunable_parameters.yaml",
+  "stage_a_sha256": "f6857617db3bcff1a1580f6361a9f48643b68fa5fc17676d817e4a6b3e621cdc",
+  "stage_b_path": "dataset/circuit_0605/parameters/ideal_design_space.yaml",
+  "stage_b_sha256": "5b6db843cf5a9f7d4048c7710392baec9aeeb7ae8a430188624d2d1449df54f0",
+  "parameter_space_sha256": "e06fcd0fe7368bbe468bbd8cfb0e4cf5a39ef5760f2078e34f14da17ca0261c1",
+  "parameters": [
+    {
+      "name": "C0",
+      "device_instance": "C0",
+      "device_role": "hold_capacitor",
+      "parameter_kind": "C",
+      "unit": "F",
+      "nominal_value": 1e-12,
+      "stage_a_parameter_id": "C0.C",
+      "stage_b_admissible_range": {
+        "lower": 2.5e-14,
+        "upper": 2e-09,
+        "scale": "log",
+        "transform": null,
+        "fixed_sign": null
+      },
+      "optimization_range": {
+        "lower": 2.5e-14,
+        "upper": 2e-09,
+        "scale": "log",
+        "transform": null,
+        "fixed_sign": null
+      },
+      "native_constructor_argument": "C0",
+      "native_scale": 1.0
+    },
+    {
+      "name": "W_M1",
+      "device_instance": "M1",
+      "device_role": "buffer",
+      "parameter_kind": "W",
+      "unit": "um",
+      "nominal_value": 10.0,
+      "stage_a_parameter_id": "M1.W",
+      "stage_b_admissible_range": {
+        "lower": 0.22,
+        "upper": 100.0,
+        "scale": "log",
+        "transform": null,
+        "fixed_sign": null
+      },
+      "optimization_range": {
+        "lower": 0.22,
+        "upper": 100.0,
+        "scale": "log",
+        "transform": null,
+        "fixed_sign": null
+      },
+      "native_constructor_argument": "W_M1",
+      "native_scale": 1e-06
+    },
+    {
+      "name": "L_M1",
+      "device_instance": "M1",
+      "device_role": "buffer",
+      "parameter_kind": "L",
+      "unit": "um",
+      "nominal_value": 1.0,
+      "stage_a_parameter_id": "M1.L",
+      "stage_b_admissible_range": {
+        "lower": 0.28,
+        "upper": 50.0,
+        "scale": "log",
+        "transform": null,
+        "fixed_sign": null
+      },
+      "optimization_range": {
+        "lower": 0.28,
+        "upper": 50.0,
+        "scale": "log",
+        "transform": null,
+        "fixed_sign": null
+      },
+      "native_constructor_argument": "L_M1",
+      "native_scale": 1e-06
+    },
+    {
+      "name": "W_M0",
+      "device_instance": "M0",
+      "device_role": "sampling_switch",
+      "parameter_kind": "W",
+      "unit": "um",
+      "nominal_value": 10.0,
+      "stage_a_parameter_id": "M0.W",
+      "stage_b_admissible_range": {
+        "lower": 0.22,
+        "upper": 100.0,
+        "scale": "log",
+        "transform": null,
+        "fixed_sign": null
+      },
+      "optimization_range": {
+        "lower": 0.22,
+        "upper": 100.0,
+        "scale": "log",
+        "transform": null,
+        "fixed_sign": null
+      },
+      "native_constructor_argument": "W_M0",
+      "native_scale": 1e-06
+    },
+    {
+      "name": "L_M0",
+      "device_instance": "M0",
+      "device_role": "sampling_switch",
+      "parameter_kind": "L",
+      "unit": "um",
+      "nominal_value": 1.0,
+      "stage_a_parameter_id": "M0.L",
+      "stage_b_admissible_range": {
+        "lower": 0.28,
+        "upper": 50.0,
+        "scale": "log",
+        "transform": null,
+        "fixed_sign": null
+      },
+      "optimization_range": {
+        "lower": 0.28,
+        "upper": 50.0,
+        "scale": "log",
+        "transform": null,
+        "fixed_sign": null
+      },
+      "native_constructor_argument": "L_M0",
+      "native_scale": 1e-06
+    },
+    {
+      "name": "R0",
+      "device_instance": "R0",
+      "device_role": "internal_design_resistor",
+      "parameter_kind": "R",
+      "unit": "Ohm",
+      "nominal_value": 10000.0,
+      "stage_a_parameter_id": "R0.R",
+      "stage_b_admissible_range": {
+        "lower": 1.0,
+        "upper": 1000000000.0,
+        "scale": "log",
+        "transform": null,
+        "fixed_sign": null
+      },
+      "optimization_range": {
+        "lower": 1.0,
+        "upper": 1000000000.0,
+        "scale": "log",
+        "transform": null,
+        "fixed_sign": null
+      },
+      "native_constructor_argument": "R0",
+      "native_scale": 1.0
+    }
+  ],
+  "equality_constraints": [],
+  "fixture_artifact": "ActiveLearning/docs/reference_audit/SC_0605_CANARY_FIXTURE_CANDIDATE_SC4C4.json",
+  "fixture_file_sha256": "4f991609924eba9dfe9fbb3e2828e47e29645b09afdbb7e1059638acc7499c52",
+  "fixture_sha256": "c0cfaefb49481fad200c6813be5e8264eb3c87d03edfcc5bc4a49a6c7fb80ac7",
+  "stimulus_sha256": "9a0490677a7027c0f77a473a93cf7042c672cff4b5e37d844988d139c082807e",
+  "physical_mapping": {
+    "inputs": [
+      "VIN1"
+    ],
+    "outputs": [
+      "VOUT1"
+    ],
+    "clock": "VCLK1",
+    "track_clock_level": "HIGH",
+    "diagnostic_nodes": [
+      "net3"
+    ],
+    "ground": "VSS",
+    "circuit_id": "circuit_0605"
+  },
+  "fixed_operating_conditions": {
+    "vin_range_v": [
+      0.9,
+      1.5
+    ],
+    "clock_period_s": 1e-06,
+    "clock_low_v": 0.0,
+    "clock_high_v": 3.3,
+    "clock_duty": 0.75,
+    "clock_rise_s": 5e-09,
+    "clock_fall_s": 5e-09,
+    "provenance": {
+      "vin_range_v": "conditional engineering from archived VIN1 SIN extrema; not a verified limit",
+      "clock_period_s": "archived ideal transient PULSE period 1 us",
+      "clock_levels_v": "archived ideal transient PULSE 0..3.3 V",
+      "clock_duty": "conditional 0.75 fixture Track fraction aligned to historical 750 ns high-scale",
+      "clock_edges_s": "archived ideal transient PULSE 5 ns rise/fall",
+      "vin_edge_s": "conditional 5 ns PWL test transition"
+    },
+    "fixed_common_mode_v": null,
+    "vin_edge_s": 5e-09
+  },
+  "startup_cycles": 2,
+  "scored_cycles": 6,
+  "temperature_c": 25.0,
+  "evaluator": "SampleHoldEvaluator V1 via SampleHoldFunctionalValidator",
+  "metric_config": {
+    "minimize": [
+      "track_end_error_v",
+      "sampling_error_v",
+      "hold_isolation_error_v"
+    ],
+    "record_only": [
+      "hold_droop_v_per_s"
+    ],
+    "aggregate": "mean_of_six_cycles",
+    "diagnostics": [
+      "max",
+      "per_level"
+    ]
+  },
+  "s0_status": "unfrozen_exploratory",
+  "target_specs": null,
+  "meets_spec_without_target": null,
+  "sampling": {
+    "mode": "v3",
+    "seed": 42,
+    "nominal": 1,
+    "local": 10,
+    "global": 9,
+    "local_factor": 1.25
+  },
+  "candidate_plan_file": "ActiveLearning/docs/reference_audit/SC_0605_D0_CANDIDATES_SC5A3.json",
+  "candidate_plan_file_sha256": "7a38fc503b5469a16d411fae36c323135312e04e878cd275ad56d578b4e87c6c",
+  "candidate_plan_sha256": "ec1cbe703436f6594d4aac009698239186610437732f22023dbd1af0df364101",
+  "candidate_vector_hashes": {
+    "d0_v3_000": "213709c95ab3b9844f1e26d061578cc0e97ae1813a07d3a8d02eeab7c34ac68b",
+    "d0_v3_001": "d05ec8c2e7a27cc95f67461075a20d378283de9ada35586ecc97f6d97d665726",
+    "d0_v3_002": "fb7e185b5ff5405c05d8f7f5f2c92a4a69c3b56d72c15839deaf7ebde5b4228b",
+    "d0_v3_003": "783c2bc011b5fe30654fae039a1f889fbb5ee4c31f6b76e314339029935148cd",
+    "d0_v3_004": "b46ff5d16570e7455ca1035fcd6a2b1b9a75454fde09dd285a09c8ef85a50f60",
+    "d0_v3_005": "c615a0f6271b8a57f3c5633a5c19c48092d63f34213614cc7eb11953b725127c",
+    "d0_v3_006": "452ea71f251bb97ae6b2f66a8bd28b1a9f73906576b0b22a6480e689bc3f7e32",
+    "d0_v3_007": "526358233263e251f6d555290e27cb94beb36b70db417c0342afb6760f7fe9c5",
+    "d0_v3_008": "020293506361530e7417bb8679eb833bf1a18b61d7f1ffbba85e8292f2d6ef72",
+    "d0_v3_009": "5b1c4a98b5c34f3c519623d8f080704348c4e7b14d8404407dbad25c40793a21",
+    "d0_v3_010": "ccdc354c23d4bd09129a63d7ae823cfceadfd96694c848bb5ed4a89f138db98a",
+    "d0_v3_011": "87bde07e14b82d61fdfe0923fe673f7e18b63ad33616f0d2b621c5d459aee26a",
+    "d0_v3_012": "ede2babb86417d3d19918b0942731e480892d5b8153a3e6dfb0d90e84065d6cb",
+    "d0_v3_013": "74402e71e7f42e91879f4c7a4c612256960c5701ad33dddc95e6a10cccda9dc7",
+    "d0_v3_014": "eff4d65bb12c566f6104b340cd0c5abcc21d844ad077ca631e8dc98bc7465b3a",
+    "d0_v3_015": "663c726dfa17b0cf79a69cffcbfbbf7c53348a68a1c341486299ed3b472ad44e",
+    "d0_v3_016": "409bf71b0cad2aee262bec2af45296e1fae9105ee965116fdf3544a7a06d9222",
+    "d0_v3_017": "6713be8b809ea5c5b32a1465bf4df092790d3aec7d87c8cf01ae4c4bd2bf81ae",
+    "d0_v3_018": "ded30c40c138e9a8dfba05852d7eff4034c333bf787695db2ba6c2cc354acaf8",
+    "d0_v3_019": "7c5e748769b0dea079089cea0b2b851f34ab121ea4f7d948bc5ccb84fd158548"
+  },
+  "output_schema": [
+    "existing_D0_JSONL",
+    "existing_D0_CSV",
+    "initialization_JSON",
+    "physical_attempt_ledger_JSONL",
+    "batch_completion_JSON"
+  ],
+  "proposed_physical_attempt_budget": {
+    "physical_attempts_max": 20,
+    "single_attempt_timeout_s": 180,
+    "overall_timeout_s": 3600,
+    "automatic_retries": 0
+  },
+  "checkpoint_resume": "durable ordered JSONL prefix plus per-candidate success cache; same config/approval/plan; no failed-attempt retry",
+  "batch_approval_file": "D:/analogCkt/SC_D0_approvals/sc0605_independent_d0_v1_batch_approval.json",
+  "pilot_review_gate": {
+    "pilot_candidates": 1,
+    "continuation_review_file": "D:/analogCkt/SC_D0_approvals/sc0605_independent_d0_v1_pilot_review.json"
+  },
+  "approval_status": "not_issued",
+  "strict_native_environment_identity": "approval_host_verification_required",
+  "readiness_status": "SC5A3_D0_CONFIG_FROZEN_READY_FOR_APPROVAL",
+  "outstanding": [
+    "separate_operator_physical_approval",
+    "native_parameterized_spice_validation",
+    "pilot_continuation_review_after_d0_v3_000",
+    "S0_target_after_authentic_D0"
+  ]
+}

@@ -1,0 +1,75 @@
+{
+  "schema": "sc_0259_guarded_transient_v1_sc4b3c",
+  "status": "candidate_unapproved",
+  "experiment_id": "sc0259_ideal_v1_canary_1",
+  "circuit_id": "circuit_0259",
+  "output_root": "D:/analogCkt/SC_0259_canary_runs",
+  "source_assets": {
+    "topology": {"path": "dataset/circuit_0259/topology/circuit_0259.cir", "sha256": "7bbd46660ee48f8c988585a02b198a2cb0a13368e5856a0cf5a8fe4ca166f130"},
+    "converted_pyspice": {"path": "dataset/circuit_0259/topology/circuit_0259.py", "sha256": "b859a176da95954676425bbeb37de6c698dfb3229f49697ac9bbf1d1ea6e530f"},
+    "ideal_parameter_archive": {"path": "dataset/circuit_0259/simulation/parameter/ideal_param.yaml", "sha256": "2438e232294721cf38f94340efb1fe11e03e2193a6eeee650524eff20b82bfc6"},
+    "archived_runner": {"path": "run/post_nanometer_common/run_ideal_post_nanometer_simulations.py", "sha256": "4d8675633e06d541a06247e18373658d184632703c53309c0b2aaa22bff8bef8"},
+    "offline_evaluator": {"path": "ActiveLearning/sample_hold_offline.py", "sha256": "c0e41668b9305a2c957cbca4348f364595e3f1b2c13ecfe9061103aa32e57dd4"},
+    "guarded_runner": {"path": "ActiveLearning/sc_0259_canary.py", "sha256": "3450684d39eb91f2b6a08669b6d8198e319d22c6f94280a0c28f783dfd8cdd78"},
+    "isolated_child": {"path": "ActiveLearning/sc_0259_canary_child.py", "sha256": "d766979e4ffb79f53d156ab9853e12cc3290c271a7ea867094730a0dc43ee85d"},
+    "source_closure": {"path": "ActiveLearning/docs/reference_audit/SC_0259_CANARY_SOURCE_CLOSURE_SC4B3C.json", "sha256": "6ba56786bd88d21bfa7d1cb1d5a2f51dc228048c5b293ea91d145d5a385ac35e"}
+  },
+  "fixed_parameters": {
+    "W_M0_m": 1e-5,
+    "L_M0_m": 1e-6,
+    "C0_f": 1e-12,
+    "model": {"LEVEL": 1, "VTO": 0.7, "KP": 0.0002, "LAMBDA": 0.02},
+    "temperature_c": 25.0,
+    "nominal_temperature_c": 25.0,
+    "additional_load": null,
+    "forced_initial_condition": null
+  },
+  "startup_vin_v": 1.2,
+  "fixture_inputs": {
+    "mapping": {
+      "circuit_id": "circuit_0259",
+      "inputs": ["VIN1"],
+      "outputs": ["VOUT1"],
+      "clock": "VCLK1",
+      "track_clock_level": "HIGH",
+      "source_topology_sha256": "7bbd46660ee48f8c988585a02b198a2cb0a13368e5856a0cf5a8fe4ca166f130",
+      "diagnostic_nodes": []
+    },
+    "conditions": {
+      "vin_range_v": [0.8, 1.6],
+      "clock_period_s": 1e-6,
+      "clock_low_v": 0.0,
+      "clock_high_v": 3.3,
+      "clock_duty": 0.4,
+      "clock_rise_s": 1e-8,
+      "clock_fall_s": 1e-8,
+      "provenance": {
+        "vin_range_v": "engineering proposal based on archived 1.2 +/- 0.4 V sine",
+        "clock": "archived 1 MHz 0..3.3 V pulse with revised phase epoch and 390 ns plateau",
+        "vin_edge_s": "provisional operator-requested 10 ns finite PWL transitions"
+      },
+      "fixed_common_mode_v": null,
+      "vin_edge_s": 1e-8
+    },
+    "startup_cycles": 2,
+    "measurement_cycles": 6,
+    "guard_time_s": 5e-9
+  },
+  "abstract_fixture_sha256": "1f31a7ddd979c5572914d8670af94584e8395ce1d57363b51d9041dd04a07674",
+  "stimulus_sha256": "fbda5e833ce9de0d6ec5de2c33257a71457e9f555c2ef6959666c5c50e39db9b",
+  "clock_semantics": "PULSE low=0 high=3.3 delay=0 rise=10ns plateau=390ns fall=10ns period=1us; falling edge starts at t0+400ns and completes at t0+410ns",
+  "vin_semantics": "PWL startup=1.2V; each cycle resets to inward Track initial over first 10ns, Track step at t0+120..130ns and Hold perturbation at t0+802..812ns; no discontinuities",
+  "metrics_active": ["track_end_error_v", "sampling_error_v", "hold_isolation_error_v"],
+  "metrics_recorded_only": ["hold_droop_v_per_s"],
+  "numeric_performance_targets": null,
+  "budget": {
+    "logical_evaluations_max": 1,
+    "native_transient_attempts_max": 1,
+    "automatic_retries": 0,
+    "single_native_attempt_timeout_s": 180,
+    "overall_execution_timeout_s": 240
+  },
+  "operator_approved": false,
+  "electrically_validated": false,
+  "real_execution_authorized": false
+}

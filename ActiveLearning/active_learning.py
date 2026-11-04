@@ -155,11 +155,13 @@ def run_active_learning(
     *,
     runtime=None,
     max_iterations=10,
+    stop_on_meets_spec=True,
     beta=0.7,
     acquisition_mode="conservative_feasibility",
     context_k=5,
     retrieval_k=3,
     committee_size=5,
+    prediction_prompt_version="v1",
     data_expansion_seed=42,
     data_expansion_config=None,
     output_dir=None,
@@ -211,7 +213,7 @@ def run_active_learning(
     initial_feasible_record = _recompute_initial_meets_spec(
         records, target_specs, circuit_type=circuit_info.get("circuit_type"),
     )
-    if initial_feasible_record is not None:
+    if stop_on_meets_spec and initial_feasible_record is not None:
         return {
             "records": records,
             "iteration_log": iteration_log,
@@ -290,6 +292,7 @@ def run_active_learning(
             parameter_template=parameter_template,
             retrieval_k=retrieval_k,
             committee_size=committee_size,
+            prompt_version=prediction_prompt_version,
             llm_client=prediction_client,
         )
         timing["performance_prediction_seconds"] = time.perf_counter() - start
@@ -562,7 +565,7 @@ def run_active_learning(
             if is_current_mirror
             else new_record["status"]["meets_spec"] is True
         )
-        if verified_success:
+        if stop_on_meets_spec and verified_success:
             stop_reason = "meets_spec"
             break
 

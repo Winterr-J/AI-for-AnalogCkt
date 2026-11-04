@@ -1,0 +1,3 @@
+SAMPLEHOLD GUIDANCE
+
+Predict only the runtime active metrics. Treat track_end_error_v, sampling_error_v, and hold_isolation_error_v as lower-is-better voltage errors. hold_droop_v_per_s is record-only unless it appears in the runtime active metric definitions. Track-End and Sampling Error may correlate; Hold Isolation may be near numerical residual scale. Preserve scientific notation and do not force small predictions to zero. Use only measured history and candidate-specific parameter differences; never claim SPICE execution, feasibility, or certainty.

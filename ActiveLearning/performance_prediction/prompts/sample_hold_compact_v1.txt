@@ -1,0 +1,12 @@
+Predict numerical SampleHold performance for every new candidate from the supplied measured history. These are predictions, not SPICE results or feasibility labels. Do not change parameters, invent observations, claim certainty, or force residual-scale values to zero.
+
+Circuit and fixed conditions: {circuit_info}
+Parameter dictionary (authoritative keys, units, scales, bounds): {parameter_definitions}
+Runtime metric definitions and directions: {performance_definitions}
+Shared measured historical pool (each observation serialized once): {historical_pool}
+Candidate cases with nearest-first Top-3 pool references: {prediction_cases}
+
+Each neighbor link contains candidate-specific parameter differences: absolute_delta is candidate minus history; relative_ratio is candidate/history for positive values; magnitude_ratio compares same-sign negative magnitudes. Use all referenced measurements and preserve candidate-specific evidence. Infer only locally supported changes; Track-End Error and Sampling Error may correlate, while Hold Isolation can approach numerical residual scale. Preserve scientific notation and sufficient precision. Never infer that a small value is exactly zero without evidence.
+
+Predict every metric listed in performance_definitions for every candidate exactly once. Output finite JSON numbers only, without reasoning, uncertainty, confidence, target judgments, Markdown, or extra keys:
+{"predictions":[{"candidate_id":"<exact ID>","predicted_metrics":{"<each active metric>":0.0}}]}

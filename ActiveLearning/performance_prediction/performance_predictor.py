@@ -17,6 +17,7 @@ _GENERIC_PROMPT_PATH = _PROMPT_DIR / "generic_performance_prediction_v1.txt"
 _CIRCUIT_TEMPLATE_FILES = {
     "currentmirror": "current_mirror_v1.txt",
     "opamp": "opamp_v1.txt",
+    "samplehold": "sample_hold_v1.txt",
 }
 _MAX_ROUND_ATTEMPTS = 3
 
@@ -360,6 +361,24 @@ def _collect_committee_rounds(
     return rounds, attempt_counts
 
 
+def _build_compact_components(prediction_cases, retrieval_diagnostics):
+    from .sample_hold_compact import build_components
+
+    return build_components(prediction_cases, retrieval_diagnostics)
+
+
+def _build_sample_hold_compact_prompt(
+    circuit_info, performance_definitions, prediction_cases,
+    retrieval_diagnostics, parameter_template,
+):
+    from .sample_hold_compact import build_prompt
+
+    return build_prompt(
+        circuit_info, performance_definitions, prediction_cases,
+        retrieval_diagnostics, parameter_template,
+    )
+
+
 def predict_candidate_performance(
     candidates,
     records,
@@ -369,9 +388,14 @@ def predict_candidate_performance(
     parameter_template=None,
     retrieval_k=3,
     committee_size=5,
+    prompt_version="v1",
     llm_client=None,
 ):
     """Predict candidate metrics using retrieved context and an LLM committee."""
+    if prompt_version not in {"v1", "compact_v1"}:
+        raise ValueError("Unsupported performance prediction prompt version")
+    if prompt_version == "compact_v1" and circuit_info.get("circuit_type") != "SampleHold":
+        raise ValueError("Compact Prompt V1 currently supports SampleHold only")
     if not candidates:
         return []
 
@@ -391,7 +415,13 @@ def predict_candidate_performance(
         parameter_template=parameter_template,
         return_diagnostics=True,
     )
-    prompt = _build_prompt(circuit_info, definitions, cases)
+    if prompt_version == "compact_v1":
+        from .sample_hold_compact import build_prompt
+
+        prompt = build_prompt(circuit_info, definitions, cases,
+                              retrieval_diagnostics, parameter_template)
+    else:
+        prompt = _build_prompt(circuit_info, definitions, cases)
     client = call_inverse_design_llm if llm_client is None else llm_client
     candidate_ids = [candidate["candidate_id"] for candidate in candidates]
     rounds, attempt_counts = _collect_committee_rounds(

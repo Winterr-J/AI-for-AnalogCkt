@@ -1,0 +1,37 @@
+schema_version: performance_template_v1
+performance_template:
+  circuit_type: sample_hold
+  template_version: sc_v1
+  active_metrics:
+    - track_end_error_v
+    - sampling_error_v
+    - hold_isolation_error_v
+  metrics:
+    track_end_error_v:
+      name: track_end_error_v
+      enabled_in_v1: true
+      unit: V
+      direction: minimize
+      description: Mean absolute tracking error at the end of the track interval.
+      required_analysis: [Transient]
+    sampling_error_v:
+      name: sampling_error_v
+      enabled_in_v1: true
+      unit: V
+      direction: minimize
+      description: Mean absolute output error at the defined sampling instant.
+      required_analysis: [Transient]
+    hold_isolation_error_v:
+      name: hold_isolation_error_v
+      enabled_in_v1: true
+      unit: V
+      direction: minimize
+      description: Mean absolute held-output response to input changes during hold.
+      required_analysis: [Transient]
+    hold_droop_v_per_s:
+      name: hold_droop_v_per_s
+      enabled_in_v1: false
+      unit: V/s
+      direction: minimize
+      description: Mean held-output voltage drift rate; record-only unless activated.
+      required_analysis: [Transient]

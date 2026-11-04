@@ -1712,6 +1712,21 @@ def _build_opamp_circuit_config(
     )
 
 
+def _build_sample_hold_circuit_config(
+    circuit_type: str,
+    circuit_id: str,
+    *,
+    repository_root: str | Path | None = None,
+    runtime_provider: Any,
+) -> ActiveLearningCircuitConfig:
+    from .sample_hold import build_sample_hold_circuit_config
+
+    return build_sample_hold_circuit_config(
+        circuit_type, circuit_id, repository_root=repository_root,
+        runtime_provider=runtime_provider,
+    )
+
+
 def build_active_learning_circuit_config(
     circuit_type: str,
     circuit_id: str,

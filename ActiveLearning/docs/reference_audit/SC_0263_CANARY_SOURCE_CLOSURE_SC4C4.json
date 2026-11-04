@@ -1,0 +1,164 @@
+{
+  "schema": "sc_sample_hold_source_closure_sc4c3_v1",
+  "circuit_id": "circuit_0263",
+  "status": "frozen_verified",
+  "purpose": "SC-4C.4 raw-byte/source/host freeze; no operator or execution approval",
+  "source_files": [
+    {
+      "path": "ActiveLearning/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "ActiveLearning/docs/reference_audit/SC_0263_FIXTURE_RESOLUTION_PHASE_SC4C2.json",
+      "sha256": "b74fa89338afd9fc822e9561c6c23325645e9cdd49b5d66a92bae04d67ad10a9"
+    },
+    {
+      "path": "ActiveLearning/sample_hold_offline.py",
+      "sha256": "c0e41668b9305a2c957cbca4348f364595e3f1b2c13ecfe9061103aa32e57dd4"
+    },
+    {
+      "path": "ActiveLearning/sc_0259_canary.py",
+      "sha256": "3450684d39eb91f2b6a08669b6d8198e319d22c6f94280a0c28f783dfd8cdd78"
+    },
+    {
+      "path": "ActiveLearning/sc_sample_hold_canary.py",
+      "sha256": "4d45ff901e1459e13ad2b49fae4142fda89fa5b96c9b757067af05e569a62e57"
+    },
+    {
+      "path": "ActiveLearning/sc_sample_hold_canary_child.py",
+      "sha256": "21ab52e2fa4cdd031836103a5ce58c3a5a29932c59805fcf5261d9a55afbce8b"
+    },
+    {
+      "path": "ActiveLearning/sc_sample_hold_generic.py",
+      "sha256": "9f90dfd0c928f3239e18d19eab4baca4eaa0a76cdd46589de56e108bdc8407bb"
+    },
+    {
+      "path": "ActiveLearning/windows_job_isolation.py",
+      "sha256": "56da48f71aab0c54676e127dbd3f0a823cd6b08438f6c5240cc87fcb897a45a6"
+    },
+    {
+      "path": "conversion/__init__.py",
+      "sha256": "fa55774b300a8648304937e13c439b81b5ad6b40739579906b145223a8de8dbd"
+    },
+    {
+      "path": "conversion/cadence_to_pyspice.py",
+      "sha256": "a5a0538178b130cbd76e8ac94ec51dc008072642a848ffe6ace1138c7d139609"
+    },
+    {
+      "path": "dataset/circuit_0263/simulation/parameter/ideal_param.yaml",
+      "sha256": "b9bae75b713dda8c00accdcefbb4c0fce4579722cc31e4f6ba90cade318c12b2"
+    },
+    {
+      "path": "dataset/circuit_0263/topology/circuit_0263.cir",
+      "sha256": "23bc79663db36ba0414bc9382790f2dc00ab93c0613fa681cb444863880a93b6"
+    },
+    {
+      "path": "dataset/circuit_0263/topology/circuit_0263.py",
+      "sha256": "3d5cccf64b6e3397211c3bc9b13a72a6e6391fa0c9f2ec79872b762cf9b94f66"
+    },
+    {
+      "path": "run/__init__.py",
+      "sha256": "c1c866c27e369c1606e4f35184c13b2011a6c48b2daa7f041e724ef1fc7ec216"
+    },
+    {
+      "path": "run/post_nanometer_common/run_ideal_post_nanometer_simulations.py",
+      "sha256": "4d8675633e06d541a06247e18373658d184632703c53309c0b2aaa22bff8bef8"
+    },
+    {
+      "path": "run/single_stage_amplifier/__init__.py",
+      "sha256": "f196374085473e2fd0f95e36805791a7a2e490ab7cfa9bb00a0cbd6144f26456"
+    },
+    {
+      "path": "run/single_stage_amplifier/run_ideal_dataset_simulations.py",
+      "sha256": "f8b504c2bfd33f3e1a3f7622f8cafe36e63d9292a140ee8bc4f3051c7249115d"
+    },
+    {
+      "path": "simulation_metrics/__init__.py",
+      "sha256": "f195b3665626b15c879dcab157c9ccb060e02c9cbf9de532254223b8cb78b664"
+    },
+    {
+      "path": "simulation_metrics/ac.py",
+      "sha256": "ec8338f6d979c786ecb54750a96ed236394e06554340272b3d9386fcb164ff5d"
+    },
+    {
+      "path": "simulation_metrics/dc.py",
+      "sha256": "cba03619ab62ae64d3d3325108157c0ddca9d6ddec908d793dcaa6e4c10d7706"
+    },
+    {
+      "path": "simulation_metrics/loop_gain.py",
+      "sha256": "b8b556f966dd0fb85fd234891e8af6ffc7af59bb2a6b23452994b0172a16332d"
+    },
+    {
+      "path": "simulation_metrics/op.py",
+      "sha256": "5cf881b47e06400d1f52f5b9bf5a2b0051db2352a9b4d8e8f7adc4c3bc97e0d1"
+    },
+    {
+      "path": "simulation_metrics/transient.py",
+      "sha256": "6aa58cf975baa84b6fe4f797ea61cae10b82ebf22cb4ce378297f6ae98d08fdb"
+    }
+  ],
+  "external_environment": {
+    "python_executable": "C:/Users/clair/anaconda3/python.exe",
+    "python_version": "3.11.5",
+    "packages": {
+      "PySpice": "1.5",
+      "numpy": "1.26.4",
+      "scipy": "1.11.4",
+      "PyYAML": "6.0.1",
+      "cffi": "1.16.0",
+      "pywin32": "310"
+    },
+    "environment_paths": {
+      "NGSPICE_LIBRARY_PATH": "D:/analogCkt/Batch_simulation/vendor/Spice64_dll/dll-vs/ngspice.dll",
+      "SPICE_LIB_DIR": "D:/analogCkt/Batch_simulation/vendor/ngspice_runtime"
+    },
+    "native_files": {
+      "ngspice_dll": {
+        "path": "D:/analogCkt/Batch_simulation/vendor/Spice64_dll/dll-vs/ngspice.dll",
+        "sha256": "e5ef5b70cfd08a63cdfdb40fa2b610735921f624c53848363f33b20d05169576"
+      },
+      "libomp_dll": {
+        "path": "D:/analogCkt/Batch_simulation/vendor/Spice64_dll/dll-vs/libomp140.x86_64.dll",
+        "sha256": "644c49149f8a5d9275a83e9331a0adbd14620f930190e985d30b842107123597"
+      },
+      "spinit": {
+        "path": "D:/analogCkt/Batch_simulation/vendor/ngspice_runtime/scripts/spinit",
+        "sha256": "47e8378757585eeac4df1740a14cd9440dc12bb8be587565bb3d147a9313552f"
+      }
+    },
+    "resolved_win32job_module": {
+      "path": "C:/Users/clair/AppData/Roaming/Python/Python311/site-packages/win32/win32job.pyd",
+      "sha256": "5a8868068766b087709cfd9561ba1eb0382921d46345abc4f12e60db2e4b25e9"
+    },
+    "resolved_pywin32_modules": {
+      "win32job": {
+        "path": "C:/Users/clair/AppData/Roaming/Python/Python311/site-packages/win32/win32job.pyd",
+        "sha256": "5a8868068766b087709cfd9561ba1eb0382921d46345abc4f12e60db2e4b25e9"
+      },
+      "win32api": {
+        "path": "C:/Users/clair/AppData/Roaming/Python/Python311/site-packages/win32/win32api.pyd",
+        "sha256": "6ba86018ac060effa78e1597310c83408eb5c9f9cacdf86511c442a6f7bc5464"
+      },
+      "win32process": {
+        "path": "C:/Users/clair/AppData/Roaming/Python/Python311/site-packages/win32/win32process.pyd",
+        "sha256": "c855fb07de92587c9f6f8fc3e2ab94fb98e6b6584671eb46dc0d46a37dc62799"
+      },
+      "win32event": {
+        "path": "C:/Users/clair/AppData/Roaming/Python/Python311/site-packages/win32/win32event.pyd",
+        "sha256": "8b36e49212f867d2c125d595e1088ade5220fbebe70fc7feef9fa9316867a838"
+      },
+      "win32con": {
+        "path": "C:/Users/clair/AppData/Roaming/Python/Python311/site-packages/win32/lib/win32con.py",
+        "sha256": "1a34d587b8625220f3327f692135349ddce70e3ac6ff9533f088b455385ac552"
+      }
+    }
+  },
+  "environment_observation": {
+    "host_python_prefix": "C:/Users/clair/anaconda3",
+    "host_user_site": "C:/Users/clair/AppData/Roaming/Python/Python311/site-packages",
+    "parent_child_identity_equal": true,
+    "restricted_development_context_pywin32": "305.1",
+    "note": "Host and simulator-free child resolve pywin32 310; restricted sandbox only sees Conda 305.1."
+  },
+  "package_revision": "SC4C4"
+}

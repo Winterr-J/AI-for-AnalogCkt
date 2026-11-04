@@ -1,0 +1,218 @@
+{
+  "schema": "sc5a3_independent_d0_preparation_v2",
+  "circuit_type": "SampleHold",
+  "circuit_id": "circuit_0259",
+  "experiment_id": "sc0259_independent_d0_v1",
+  "config_path": "ActiveLearning/InitializeD0/examples/SampleHold/circuit_0259/active_learning_config.yaml",
+  "config_sha256": "3188a689a1400bfd95054e32eb0b10708bb92850afd60f241f5a7124287be6ea",
+  "topology_path": "dataset/circuit_0259/topology/circuit_0259.py",
+  "topology_sha256": "b859a176da95954676425bbeb37de6c698dfb3229f49697ac9bbf1d1ea6e530f",
+  "model_identity": {
+    "LEVEL": 1,
+    "VTO": 0.7,
+    "KP": 0.0002,
+    "LAMBDA": 0.02
+  },
+  "stage_a_path": "dataset/circuit_0259/parameters/tunable_parameters.yaml",
+  "stage_a_sha256": "63fa40023a4dce1746bf6e3ae62760df98d181a3e3886f81d9eb55c6a145ea40",
+  "stage_b_path": "dataset/circuit_0259/parameters/ideal_design_space.yaml",
+  "stage_b_sha256": "be504fd1cd82610b37defe52e5e4edd2ac86a7c5ac51dc0ce67435d30225dc77",
+  "parameter_space_sha256": "692ce8e6700942ad20b0b57edbdaac62f302ae05f5974f945ee355b1026f8530",
+  "parameters": [
+    {
+      "name": "W_M0",
+      "device_instance": "M0",
+      "device_role": "sampling_switch",
+      "parameter_kind": "W",
+      "unit": "um",
+      "nominal_value": 10.0,
+      "stage_a_parameter_id": "M0.W",
+      "stage_b_admissible_range": {
+        "lower": 0.22,
+        "upper": 100.0,
+        "scale": "log",
+        "transform": null,
+        "fixed_sign": null
+      },
+      "optimization_range": {
+        "lower": 0.22,
+        "upper": 100.0,
+        "scale": "log",
+        "transform": null,
+        "fixed_sign": null
+      },
+      "native_constructor_argument": "W_M0",
+      "native_scale": 1e-06
+    },
+    {
+      "name": "L_M0",
+      "device_instance": "M0",
+      "device_role": "sampling_switch",
+      "parameter_kind": "L",
+      "unit": "um",
+      "nominal_value": 1.0,
+      "stage_a_parameter_id": "M0.L",
+      "stage_b_admissible_range": {
+        "lower": 0.28,
+        "upper": 50.0,
+        "scale": "log",
+        "transform": null,
+        "fixed_sign": null
+      },
+      "optimization_range": {
+        "lower": 0.28,
+        "upper": 50.0,
+        "scale": "log",
+        "transform": null,
+        "fixed_sign": null
+      },
+      "native_constructor_argument": "L_M0",
+      "native_scale": 1e-06
+    },
+    {
+      "name": "C0",
+      "device_instance": "C0",
+      "device_role": "hold_capacitor",
+      "parameter_kind": "C",
+      "unit": "F",
+      "nominal_value": 1e-12,
+      "stage_a_parameter_id": "C0.C",
+      "stage_b_admissible_range": {
+        "lower": 2.5e-14,
+        "upper": 2e-09,
+        "scale": "log",
+        "transform": null,
+        "fixed_sign": null
+      },
+      "optimization_range": {
+        "lower": 2.5e-14,
+        "upper": 2e-09,
+        "scale": "log",
+        "transform": null,
+        "fixed_sign": null
+      },
+      "native_constructor_argument": "C0",
+      "native_scale": 1.0
+    }
+  ],
+  "equality_constraints": [],
+  "fixture_artifact": "ActiveLearning/docs/reference_audit/SC_0259_TRANSIENT_FIXTURE_V1_SC4B3C.json",
+  "fixture_file_sha256": "af518dd8e8eb2d6d6a1dd0383d5c95879f1bcaacdd4236366cc1f2aae871b2bc",
+  "fixture_sha256": "1f31a7ddd979c5572914d8670af94584e8395ce1d57363b51d9041dd04a07674",
+  "stimulus_sha256": "fbda5e833ce9de0d6ec5de2c33257a71457e9f555c2ef6959666c5c50e39db9b",
+  "physical_mapping": {
+    "circuit_id": "circuit_0259",
+    "inputs": [
+      "VIN1"
+    ],
+    "outputs": [
+      "VOUT1"
+    ],
+    "clock": "VCLK1",
+    "track_clock_level": "HIGH",
+    "source_topology_sha256": "7bbd46660ee48f8c988585a02b198a2cb0a13368e5856a0cf5a8fe4ca166f130",
+    "diagnostic_nodes": []
+  },
+  "fixed_operating_conditions": {
+    "vin_range_v": [
+      0.8,
+      1.6
+    ],
+    "clock_period_s": 1e-06,
+    "clock_low_v": 0.0,
+    "clock_high_v": 3.3,
+    "clock_duty": 0.4,
+    "clock_rise_s": 1e-08,
+    "clock_fall_s": 1e-08,
+    "provenance": {
+      "vin_range_v": "engineering proposal based on archived 1.2 +/- 0.4 V sine",
+      "clock": "archived 1 MHz 0..3.3 V pulse with revised phase epoch and 390 ns plateau",
+      "vin_edge_s": "provisional operator-requested 10 ns finite PWL transitions"
+    },
+    "fixed_common_mode_v": null,
+    "vin_edge_s": 1e-08
+  },
+  "startup_cycles": 2,
+  "scored_cycles": 6,
+  "temperature_c": 25.0,
+  "evaluator": "SampleHoldEvaluator V1 via SampleHoldFunctionalValidator",
+  "metric_config": {
+    "minimize": [
+      "track_end_error_v",
+      "sampling_error_v",
+      "hold_isolation_error_v"
+    ],
+    "record_only": [
+      "hold_droop_v_per_s"
+    ],
+    "aggregate": "mean_of_six_cycles",
+    "diagnostics": [
+      "max",
+      "per_level"
+    ]
+  },
+  "s0_status": "unfrozen_exploratory",
+  "target_specs": null,
+  "meets_spec_without_target": null,
+  "sampling": {
+    "mode": "v3",
+    "seed": 42,
+    "nominal": 1,
+    "local": 10,
+    "global": 9,
+    "local_factor": 1.25
+  },
+  "candidate_plan_file": "ActiveLearning/docs/reference_audit/SC_0259_D0_CANDIDATES_SC5A3.json",
+  "candidate_plan_file_sha256": "624ebe73572209d3540b389973f5dcde987f15951b68552119c934b4d202527a",
+  "candidate_plan_sha256": "39b30579ce6c676dfe6986af001ccf2e757c410a833d4b14bbe396f44eae570d",
+  "candidate_vector_hashes": {
+    "d0_v3_000": "dcf0bf77577e34660c80a47180c4155711a86a29ec45638d22b6509f96532720",
+    "d0_v3_001": "866196182a571c3ff63e7ddb76e4b7f46213389d23eef6979b71e4088b8b4e9e",
+    "d0_v3_002": "b975a9e97e5ff27157dabc55e61d45c0ef319eb98425bd37b2a8a79ca1446e1d",
+    "d0_v3_003": "4351d251af031191571e25c6b4a7911c0d2a4361ef8d7fbab3a1e3b377df8e69",
+    "d0_v3_004": "82e0a1a7aa1e12adb865c5ff99ef4013b4af39afab668bb1c0f8060657a7a132",
+    "d0_v3_005": "dc36a3dd0f5c7c5b81b9bbb73868a2f1880db580c8eb766edbe0c64a157ddebe",
+    "d0_v3_006": "47d2bf7878d9b0f0e04d2f88de23d0bd68a5f951b516a2d2a6a848adbb0ccd8a",
+    "d0_v3_007": "329756e9e4d972b1b8e0d4f5bb073dd965f204a42b44e93f7dd7c76c7a7b7744",
+    "d0_v3_008": "a00bd42d89d2d759940c5c93a4b5e37512744f7d5b61570863059d7ef1d55cc4",
+    "d0_v3_009": "8dda6b23286407159d266999a9c9e297e51c9d1f2cd1e2d2fc6433e151561b45",
+    "d0_v3_010": "8d4f3e4f887a93104a07961560d4f6d14fe0804a06707bfbde072d16d83363dd",
+    "d0_v3_011": "234d5005f0b65a3e4f6306e0dbd9670aa81521e39cb4f4732313d09b421f67a3",
+    "d0_v3_012": "487b189aef5a0ef25306dcbfcca55e2a1b36a143e34f3879168212df1038df42",
+    "d0_v3_013": "c01357e2681d78c457dd78e30a25cc4f0f403de09a8c6f48fdb68bec4b288831",
+    "d0_v3_014": "94ee4e85fcfc7817540d4bb0d700d67097e218f713225e1e72e7b0a64ef8b661",
+    "d0_v3_015": "eb22582fdcb588ffcb4451bcb1c819a45e8197df30a7af3519e0a061638f0bf6",
+    "d0_v3_016": "1e9b7b3b39718a171068437b2d19842e2578a742c94a5333b33e889431d428f2",
+    "d0_v3_017": "f0f7365955e400e3ad4e12029a3ef194974fa966c8bd97e60d3798b63e816825",
+    "d0_v3_018": "dfd356a324a7120a4fe92b36ca5677d01fdae852cd2eda88790d478dacfe6292",
+    "d0_v3_019": "5e95e249a9d85ea3ae510a7278cbc3f71e28ad790e15f24f63ed0520a349d702"
+  },
+  "output_schema": [
+    "existing_D0_JSONL",
+    "existing_D0_CSV",
+    "initialization_JSON",
+    "physical_attempt_ledger_JSONL",
+    "batch_completion_JSON"
+  ],
+  "proposed_physical_attempt_budget": {
+    "physical_attempts_max": 20,
+    "single_attempt_timeout_s": 180,
+    "overall_timeout_s": 3600,
+    "automatic_retries": 0
+  },
+  "checkpoint_resume": "durable ordered JSONL prefix plus per-candidate success cache; same config/approval/plan; no failed-attempt retry",
+  "batch_approval_file": "D:/analogCkt/SC_D0_approvals/sc0259_independent_d0_v1_batch_approval.json",
+  "pilot_review_gate": {
+    "pilot_candidates": 1,
+    "continuation_review_file": "D:/analogCkt/SC_D0_approvals/sc0259_independent_d0_v1_pilot_review.json"
+  },
+  "approval_status": "not_issued",
+  "strict_native_environment_identity": "approval_host_verification_required",
+  "readiness_status": "SC5A3_D0_CONFIG_FROZEN_READY_FOR_APPROVAL",
+  "outstanding": [
+    "separate_operator_physical_approval",
+    "native_parameterized_spice_validation",
+    "pilot_continuation_review_after_d0_v3_000",
+    "S0_target_after_authentic_D0"
+  ]
+}

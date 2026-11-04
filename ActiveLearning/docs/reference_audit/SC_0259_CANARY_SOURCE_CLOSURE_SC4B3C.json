@@ -1,0 +1,47 @@
+{
+  "schema": "sc_0259_canary_source_closure_sc4b3c",
+  "purpose": "Unapproved circuit_0259 one-transient candidate source closure; not an execution authorization",
+  "source_files": [
+    {"name": "active_learning_package", "path": "ActiveLearning/__init__.py", "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"},
+    {"name": "offline_evaluator", "path": "ActiveLearning/sample_hold_offline.py", "sha256": "c0e41668b9305a2c957cbca4348f364595e3f1b2c13ecfe9061103aa32e57dd4"},
+    {"name": "guarded_runner", "path": "ActiveLearning/sc_0259_canary.py", "sha256": "3450684d39eb91f2b6a08669b6d8198e319d22c6f94280a0c28f783dfd8cdd78"},
+    {"name": "isolated_child", "path": "ActiveLearning/sc_0259_canary_child.py", "sha256": "d766979e4ffb79f53d156ab9853e12cc3290c271a7ea867094730a0dc43ee85d"},
+    {"name": "windows_job_isolation", "path": "ActiveLearning/windows_job_isolation.py", "sha256": "56da48f71aab0c54676e127dbd3f0a823cd6b08438f6c5240cc87fcb897a45a6"},
+    {"name": "conversion_package", "path": "conversion/__init__.py", "sha256": "fa55774b300a8648304937e13c439b81b5ad6b40739579906b145223a8de8dbd"},
+    {"name": "cadence_conversion_module", "path": "conversion/cadence_to_pyspice.py", "sha256": "a5a0538178b130cbd76e8ac94ec51dc008072642a848ffe6ace1138c7d139609"},
+    {"name": "ideal_parameter_archive", "path": "dataset/circuit_0259/simulation/parameter/ideal_param.yaml", "sha256": "2438e232294721cf38f94340efb1fe11e03e2193a6eeee650524eff20b82bfc6"},
+    {"name": "topology", "path": "dataset/circuit_0259/topology/circuit_0259.cir", "sha256": "7bbd46660ee48f8c988585a02b198a2cb0a13368e5856a0cf5a8fe4ca166f130"},
+    {"name": "converted_pyspice", "path": "dataset/circuit_0259/topology/circuit_0259.py", "sha256": "b859a176da95954676425bbeb37de6c698dfb3229f49697ac9bbf1d1ea6e530f"},
+    {"name": "run_package", "path": "run/__init__.py", "sha256": "c1c866c27e369c1606e4f35184c13b2011a6c48b2daa7f041e724ef1fc7ec216"},
+    {"name": "archived_runner", "path": "run/post_nanometer_common/run_ideal_post_nanometer_simulations.py", "sha256": "4d8675633e06d541a06247e18373658d184632703c53309c0b2aaa22bff8bef8"},
+    {"name": "single_stage_package", "path": "run/single_stage_amplifier/__init__.py", "sha256": "f196374085473e2fd0f95e36805791a7a2e490ab7cfa9bb00a0cbd6144f26456"},
+    {"name": "ngspice_configuration_module", "path": "run/single_stage_amplifier/run_ideal_dataset_simulations.py", "sha256": "f8b504c2bfd33f3e1a3f7622f8cafe36e63d9292a140ee8bc4f3051c7249115d"},
+    {"name": "simulation_metrics_package", "path": "simulation_metrics/__init__.py", "sha256": "f195b3665626b15c879dcab157c9ccb060e02c9cbf9de532254223b8cb78b664"},
+    {"name": "simulation_metrics_ac", "path": "simulation_metrics/ac.py", "sha256": "ec8338f6d979c786ecb54750a96ed236394e06554340272b3d9386fcb164ff5d"},
+    {"name": "simulation_metrics_dc", "path": "simulation_metrics/dc.py", "sha256": "cba03619ab62ae64d3d3325108157c0ddca9d6ddec908d793dcaa6e4c10d7706"},
+    {"name": "simulation_metrics_loop_gain", "path": "simulation_metrics/loop_gain.py", "sha256": "b8b556f966dd0fb85fd234891e8af6ffc7af59bb2a6b23452994b0172a16332d"},
+    {"name": "simulation_metrics_op", "path": "simulation_metrics/op.py", "sha256": "5cf881b47e06400d1f52f5b9bf5a2b0051db2352a9b4d8e8f7adc4c3bc97e0d1"},
+    {"name": "simulation_metrics_transient", "path": "simulation_metrics/transient.py", "sha256": "6aa58cf975baa84b6fe4f797ea61cae10b82ebf22cb4ce378297f6ae98d08fdb"}
+  ],
+  "external_environment": {
+    "python_executable": "C:/Users/clair/anaconda3/python.exe",
+    "python_version": "3.11.5",
+    "packages": {
+      "PySpice": "1.5",
+      "numpy": "1.26.4",
+      "scipy": "1.11.4",
+      "PyYAML": "6.0.1",
+      "cffi": "1.16.0",
+      "pywin32": "310"
+    },
+    "environment_paths": {
+      "NGSPICE_LIBRARY_PATH": "D:/analogCkt/Batch_simulation/vendor/Spice64_dll/dll-vs/ngspice.dll",
+      "SPICE_LIB_DIR": "D:/analogCkt/Batch_simulation/vendor/ngspice_runtime"
+    },
+    "native_files": {
+      "ngspice_dll": {"path": "D:/analogCkt/Batch_simulation/vendor/Spice64_dll/dll-vs/ngspice.dll", "sha256": "e5ef5b70cfd08a63cdfdb40fa2b610735921f624c53848363f33b20d05169576"},
+      "libomp_dll": {"path": "D:/analogCkt/Batch_simulation/vendor/Spice64_dll/dll-vs/libomp140.x86_64.dll", "sha256": "644c49149f8a5d9275a83e9331a0adbd14620f930190e985d30b842107123597"},
+      "spinit": {"path": "D:/analogCkt/Batch_simulation/vendor/ngspice_runtime/scripts/spinit", "sha256": "47e8378757585eeac4df1740a14cd9440dc12bb8be587565bb3d147a9313552f"}
+    }
+  }
+}

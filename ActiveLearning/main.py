@@ -104,6 +104,15 @@ def _configured_targets(config):
     return target_specs
 
 
+def _experiment_targets(config, circuit_type):
+    if (circuit_type == "SampleHold"
+            and config.get("target_status") == "exploratory_unfrozen"
+            and config.get("performance_target_selected") is False
+            and config.get("target_specs") in (None, {})):
+        return None
+    return _configured_targets(config)
+
+
 def _resolve_experiment(circuit_type, circuit_id, config_path, runtime):
     paths = _resolve_paths(circuit_type, circuit_id, config_path)
     if not paths["config"].is_file():
@@ -112,7 +121,7 @@ def _resolve_experiment(circuit_type, circuit_id, config_path, runtime):
             f"targets are not configured: {paths['config']}"
         )
     config = _load_yaml(paths["config"])
-    target_specs = _configured_targets(config)
+    target_specs = _experiment_targets(config, circuit_type)
     data_config = config.get("data") or {}
     if not data_config.get("d0_path"):
         raise ValueError("data.d0_path must be configured before running")
@@ -171,12 +180,24 @@ def _inspect_experiment_config(circuit_type, circuit_id, config_path=None):
     experiment = {
         "config_path": paths["config"].resolve(),
         "config": config,
-        "target_specs": _configured_targets(config),
+        "target_specs": _experiment_targets(config, circuit_type),
     }
     if (config.get("data") or {}).get("d0_mode") is not None:
         experiment["resolved_d0_path"] = _resolve_experiment(
             circuit_type, circuit_id, config_path, None
         )[3].resolve()
+    if (circuit_type == "SampleHold"
+            and paths["config"].name in {
+                "one_iteration_pilot_v1.yaml", "five_iteration_validation_v1.yaml"
+            }):
+        from ActiveLearning.onboarding.sample_hold_phase_a import validate_pilot_static
+
+        runtime = build_active_learning_circuit_config(
+            circuit_type, circuit_id, repository_root=_REPOSITORY_ROOT)
+        validate_pilot_static(
+            runtime, config, paths["config"], experiment["resolved_d0_path"],
+            _load_yaml(paths["performance_template"]),
+        )
     return experiment
 
 
@@ -217,6 +238,11 @@ def initialize_experiment_d0(
         }
     if (config.get("data") or {}).get("d0_mode") == "reuse":
         raise AutoConfigError(f"reused D0 is not available: {d0_path}")
+    if circuit_type == "SampleHold":
+        raise AutoConfigError(
+            "SampleHold Phase A cannot start D0: Ubuntu native source closure and "
+            "operator authorization are not established"
+        )
     result = initialize_configured_d0(
         runtime,
         config,
@@ -274,11 +300,21 @@ def run_configured_active_learning(
         raise AutoConfigError("frozen D0 fingerprint mismatch")
     _check_independent_d0(config, d0_path)
     records = _load_jsonl(d0_path)
+    if circuit_type == "SampleHold":
+        from ActiveLearning.onboarding.sample_hold_phase_a import validate_pilot_static
+
+        validate_pilot_static(runtime, config, paths["config"], d0_path,
+                              performance_template)
+        raise AutoConfigError(
+            "SampleHold Phase A is static only: Ubuntu native closure and "
+            "physical AL authorization must be reviewed before execution"
+        )
     circuit_info = dict(parameter_template["circuit"])
     circuit_info.update(config.get("circuit_info", {}))
     settings = config.get("active_learning", {})
     effective_settings = {
         "max_iterations": settings.get("max_iterations", 10),
+        "stop_on_meets_spec": settings.get("stop_on_meets_spec", True),
         "beta": settings.get("beta", 0.7),
         "acquisition_mode": settings.get(
             "acquisition_mode", "conservative_feasibility"
@@ -287,6 +323,7 @@ def run_configured_active_learning(
         "context_k": settings.get("context_k", 5),
         "retrieval_k": settings.get("retrieval_k", 3),
         "committee_size": settings.get("committee_size", 5),
+        "prediction_prompt_version": settings.get("prediction_prompt_version", "v1"),
         "data_expansion_seed": settings.get("data_expansion_seed", 42),
     }
     data_expansion_config = deepcopy(config.get("data_expansion") or {"mode": "v1"})
@@ -338,11 +375,13 @@ def run_configured_active_learning(
         adapter=_load_adapter(circuit_type, circuit_id, runtime),
         runtime=runtime,
         max_iterations=effective_settings["max_iterations"],
+        stop_on_meets_spec=effective_settings["stop_on_meets_spec"],
         beta=effective_settings["beta"],
         acquisition_mode=effective_settings["acquisition_mode"],
         context_k=effective_settings["context_k"],
         retrieval_k=effective_settings["retrieval_k"],
         committee_size=effective_settings["committee_size"],
+        prediction_prompt_version=effective_settings["prediction_prompt_version"],
         data_expansion_seed=effective_settings["data_expansion_seed"],
         data_expansion_config=data_expansion_config,
         output_dir=run_context["run_directory"],
@@ -459,6 +498,10 @@ def _print_autoconfig_summary(runtime):
         print(f"      dc_measurement: {output['dc_section']}/{output['dc_name']}")
         print(f"    output_node: {semantic['output_node']}")
         print(f"    sweep_element: {semantic['sweep_element']}")
+    elif summary["circuit_type"] == "SampleHold":
+        print(f"    inputs: {', '.join(semantic['inputs'])}")
+        print(f"    outputs: {', '.join(semantic['outputs'])}")
+        print(f"    clock: {semantic['clock']}")
     else:
         inputs = semantic["inputs"]
         outputs = semantic["outputs"]
@@ -484,7 +527,7 @@ def _print_experiment_config_summary(experiment):
     if config.get("benchmark_version") is not None:
         print(f"  benchmark_version: {config['benchmark_version']}")
     print("  performance_target:")
-    for name, spec in experiment["target_specs"].items():
+    for name, spec in (experiment["target_specs"] or {}).items():
         print(f"    {name} {spec['operator']} {spec['value']}")
     if config.get("performance_target_selected") is not None:
         print(
@@ -551,7 +594,7 @@ def _print_d0_summary(result):
         print(f"  seed: {sampling['seed']}")
         if sampling["sampling_mode"] == "v2":
             print(f"  local_radius: {sampling['local_radius']}")
-    for name, spec in result["target_specs"].items():
+    for name, spec in (result["target_specs"] or {}).items():
         print(f"  target {name}: {spec['operator']} {spec['value']}")
     print(f"  jsonl: {result['artifacts']['jsonl']}")
     if result["artifacts"].get("csv") is not None:

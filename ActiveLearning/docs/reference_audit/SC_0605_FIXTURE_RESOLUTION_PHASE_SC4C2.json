@@ -1,0 +1,103 @@
+{
+  "schema": "sc4c2_sample_hold_fixture_resolution_v1",
+  "circuit_id": "circuit_0605",
+  "status": "candidate_for_fixture_approval",
+  "real_execution_authorized": false,
+  "electrically_validated": false,
+  "fixture_hash": "c0cfaefb49481fad200c6813be5e8264eb3c87d03edfcc5bc4a49a6c7fb80ac7",
+  "source_assets": {
+    "topology": {"path": "dataset/circuit_0605/topology/circuit_0605.cir", "sha256": "214e4ae4f89011029992666d05fc0a228c1c2f924b0e047425cafc99369b6179"},
+    "converted": {"path": "dataset/circuit_0605/topology/circuit_0605.py", "sha256": "06a300834380249a2371f60d1b14e7d8dc4487357de6e37f3cf847ae5bbae563"},
+    "ideal_parameters": {"path": "dataset/circuit_0605/simulation/parameter/ideal_param.yaml", "sha256": "2182751807e9e3809635ba09fff637d91b31006fca9a240a5dc290a293e6d345"}
+  },
+  "model_and_devices": {
+    "selected_model": "NMOS_IDEAL Level 1, VTO=0.7 V, KP=0.0002 A/V^2, LAMBDA=0.02 1/V",
+    "source": "ideal_param.yaml; no PDK model selected",
+    "M0_sampling": "W=10 um L=1 um m=1, VIN1/VCLK1/net3/VSS",
+    "M1_buffer": "W=10 um L=1 um m=1, VDD/net3/VOUT1/VSS",
+    "C0_f": 1e-12,
+    "R0_ohm": 10000
+  },
+  "mapping": {
+    "inputs": ["VIN1"],
+    "outputs": ["VOUT1"],
+    "clock": "VCLK1",
+    "track_clock_level": "HIGH",
+    "diagnostic_nodes": ["net3"],
+    "ground": "VSS"
+  },
+  "evaluation_policy": {
+    "input_reference": "VIN1",
+    "external_output": "VOUT1",
+    "offset_or_gain_correction": "none",
+    "transfer_reference": "unity external VIN1 reference by explicit user policy; source-follower offset remains performance error",
+    "functional_gate": "existing V1 observable Track response and Hold isolation; offset alone is not functional failure",
+    "active_metrics": ["track_end_error_v", "sampling_error_v", "hold_isolation_error_v"],
+    "recorded_only_metric": "hold_droop_v_per_s",
+    "numeric_targets": null
+  },
+  "conditions": {
+    "vin_range_v": [0.9, 1.5],
+    "vin_levels_v": {"LOW": 0.9, "MID": 1.2, "HIGH": 1.5},
+    "vin_range_basis": "conditional engineering test span equal to archived SIN(1.2,0.3,100k) extrema; not verified operating limits",
+    "vin_edge_s": 5e-9,
+    "vin_edge_basis": "conditional finite PWL edge, chosen to fit 5 ns clock edges and measurement windows",
+    "startup_vin_v": 1.2,
+    "vdd_v": 3.3,
+    "vdd_basis": "ideal_param.yaml and M1 drain connection",
+    "vss_v": 0.0,
+    "external_load_ohm": 10000,
+    "load_basis": "R0 original source + ideal_param.yaml; no added load",
+    "clock_low_v": 0.0,
+    "clock_high_v": 3.3,
+    "clock_period_s": 1e-6,
+    "clock_duty": 0.75,
+    "clock_rise_s": 5e-9,
+    "clock_fall_s": 5e-9,
+    "clock_delay_s": 0.0,
+    "clock_high_plateau_s": 7.45e-7,
+    "clock_basis": "archived PULSE(0 3.3 50ns 5ns 5ns 750ns 1us); delay moved to 0 and plateau reduced 5ns to align V1 switch_off at 750ns; both changes are conditional fixture decisions",
+    "temperature_c": 25.0,
+    "nominal_temperature_c": 25.0,
+    "temperature_basis": "conditional engineering room-temperature test; no frozen source temperature",
+    "startup_cycles": 2,
+    "startup_basis": "V1 protocol only; archived VOUT1 nodeset is not assumed required; authentic startup must be inspected",
+    "initial_condition": null,
+    "guard_time_s": 5e-9,
+    "max_timestep_s": 1e-9
+  },
+  "condition_provenance": {
+    "vin_range_v": "conditional engineering from archived VIN1 SIN extrema; not a verified limit",
+    "clock_period_s": "archived ideal transient PULSE period 1 us",
+    "clock_levels_v": "archived ideal transient PULSE 0..3.3 V",
+    "clock_duty": "conditional 0.75 fixture Track fraction aligned to historical 750 ns high-scale",
+    "clock_edges_s": "archived ideal transient PULSE 5 ns rise/fall",
+    "vin_edge_s": "conditional 5 ns PWL test transition"
+  },
+  "waveforms": {
+    "VIN1": "finite PWL: startup 1.2 V; per measured cycle reset to inward quarter-range, 5 ns Track step to target, 5 ns Hold disturbance inward",
+    "VCLK1": "one periodic 0/3.3 V PULSE; rise 5 ns, high plateau 745 ns, fall 5 ns, period 1 us, first rise at t=0",
+    "required_saved_traces": ["time", "VIN1", "VCLK1", "VOUT1"],
+    "optional_saved_traces": ["net3"],
+    "total_duration_s": 8e-6
+  },
+  "measurement": {
+    "level_sequence": ["LOW", "MID", "HIGH", "MID", "LOW", "HIGH"],
+    "track_pre_ns": 15.0,
+    "track_step_ns": 225.0,
+    "track_end_ns": 740.0,
+    "switch_off_ns": 750.0,
+    "early_hold_ns": 765.0,
+    "quiet_hold_ns": [817.5, 880.0],
+    "hold_disturbance_ns": 917.5,
+    "post_disturbance_ns": 960.0,
+    "event_origin": "relative to each measured cycle's Track start; V1 build_fixture formula, subject to offline recomputation"
+  },
+  "provenance_classes": {
+    "user_approved_policy": ["VIN1 reference", "external VOUT1", "no offset correction", "shared V1 metrics"],
+    "source_supported": ["topology/ports", "nominal device values", "VDD=3.3 V", "R0=10 kOhm", "historical PULSE and SIN source"],
+    "conditional_engineering": ["0.9..1.5 V test span", "VIN 5 ns edge", "clock phase epoch/745 ns plateau", "25 C", "two startup cycles", "5 ns guard"],
+    "unresolved_required_before_real_run": ["operator acceptance of conditional fixture/test span", "native worker support for VDD/M1/R0/net3", "separate source closure and authorization"]
+  },
+  "readiness": "fixture values specified for operator review; NOT approved for real execution"
+}

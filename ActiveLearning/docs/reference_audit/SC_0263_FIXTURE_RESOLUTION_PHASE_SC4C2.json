@@ -1,0 +1,105 @@
+{
+  "schema": "sc4c2_sample_hold_fixture_resolution_v1",
+  "circuit_id": "circuit_0263",
+  "status": "candidate_for_fixture_approval",
+  "real_execution_authorized": false,
+  "electrically_validated": false,
+  "fixture_hash": "81cc4e708ddf83fc9d566c87afd2923acfece36d49a0901bd2f19c58c9de46d0",
+  "source_assets": {
+    "topology": {"path": "dataset/circuit_0263/topology/circuit_0263.cir", "sha256": "23bc79663db36ba0414bc9382790f2dc00ab93c0613fa681cb444863880a93b6"},
+    "converted": {"path": "dataset/circuit_0263/topology/circuit_0263.py", "sha256": "3d5cccf64b6e3397211c3bc9b13a72a6e6391fa0c9f2ec79872b762cf9b94f66"},
+    "ideal_parameters": {"path": "dataset/circuit_0263/simulation/parameter/ideal_param.yaml", "sha256": "b9bae75b713dda8c00accdcefbb4c0fce4579722cc31e4f6ba90cade318c12b2"}
+  },
+  "model_and_devices": {
+    "selected_model": "NMOS_IDEAL Level 1, VTO=0.7 V, KP=0.0002 A/V^2, LAMBDA=0.02 1/V",
+    "source": "ideal_param.yaml; no PDK model selected",
+    "M1_positive": "W=10 um L=1 um m=1, VIN1/VCLK1/VOUT1/VSS",
+    "M2_negative": "W=10 um L=1 um m=1, VIN2/VCLK1/VOUT2/VSS",
+    "C0_positive_f": 1e-12,
+    "C1_negative_f": 1e-12
+  },
+  "mapping": {
+    "inputs": ["VIN1", "VIN2"],
+    "outputs": ["VOUT1", "VOUT2"],
+    "clock": "VCLK1",
+    "track_clock_level": "HIGH",
+    "diagnostic_nodes": [],
+    "ground": "VSS"
+  },
+  "evaluation_policy": {
+    "input_reference": "VIN1 - VIN2",
+    "external_output": "VOUT1 - VOUT2",
+    "offset_or_gain_correction": "none",
+    "functional_gate": "existing V1 differential Track response and Hold isolation",
+    "active_metrics": ["track_end_error_v", "sampling_error_v", "hold_isolation_error_v"],
+    "recorded_only_metric": "hold_droop_v_per_s",
+    "numeric_targets": null
+  },
+  "conditions": {
+    "vin_diff_range_v": [-0.3, 0.3],
+    "vin_diff_levels_v": {"LOW": -0.3, "MID": 0.0, "HIGH": 0.3},
+    "vin_diff_basis": "conditional engineering test; 0.6 V total differential span gives 0.15 V programmed Track/Hold steps; no historical differential sweep",
+    "fixed_common_mode_v": 1.2,
+    "common_mode_basis": "conditional use of ideal_param.yaml VIN1=VIN2=1.2 V nominal, not an approved VCM operating range",
+    "physical_input_min_v": 0.0,
+    "physical_input_max_v": 3.3,
+    "terminal_limit_basis": "operating_space.yaml VSS..VDD compatibility with nominal 3.3 V and ideal model; conditional fixture limit, not a certified device rating",
+    "proposed_physical_input_extrema_v": [1.05, 1.35],
+    "vin_edge_s": 5e-9,
+    "vin_edge_basis": "conditional finite edge chosen for unambiguous 1 us V1 event windows",
+    "startup_vin_diff_v": 0.0,
+    "clock_low_v": 0.0,
+    "clock_high_v": 3.3,
+    "clock_period_s": 1e-6,
+    "clock_duty": 0.5,
+    "clock_rise_s": 5e-9,
+    "clock_fall_s": 5e-9,
+    "clock_delay_s": 0.0,
+    "clock_high_plateau_s": 4.95e-7,
+    "clock_basis": "1 MHz/3.3 V from ideal_param.yaml and archived summary; 50% duty, 5 ns edges and zero phase delay are conditional engineering selections because no per-edge PULSE exists",
+    "temperature_c": 25.0,
+    "nominal_temperature_c": 25.0,
+    "temperature_basis": "conditional engineering room-temperature test; no frozen source temperature",
+    "startup_cycles": 2,
+    "startup_basis": "V1 protocol; archived summary says no startup perturbation required, not proof two cycles are sufficient",
+    "initial_condition": null,
+    "guard_time_s": 5e-9,
+    "max_timestep_s": 1e-9,
+    "independent_vdd_source": null
+  },
+  "condition_provenance": {
+    "vin_range_v": "conditional differential -0.3..0.3 V engineering test span",
+    "fixed_common_mode_v": "conditional 1.2 V from two archived nominal DC inputs",
+    "clock_period_s": "archived ideal parameter 1 MHz",
+    "clock_levels_v": "archived ideal parameter 0..3.3 V",
+    "clock_duty": "conditional 0.5 engineering test fraction",
+    "clock_edges_s": "conditional 5 ns rise/fall engineering test edges",
+    "vin_edge_s": "conditional 5 ns PWL test transition"
+  },
+  "waveforms": {
+    "VIN1": "VCM + VIN_DIFF/2, finite 5 ns PWL around proposed levels",
+    "VIN2": "VCM - VIN_DIFF/2, finite 5 ns PWL around proposed levels",
+    "VCLK1": "one periodic 0/3.3 V PULSE; rise 5 ns, high plateau 495 ns, fall 5 ns, period 1 us, first rise at t=0",
+    "required_saved_traces": ["time", "VIN1", "VIN2", "VCLK1", "VOUT1", "VOUT2"],
+    "total_duration_s": 8e-6
+  },
+  "measurement": {
+    "level_sequence": ["LOW", "MID", "HIGH", "MID", "LOW", "HIGH"],
+    "track_pre_ns": 15.0,
+    "track_step_ns": 150.0,
+    "track_end_ns": 490.0,
+    "switch_off_ns": 500.0,
+    "early_hold_ns": 515.0,
+    "quiet_hold_ns": [635.0, 760.0],
+    "hold_disturbance_ns": 835.0,
+    "post_disturbance_ns": 920.0,
+    "event_origin": "relative to each measured cycle's Track start; V1 build_fixture formula, subject to offline recomputation"
+  },
+  "provenance_classes": {
+    "user_approved_policy": ["VIN1-VIN2", "VOUT1-VOUT2", "shared V1 metrics", "no separate differential evaluator"],
+    "source_supported": ["two NMOS paths share one VCLK1", "C0/C1 storage", "nominal VIN1=VIN2=1.2 V", "historical 1 MHz/3.3 V clock"],
+    "conditional_engineering": ["-0.3..0.3 V differential test span", "VCM=1.2 V", "0..3.3 V terminal test envelope", "50% duty/5 ns edges/zero delay", "25 C", "two startup cycles", "5 ns guard"],
+    "unresolved_required_before_real_run": ["operator acceptance of conditional differential/clock/test limits", "native worker support for two PWL input sources", "separate source closure and authorization"]
+  },
+  "readiness": "fixture values specified for operator review; NOT approved for real execution"
+}

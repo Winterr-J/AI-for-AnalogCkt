@@ -1,0 +1,52 @@
+{
+  "schema": "sample_hold_v1_offline_mappings",
+  "scope": "static mapping only; no executable simulation configuration",
+  "circuits": {
+    "circuit_0259": {
+      "source": "dataset/circuit_0259/topology/circuit_0259.cir",
+      "source_sha256": "7bbd46660ee48f8c988585a02b198a2cb0a13368e5856a0cf5a8fe4ca166f130",
+      "inputs": ["VIN1"],
+      "outputs": ["VOUT1"],
+      "clock": "VCLK1",
+      "track_clock_level": "HIGH",
+      "track_phase_evidence": "direct NMOS gate VCLK1; conditional Level-1 switch inference",
+      "diagnostic_nodes": [],
+      "storage_nodes": ["VOUT1"],
+      "known_conditions": {"clock_period_s": 1e-6, "clock_low_v": 0.0, "clock_high_v": 3.3, "clock_duty": 0.4, "clock_rise_s": 1e-8, "clock_fall_s": 1e-8, "nominal_vin_v": 1.2, "temperature_c": null},
+      "condition_source": "simulation/parameter/ideal_param.yaml and archived intro-SC transient runner, not a verified working range",
+      "vin_range_v": null,
+      "readiness": "requires explicit VIN working range and real waveform validation"
+    },
+    "circuit_0605": {
+      "source": "dataset/circuit_0605/topology/circuit_0605.cir",
+      "source_sha256": "214e4ae4f89011029992666d05fc0a228c1c2f924b0e047425cafc99369b6179",
+      "inputs": ["VIN1"],
+      "outputs": ["VOUT1"],
+      "clock": "VCLK1",
+      "track_clock_level": "HIGH",
+      "track_phase_evidence": "direct NMOS sampling gate VCLK1; conditional Level-1 inference",
+      "diagnostic_nodes": ["net3"],
+      "storage_nodes": ["net3"],
+      "known_conditions": {"clock_period_s": 1e-6, "clock_low_v": 0.0, "clock_high_v": 3.3, "clock_duty": 0.75, "clock_rise_s": 5e-9, "clock_fall_s": 5e-9, "nominal_vin_v": 1.2, "supply_v": 3.3, "temperature_c": null},
+      "condition_source": "simulation/parameter/ideal_param.yaml and archived tran_results.yaml; buffered output is not the storage node",
+      "vin_range_v": null,
+      "readiness": "requires explicit VIN range, buffer transfer/loaded output fixture and real waveform validation"
+    },
+    "circuit_0263": {
+      "source": "dataset/circuit_0263/topology/circuit_0263.cir",
+      "source_sha256": "23bc79663db36ba0414bc9382790f2dc00ab93c0613fa681cb444863880a93b6",
+      "inputs": ["VIN1", "VIN2"],
+      "outputs": ["VOUT1", "VOUT2"],
+      "clock": "VCLK1",
+      "track_clock_level": "HIGH",
+      "track_phase_evidence": "both direct NMOS sampling gates controlled by VCLK1",
+      "diagnostic_nodes": [],
+      "storage_nodes": ["VOUT1", "VOUT2"],
+      "known_conditions": {"clock_period_s": 1e-6, "clock_low_v": 0.0, "clock_high_v": 3.3, "clock_duty": null, "clock_rise_s": null, "clock_fall_s": null, "nominal_vin1_v": 1.2, "nominal_vin2_v": 1.2, "temperature_c": null},
+      "condition_source": "simulation/parameter/ideal_param.yaml and archived tran_results.yaml; no authoritative per-edge waveform",
+      "vin_diff_range_v": null,
+      "common_mode_v": null,
+      "readiness": "requires differential/common-mode range, clock duty/edges and waveform validation"
+    }
+  }
+}

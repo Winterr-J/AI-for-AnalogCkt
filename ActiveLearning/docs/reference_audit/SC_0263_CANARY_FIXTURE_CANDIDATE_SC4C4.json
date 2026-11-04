@@ -1,0 +1,276 @@
+{
+  "schema": "sc_sample_hold_generic_candidate_sc4c3_v1",
+  "circuit_id": "circuit_0263",
+  "experiment_id": "sc0263_ideal_v1_canary_1",
+  "status": "candidate_unapproved",
+  "static_validation_passed": true,
+  "engineering_assumptions_pending_approval": true,
+  "operator_fixture_approved": false,
+  "real_execution_authorized": false,
+  "electrically_validated": false,
+  "output_root": "D:/analogCkt/SC_0263_canary_runs",
+  "source_assets": {
+    "topology": {
+      "path": "dataset/circuit_0263/topology/circuit_0263.cir",
+      "sha256": "23bc79663db36ba0414bc9382790f2dc00ab93c0613fa681cb444863880a93b6"
+    },
+    "converted": {
+      "path": "dataset/circuit_0263/topology/circuit_0263.py",
+      "sha256": "3d5cccf64b6e3397211c3bc9b13a72a6e6391fa0c9f2ec79872b762cf9b94f66"
+    },
+    "ideal_parameters": {
+      "path": "dataset/circuit_0263/simulation/parameter/ideal_param.yaml",
+      "sha256": "b9bae75b713dda8c00accdcefbb4c0fce4579722cc31e4f6ba90cade318c12b2"
+    },
+    "fixture_resolution": {
+      "path": "ActiveLearning/docs/reference_audit/SC_0263_FIXTURE_RESOLUTION_PHASE_SC4C2.json",
+      "sha256": "b74fa89338afd9fc822e9561c6c23325645e9cdd49b5d66a92bae04d67ad10a9"
+    },
+    "generic_worker": {
+      "path": "ActiveLearning/sc_sample_hold_generic.py",
+      "sha256": "9f90dfd0c928f3239e18d19eab4baca4eaa0a76cdd46589de56e108bdc8407bb"
+    },
+    "native_child": {
+      "path": "ActiveLearning/sc_sample_hold_canary_child.py",
+      "sha256": "21ab52e2fa4cdd031836103a5ce58c3a5a29932c59805fcf5261d9a55afbce8b"
+    },
+    "evaluator": {
+      "path": "ActiveLearning/sample_hold_offline.py",
+      "sha256": "c0e41668b9305a2c957cbca4348f364595e3f1b2c13ecfe9061103aa32e57dd4"
+    },
+    "job_isolation": {
+      "path": "ActiveLearning/windows_job_isolation.py",
+      "sha256": "56da48f71aab0c54676e127dbd3f0a823cd6b08438f6c5240cc87fcb897a45a6"
+    },
+    "legacy_guarded_runner": {
+      "path": "ActiveLearning/sc_0259_canary.py",
+      "sha256": "3450684d39eb91f2b6a08669b6d8198e319d22c6f94280a0c28f783dfd8cdd78"
+    },
+    "ngspice_configuration": {
+      "path": "run/single_stage_amplifier/run_ideal_dataset_simulations.py",
+      "sha256": "f8b504c2bfd33f3e1a3f7622f8cafe36e63d9292a140ee8bc4f3051c7249115d"
+    }
+  },
+  "source_closure": {
+    "path": "ActiveLearning/docs/reference_audit/SC_0263_CANARY_SOURCE_CLOSURE_SC4C4.json",
+    "sha256": "91b9a3b26e397cea50a22cf4448e4747302c7fff3a860aacdb66cd774839479e"
+  },
+  "original_netlist_lines": [
+    "M2 (VIN2 VCLK1 VOUT2 VSS) nmos4",
+    "M1 (VIN1 VCLK1 VOUT1 VSS) nmos4",
+    "C1 (VOUT2 VSS) capacitor",
+    "C0 (VOUT1 VSS) capacitor"
+  ],
+  "parameter_bindings": {
+    "model.LEVEL": {
+      "path": [
+        "models",
+        "nmos",
+        "level"
+      ],
+      "scale": 1
+    },
+    "model.VTO": {
+      "path": [
+        "models",
+        "nmos",
+        "VTO"
+      ],
+      "scale": 1
+    },
+    "model.KP": {
+      "path": [
+        "models",
+        "nmos",
+        "KP_uA_per_V2"
+      ],
+      "scale": 1e-06
+    },
+    "model.LAMBDA": {
+      "path": [
+        "models",
+        "nmos",
+        "LAMBDA"
+      ],
+      "scale": 1
+    },
+    "NMOS_MODEL": {
+      "path": [
+        "devices",
+        "MOS",
+        "M1",
+        "model"
+      ],
+      "scale": 1
+    },
+    "W_M2": {
+      "path": [
+        "devices",
+        "MOS",
+        "M2",
+        "W_um"
+      ],
+      "scale": 1e-06
+    },
+    "L_M2": {
+      "path": [
+        "devices",
+        "MOS",
+        "M2",
+        "L_um"
+      ],
+      "scale": 1e-06
+    },
+    "W_M1": {
+      "path": [
+        "devices",
+        "MOS",
+        "M1",
+        "W_um"
+      ],
+      "scale": 1e-06
+    },
+    "L_M1": {
+      "path": [
+        "devices",
+        "MOS",
+        "M1",
+        "L_um"
+      ],
+      "scale": 1e-06
+    },
+    "C1": {
+      "path": [
+        "devices",
+        "C",
+        "C1",
+        "C_f"
+      ],
+      "scale": 1
+    },
+    "C0": {
+      "path": [
+        "devices",
+        "C",
+        "C0",
+        "C_f"
+      ],
+      "scale": 1
+    }
+  },
+  "assembly": {
+    "constructor_arguments": {
+      "VIN1": {
+        "kind": "input",
+        "name": "VIN1"
+      },
+      "VIN2": {
+        "kind": "input",
+        "name": "VIN2"
+      },
+      "VCLK1": {
+        "kind": "clock",
+        "name": "VCLK1"
+      },
+      "NMOS_MODEL": {
+        "kind": "fixed",
+        "value": "NMOS_IDEAL"
+      },
+      "W_M2": {
+        "kind": "fixed",
+        "value": 1e-05
+      },
+      "L_M2": {
+        "kind": "fixed",
+        "value": 1e-06
+      },
+      "W_M1": {
+        "kind": "fixed",
+        "value": 1e-05
+      },
+      "L_M1": {
+        "kind": "fixed",
+        "value": 1e-06
+      },
+      "C1": {
+        "kind": "fixed",
+        "value": 1e-12
+      },
+      "C0": {
+        "kind": "fixed",
+        "value": 1e-12
+      }
+    },
+    "model": {
+      "LEVEL": 1,
+      "VTO": 0.7,
+      "KP": 0.0002,
+      "LAMBDA": 0.02
+    },
+    "supply_sources": {},
+    "external_load_connections": []
+  },
+  "mapping": {
+    "inputs": [
+      "VIN1",
+      "VIN2"
+    ],
+    "outputs": [
+      "VOUT1",
+      "VOUT2"
+    ],
+    "clock": "VCLK1",
+    "track_clock_level": "HIGH",
+    "diagnostic_nodes": [],
+    "ground": "VSS",
+    "circuit_id": "circuit_0263"
+  },
+  "conditions": {
+    "vin_range_v": [
+      -0.3,
+      0.3
+    ],
+    "clock_period_s": 1e-06,
+    "clock_low_v": 0.0,
+    "clock_high_v": 3.3,
+    "clock_duty": 0.5,
+    "clock_rise_s": 5e-09,
+    "clock_fall_s": 5e-09,
+    "provenance": {
+      "vin_range_v": "conditional differential -0.3..0.3 V engineering test span",
+      "fixed_common_mode_v": "conditional 1.2 V from two archived nominal DC inputs",
+      "clock_period_s": "archived ideal parameter 1 MHz",
+      "clock_levels_v": "archived ideal parameter 0..3.3 V",
+      "clock_duty": "conditional 0.5 engineering test fraction",
+      "clock_edges_s": "conditional 5 ns rise/fall engineering test edges",
+      "vin_edge_s": "conditional 5 ns PWL test transition"
+    },
+    "fixed_common_mode_v": 1.2,
+    "vin_edge_s": 5e-09
+  },
+  "startup_cycles": 2,
+  "startup_input_v": 0.0,
+  "guard_time_s": 5e-09,
+  "physical_input_bounds_v": {
+    "VIN1": [
+      0.0,
+      3.3
+    ],
+    "VIN2": [
+      0.0,
+      3.3
+    ]
+  },
+  "temperature_c": 25.0,
+  "nominal_temperature_c": 25.0,
+  "fixture_sha256": "81cc4e708ddf83fc9d566c87afd2923acfece36d49a0901bd2f19c58c9de46d0",
+  "stimulus_sha256": "e83dbbc872ec8e39b2f994502a8008e9c65f85555d4d641d26205de0703af5bb",
+  "numeric_targets": null,
+  "budget": {
+    "native_transient_attempts_max": 1,
+    "automatic_retries": 0,
+    "single_native_attempt_timeout_s": 180,
+    "overall_execution_timeout_s": 240
+  },
+  "package_revision": "SC4C4"
+}

@@ -1,0 +1,12 @@
+Propose exactly one SampleHold candidate from measured history. You are not a simulator: do not claim SPICE execution, fabricate observations, predicted performance, feasibility, or fixed targets.
+
+Circuit and fixed conditions: {circuit_info}
+Runtime parameter space (authoritative keys, units, bounds): {parameter_space}
+Runtime target specifications: {target_specs}
+Best measured anchor: {best_known_anchor}
+MMR measured context: {context_samples}
+
+Use every and only the runtime optimization keys, once each. Respect their units, continuous bounds, discrete choices, constraints, and signed conventions. The same rules apply to 3D and 6D SampleHold variants. Treat each target according to its runtime operator; for lower-is-better metrics, prioritize the largest normalized violated constraint while preserving already-satisfied constraints. Prefer a measured, evidence-supported local move around the best anchor. Do not invent a target or assume that numerical-residual-scale error is exactly zero.
+
+Return JSON only, with no Markdown or explanation:
+{"x_seed":{"<each exact runtime parameter key>":0.0}}

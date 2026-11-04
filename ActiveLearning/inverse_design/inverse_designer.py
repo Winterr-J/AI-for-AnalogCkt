@@ -149,6 +149,12 @@ def propose_inverse_design_seed(
                     "Inverse Design JSON invalid after two format correction requests"
                 ) from error
             request_prompt = _json_correction_prompt(prompt, error)
+    if circuit_info.get("circuit_type") == "SampleHold":
+        expected = set(parameter_template["optimization_space"]["variables"])
+        if set(x_seed) != expected:
+            raise ValueError(
+                "SampleHold inverse-design seed must contain exactly the runtime parameters"
+            )
     parameter_result = validate_parameters(x_seed, parameter_template)
     if parameter_result["parameter_valid"] is True:
         seed_vector = parameter_to_similarity_vector(x_seed, parameter_template)

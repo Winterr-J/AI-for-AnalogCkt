@@ -1,0 +1,37 @@
+circuit_info:
+  circuit_type: SampleHold
+  circuit_id: circuit_0263
+
+# Experimental compatibility targets copied from the Nominal D0 measurement.
+# These are not engineering-qualified performance specifications.
+target_status: experimental_selected
+performance_target_selected: true
+target_specs:
+  track_end_error_v: {operator: "<=", value: 1.3470979887131307e-10}
+  sampling_error_v: {operator: "<=", value: 3.3800628407298916e-9}
+  hold_isolation_error_v: {operator: "<=", value: 1.3516965324811281e-14}
+
+data:
+  d0_mode: reuse
+  d0_path_relative_to: circuit
+  d0_path: d0/d0_v3_seed42.jsonl
+  initialize_if_missing: false
+  expected_d0_sha256: e8b424b44c7609579ee2bedf10dbe71c0a447392a221cd8cb632375098f5e338
+
+active_learning:
+  max_iterations: 1
+  stop_on_meets_spec: false
+  prediction_prompt_version: compact_v1
+
+sample_hold_pilot:
+  enabled: true
+  execution_id: sc0263_al_pilot_v1
+  output_root: D:/analogCkt/SC_AL_pilots
+  budget:
+    physical_attempts_max: 1
+    single_attempt_timeout_s: 180
+    overall_timeout_s: 600
+    automatic_retries: 0
+
+output:
+  runs_root: ActiveLearning/runs

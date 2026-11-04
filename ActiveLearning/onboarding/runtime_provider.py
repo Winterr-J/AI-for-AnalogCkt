@@ -164,6 +164,24 @@ def _opamp_validator_factory(runtime: Any) -> Any:
     )
 
 
+def _sample_hold_evaluator_factory(
+    runtime: Any, testbench_overrides: Mapping[str, Any] | None,
+) -> Any:
+    from .sample_hold import SampleHoldEvaluatorAdapter
+
+    if testbench_overrides:
+        raise AutoConfigError("SampleHold fixture overrides require a reviewed source closure")
+    executor = (runtime.testbench_config.get("_al_executor")
+                or runtime.testbench_config.get("_d0_executor"))
+    return SampleHoldEvaluatorAdapter(runtime, executor)
+
+
+def _sample_hold_validator_factory(runtime: Any) -> Any:
+    from .sample_hold import SampleHoldFunctionalValidator
+
+    return SampleHoldFunctionalValidator()
+
+
 def _opamp_nominal_smoke_factory(
     runtime: Any,
     target_specs: Mapping[str, Any] | None,
@@ -185,6 +203,17 @@ def _opamp_nominal_smoke_factory(
 
 
 _PROVIDERS = {
+    "SampleHold": CircuitTypeRuntimeProvider(
+        circuit_type="SampleHold",
+        semantic_resolver_name="SampleHoldSourceVerifiedV1",
+        evaluator_name="SampleHoldEvaluatorV1",
+        functional_validator_name="SampleHoldFunctionalValidator",
+        performance_template_name="SampleHold",
+        testbench_defaults={},
+        structural_builder_name="_build_sample_hold_circuit_config",
+        evaluator_factory=_sample_hold_evaluator_factory,
+        validator_factory=_sample_hold_validator_factory,
+    ),
     "CurrentMirror": CircuitTypeRuntimeProvider(
         circuit_type="CurrentMirror",
         semantic_resolver_name="CurrentMirrorAutoConfigSemanticResolver",
