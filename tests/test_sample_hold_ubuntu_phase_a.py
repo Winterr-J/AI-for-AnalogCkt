@@ -106,7 +106,10 @@ def test_functional_and_numeric_states_remain_independent():
 
 def test_main_requires_ubuntu_acceptance_before_native_execution():
     path = PILOTS / "circuit_0259/one_iteration_pilot_v1.yaml"
-    with pytest.raises(AutoConfigError, match="requires Ubuntu acceptance"):
+    with pytest.raises(
+            AutoConfigError,
+            match=r"requires SAMPLE_HOLD_UBUNTU_ACCEPTANCE_FILE_0259"
+    ):
         run_configured_active_learning(
             "SampleHold", "circuit_0259", config_path=path,
             llm_client=lambda _: pytest.fail("LLM must not be called"),
