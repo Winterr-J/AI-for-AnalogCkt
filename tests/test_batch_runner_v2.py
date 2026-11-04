@@ -168,6 +168,38 @@ class BatchRunnerV2Tests(unittest.TestCase):
         self.assertEqual(result["completed"], 3)
         self.assertEqual(before["jobs"], status_batch("offline_batch_1", self.output)["jobs"])
 
+    def test_sample_hold_thin_dispatch_keeps_sequence_and_resume(self):
+        self.jobs = self.jobs[:2]
+        self.payload["jobs"] = self.jobs
+        for job, circuit_id in zip(
+                self.jobs, ("circuit_0259", "circuit_0263")):
+            job["circuit_type"] = "SampleHold"
+            job["circuit_id"] = circuit_id
+        self.write_manifest()
+        order = []
+        first = run_mock_batch(
+            self.manifest, self.output,
+            lambda job, attempt: (
+                order.append(job["circuit_id"]), self.success(job, attempt)
+            )[1],
+        )
+        self.assertEqual(order, ["circuit_0259", "circuit_0263"])
+        self.assertEqual(first["completed"], 2)
+        resumed = run_mock_batch(
+            self.manifest, self.output,
+            lambda *_: self.fail("completed SampleHold job replayed"),
+        )
+        self.assertEqual(resumed["completed"], 2)
+
+    def test_sample_hold_0605_remains_blocked(self):
+        self.jobs = self.jobs[:1]
+        self.payload["jobs"] = self.jobs
+        self.jobs[0]["circuit_type"] = "SampleHold"
+        self.jobs[0]["circuit_id"] = "circuit_0605"
+        self.write_manifest()
+        with self.assertRaisesRegex(ValueError, "only reviewed SampleHold"):
+            plan_batch(self.manifest)
+
     def test_mid_iteration_crash_is_uncertain_and_stops_batch(self):
         def crashing(job, attempt):
             if job["job_id"] == "job_1":

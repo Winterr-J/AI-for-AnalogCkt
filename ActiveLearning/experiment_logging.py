@@ -180,6 +180,10 @@ def write_completed_run(
         summary.pop("joint_success")
         summary.pop("functional_joint_success")
         summary.pop("functional_unverified")
+    if result.get("sample_hold_pilot_execution") is not None:
+        summary["sample_hold_pilot_execution"] = result[
+            "sample_hold_pilot_execution"
+        ]
     _write_json(Path(run_context["run_directory"]) / "summary.json", summary)
 
     row = {

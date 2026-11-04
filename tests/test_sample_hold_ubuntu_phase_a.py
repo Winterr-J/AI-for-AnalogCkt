@@ -104,9 +104,9 @@ def test_functional_and_numeric_states_remain_independent():
     assert invalid["meets_spec"] is None
 
 
-def test_main_refuses_sample_hold_before_native_execution():
+def test_main_requires_ubuntu_acceptance_before_native_execution():
     path = PILOTS / "circuit_0259/one_iteration_pilot_v1.yaml"
-    with pytest.raises(AutoConfigError, match="Phase A is static only"):
+    with pytest.raises(AutoConfigError, match="requires Ubuntu acceptance"):
         run_configured_active_learning(
             "SampleHold", "circuit_0259", config_path=path,
             llm_client=lambda _: pytest.fail("LLM must not be called"),

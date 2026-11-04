@@ -13,6 +13,9 @@ import pytest
 
 from ActiveLearning import sample_hold_linux_canary as canary
 from ActiveLearning import sample_hold_posix as posix
+from ActiveLearning.onboarding import sample_hold_batch as batch
+from ActiveLearning.onboarding import sample_hold_ubuntu as ubuntu
+from ActiveLearning.onboarding.errors import AutoConfigError
 
 
 def _draft(tmp_path: Path, monkeypatch) -> tuple[Path, Path]:
@@ -180,3 +183,91 @@ def test_posix_rejects_surviving_grandchild_after_leader_exits(monkeypatch):
         posix.run_isolated(["mock-parent-exits-grandchild-lives"], cwd=Path("."),
                            timeout=1, environment={})
     assert (4321, 9) in calls
+
+
+def test_posix_success_returns_containment_evidence(monkeypatch):
+    process = Mock()
+    process.pid = 4321
+    process.returncode = 0
+    process.communicate.return_value = ("out", "err")
+
+    def killpg(_pgid, sig):
+        if sig == 0:
+            raise ProcessLookupError
+
+    monkeypatch.setattr(posix.subprocess, "Popen", Mock(return_value=process))
+    monkeypatch.setattr(
+        posix, "os", SimpleNamespace(name="posix", killpg=killpg),
+    )
+    result = posix.run_isolated(
+        ["mock"], cwd=Path("."), timeout=1, environment={},
+    )
+    assert result.returncode == 0
+    assert result.job_evidence == {
+        "contained_before_resume": True,
+        "active_processes_at_return": 0,
+    }
+
+
+def test_parameterized_launcher_maps_uncertain_posix_cleanup_fail_closed(
+        monkeypatch):
+    monkeypatch.setattr(batch, "os", SimpleNamespace(name="posix"))
+    monkeypatch.setattr(
+        posix, "run_isolated",
+        Mock(side_effect=posix.ProcessGroupUncertain("uncertain group")),
+    )
+    with pytest.raises(batch.UncertainProcessError, match="reaping unconfirmed"):
+        batch._parameterized_native_launcher(
+            ["mock"], cwd=Path("."), timeout=1, environment={},
+        )
+
+
+def test_posix_executor_cannot_bypass_ubuntu_acceptance(tmp_path, monkeypatch):
+    config = tmp_path / "pilot.yaml"
+    config.write_text("pilot: reviewed\n", encoding="utf-8")
+    pilot = {
+        "enabled": True,
+        "execution_id": "sc0259_al_pilot_test",
+        "output_root": str((tmp_path / "physical").resolve()),
+        "budget": {
+            "physical_attempts_max": 1,
+            "single_attempt_timeout_s": 1,
+            "overall_timeout_s": 1,
+            "automatic_retries": 0,
+        },
+    }
+    monkeypatch.setattr(batch, "os", SimpleNamespace(name="posix"))
+    with pytest.raises(AutoConfigError, match="requires exact Ubuntu acceptance"):
+        batch.SampleHoldALExecutor(
+            SimpleNamespace(circuit_id="circuit_0259"), config, pilot,
+        )
+
+
+def test_ubuntu_acceptance_binds_exact_config_d0_and_output(
+        tmp_path, monkeypatch):
+    config = tmp_path / "pilot.yaml"
+    d0 = tmp_path / "d0.jsonl"
+    config.write_text("pilot: reviewed\n", encoding="utf-8")
+    d0.write_text('{"sample_id":"d0_0"}\n', encoding="utf-8")
+    acceptance = tmp_path / "acceptance.json"
+    payload = {
+        "schema": ubuntu.SCHEMA,
+        "status": "ubuntu_physical_accepted",
+        "circuit_id": "circuit_0259",
+        "config_sha256": canary._sha(config),
+        "d0_sha256": canary._sha(d0),
+        "repository_root": str(Path(ubuntu.__file__).resolve().parents[2]),
+        "python_executable": str(Path(ubuntu.sys.executable).resolve()),
+        "output_root": str((tmp_path / "physical").resolve()),
+        "accepted_by": "offline-test-operator",
+        "accepted_at": datetime.now(timezone.utc).isoformat(),
+    }
+    acceptance.write_text(json.dumps(payload), encoding="utf-8")
+    monkeypatch.setattr(ubuntu, "_is_ubuntu", lambda: True)
+    monkeypatch.setenv(ubuntu.ENVIRONMENT_VARIABLE, str(acceptance.resolve()))
+    runtime = SimpleNamespace(circuit_id="circuit_0259")
+    loaded = ubuntu.load_ubuntu_acceptance(runtime, config, d0)
+    assert loaded["acceptance_sha256"] == canary._sha(acceptance)
+    d0.write_text('{"sample_id":"changed"}\n', encoding="utf-8")
+    with pytest.raises(AutoConfigError, match="exact runtime"):
+        ubuntu.load_ubuntu_acceptance(runtime, config, d0)

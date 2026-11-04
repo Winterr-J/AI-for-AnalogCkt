@@ -36,15 +36,23 @@ _SOURCE_PATHS = (
     "ActiveLearning/onboarding/sample_hold.py",
     "ActiveLearning/onboarding/sample_hold_batch.py",
     "ActiveLearning/onboarding/sample_hold_batch_child.py",
+    "ActiveLearning/onboarding/sample_hold_phase_a.py",
+    "ActiveLearning/onboarding/sample_hold_ubuntu.py",
+    "ActiveLearning/onboarding/models.py",
+    "ActiveLearning/onboarding/runtime_provider.py",
     "ActiveLearning/onboarding/d0_execution_windows.py",
     "ActiveLearning/sc_sample_hold_generic.py",
     "ActiveLearning/sc_sample_hold_canary_child.py",
     "ActiveLearning/sample_hold_offline.py",
+    "ActiveLearning/sample_hold_posix.py",
     "ActiveLearning/windows_job_isolation.py",
     "ActiveLearning/sc_sample_hold_canary.py",
     "ActiveLearning/sc_sample_hold_canary_child.py",
     "ActiveLearning/sc_0259_canary.py",
     "ActiveLearning/main.py",
+    "ActiveLearning/active_learning.py",
+    "ActiveLearning/experiment_logging.py",
+    "ActiveLearning/real_evaluation/real_evaluator.py",
     "ActiveLearning/d0_initialization.py",
     "ActiveLearning/onboarding/auto_config.py",
     "ActiveLearning/onboarding/runtime_provider.py",
@@ -56,6 +64,25 @@ _SOURCE_PATHS = (
     "ActiveLearning/circuit_types/SampleHold/performance_template.yaml",
     "run/single_stage_amplifier/run_ideal_dataset_simulations.py",
 )
+
+
+def _parameterized_native_launcher(command, *, cwd, timeout, environment):
+    """Use the existing platform isolation while keeping one worker contract."""
+    if os.name != "posix":
+        return _native_launcher(command, cwd=cwd, timeout=timeout,
+                                environment=environment)
+    from ActiveLearning.sample_hold_posix import (
+        ProcessGroupUncertain,
+        run_isolated,
+    )
+
+    try:
+        return run_isolated(command, cwd=cwd, timeout=timeout,
+                            environment=environment)
+    except ProcessGroupUncertain as error:
+        raise UncertainProcessError(
+            "SampleHold POSIX child/descendant reaping unconfirmed"
+        ) from error
 
 
 def _canonical_sha(value: Any) -> str:
@@ -751,7 +778,9 @@ class SampleHoldBatchExecutor:
                     raise AutoConfigError(f"D0 native child exited {result.returncode}")
                 raw = json.loads((candidate / "native_result.json").read_text(encoding="utf-8"))
                 plan = _frozen_plan(self.runtime)
-                expected_mock = self.launcher is not _native_launcher
+                expected_mock = self.launcher not in {
+                    _native_launcher, _parameterized_native_launcher,
+                }
                 if (raw.get("vector_sha256") != vector_sha or raw.get("mock") is not expected_mock
                         or raw.get("fixture_sha256") != plan["fixture"].fixture_hash
                         or raw.get("stimulus_sha256") != plan["config"]["stimulus_sha256"]):
@@ -840,10 +869,12 @@ class SampleHoldALExecutor(SampleHoldBatchExecutor):
     """Bounded AL validation using the existing isolated SampleHold worker."""
 
     def __init__(self, runtime: Any, config_path: Path, pilot: Mapping[str, Any],
-                 *, launcher: Callable = _native_launcher):
+                 *, launcher: Callable | None = None,
+                 ubuntu_acceptance: Mapping[str, Any] | None = None):
         self.runtime = runtime
         self.config_path = Path(config_path).resolve(strict=True)
-        self.launcher = launcher
+        native_default = launcher is None
+        self.launcher = launcher or _parameterized_native_launcher
         if not isinstance(pilot, Mapping):
             raise AutoConfigError("invalid bounded SampleHold AL pilot contract")
         budget = pilot.get("budget")
@@ -871,6 +902,20 @@ class SampleHoldALExecutor(SampleHoldBatchExecutor):
                 or budget["overall_timeout_s"] < budget["single_attempt_timeout_s"]):
             raise AutoConfigError("invalid bounded SampleHold AL pilot contract")
         self.root = root.resolve()
+        self.ubuntu_acceptance = dict(ubuntu_acceptance or {})
+        if native_default and os.name == "posix":
+            acceptance_path = Path(
+                self.ubuntu_acceptance.get("acceptance_path") or ""
+            )
+            if (self.ubuntu_acceptance.get("circuit_id") != runtime.circuit_id
+                    or self.ubuntu_acceptance.get("output_root") != str(self.root)
+                    or not acceptance_path.is_absolute()
+                    or not acceptance_path.is_file()
+                    or sha256_file(acceptance_path)
+                    != self.ubuntu_acceptance.get("acceptance_sha256")):
+                raise AutoConfigError(
+                    "SampleHold POSIX executor requires exact Ubuntu acceptance"
+                )
         self.experiment_id = execution_id
         self.budget = dict(budget)
         self.contract_key = "execution_contract_sha256"
@@ -901,7 +946,15 @@ class SampleHoldALExecutor(SampleHoldBatchExecutor):
                 self.runtime, self.config_path, self.root,
                 self.experiment_id, self.budget)) != self.approval_sha:
             raise AutoConfigError("SampleHold AL pilot execution contract changed")
-        if self.launcher is _native_launcher and self.runtime.circuit_id != "circuit_0259":
+        if self.ubuntu_acceptance:
+            acceptance_path = Path(self.ubuntu_acceptance["acceptance_path"])
+            if (not acceptance_path.is_file()
+                    or sha256_file(acceptance_path)
+                    != self.ubuntu_acceptance["acceptance_sha256"]):
+                raise AutoConfigError("SampleHold Ubuntu acceptance changed")
+        if (self.launcher is _parameterized_native_launcher
+                and os.name != "posix"
+                and self.runtime.circuit_id != "circuit_0259"):
             from ActiveLearning.sc_sample_hold_canary import _native_environment_verified
 
             if not _native_environment_verified(_frozen_plan(self.runtime)["closure"]):
@@ -911,6 +964,7 @@ class SampleHoldALExecutor(SampleHoldBatchExecutor):
         return [
             sys.executable, "-m", "ActiveLearning.onboarding.sample_hold_batch_child",
             "--config", str(self.config_path), "--al-pilot",
+            "--output-root", str(self.root),
             "--candidate", str(candidate), "--token", token,
         ]
 

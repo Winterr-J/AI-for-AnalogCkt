@@ -213,12 +213,17 @@ def run_active_learning(
     initial_feasible_record = _recompute_initial_meets_spec(
         records, target_specs, circuit_type=circuit_info.get("circuit_type"),
     )
+    d0_meets_spec_count = sum(
+        record.get("status", {}).get("meets_spec") is True for record in records
+    )
     if stop_on_meets_spec and initial_feasible_record is not None:
         return {
             "records": records,
             "iteration_log": iteration_log,
             "iterations_completed": 0,
             "stop_reason": "initial_d0_meets_spec",
+            "stop_on_meets_spec": stop_on_meets_spec,
+            "d0_meets_spec_count": d0_meets_spec_count,
             "best_or_final_record": initial_feasible_record,
             "total_timing": {
                 "total_seconds": time.perf_counter() - run_start,
@@ -578,6 +583,8 @@ def run_active_learning(
         "iteration_log": iteration_log,
         "iterations_completed": len(iteration_log),
         "stop_reason": stop_reason,
+        "stop_on_meets_spec": stop_on_meets_spec,
+        "d0_meets_spec_count": d0_meets_spec_count,
         "best_or_final_record": final_record,
         "total_timing": total_timing,
         "total_tokens": _sum_token_usage(llm_usage_log),

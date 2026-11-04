@@ -403,6 +403,9 @@ class ActiveLearningCircuitConfig:
                 item.name: item.nominal for item in self.runtime_parameters
             },
             "operating_conditions": _jsonable(self.operating_conditions),
-            "testbench": _jsonable(self.testbench_config),
+            "testbench": _jsonable({
+                name: value for name, value in self.testbench_config.items()
+                if not name.startswith("_")
+            }),
             "semantic_mapping": semantic_mapping,
         }

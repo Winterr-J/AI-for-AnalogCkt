@@ -42,6 +42,7 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--token", required=True)
     parser.add_argument("--extension", type=Path)
     parser.add_argument("--al-pilot", action="store_true")
+    parser.add_argument("--output-root", type=Path)
     args = parser.parse_args(argv)
 
     import yaml
@@ -65,13 +66,15 @@ def main(argv: list[str] | None = None) -> int:
         if args.approval is not None or args.extension is not None:
             raise RuntimeError("AL pilot does not accept D0 approval or extension files")
         pilot = config["sample_hold_pilot"]
-        root = Path(pilot["output_root"]).resolve()
+        root = (args.output_root or Path(pilot["output_root"])).resolve()
         experiment_id = pilot["execution_id"]
         contract_key = "execution_contract_sha256"
         contract_sha = _canonical_sha(al_pilot_contract(
             runtime, config_path, root, experiment_id, pilot["budget"],
         ))
     else:
+        if args.output_root is not None:
+            raise RuntimeError("D0 execution does not accept an AL output root")
         root = Path(data["batch_output_root"]).resolve()
         experiment_id = data["batch_experiment_id"]
     operator_full = data.get("batch_execution_mode") == "operator_full"
@@ -107,7 +110,7 @@ def main(argv: list[str] | None = None) -> int:
         if window is None or time.time() >= window["deadline_unix_s"]:
             raise RuntimeError("D0 continuation execution window not active")
     plan = _frozen_plan(runtime)
-    if circuit_id != "circuit_0259":
+    if circuit_id != "circuit_0259" and os.name != "posix":
         from ActiveLearning.sc_sample_hold_canary import _native_environment_verified
         if not _native_environment_verified(plan["closure"]):
             raise RuntimeError("strict native environment mismatch")

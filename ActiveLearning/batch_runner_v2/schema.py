@@ -53,6 +53,16 @@ _REQUIRED_REAL_AL_CLOSURE = {
     "ActiveLearning/batch_runner_v2/schema.py",
     "ActiveLearning/batch_runner_v2/storage.py",
 }
+_REQUIRED_SAMPLE_HOLD_CLOSURE = {
+    "ActiveLearning/onboarding/sample_hold.py",
+    "ActiveLearning/onboarding/sample_hold_batch.py",
+    "ActiveLearning/onboarding/sample_hold_batch_child.py",
+    "ActiveLearning/onboarding/sample_hold_phase_a.py",
+    "ActiveLearning/onboarding/sample_hold_ubuntu.py",
+    "ActiveLearning/onboarding/models.py",
+    "ActiveLearning/onboarding/runtime_provider.py",
+    "ActiveLearning/sample_hold_posix.py",
+}
 
 
 def _label(value: object, name: str) -> str:
@@ -157,6 +167,9 @@ def verify_job(manifest: dict, job: dict) -> None:
             raise ValueError("performance specification identity mismatch")
     if job["circuit_type"] == "VoltageReference" and job["circuit_id"] == "circuit_0490":
         raise ValueError("AG626 one-time AL authorization is not supported by V2-A")
+    if job["circuit_type"] == "SampleHold" and job["circuit_id"] not in {
+            "circuit_0259", "circuit_0263"}:
+        raise ValueError("Batch Runner V2 admits only reviewed SampleHold 0259/0263")
 
 
 def _verify_source_closure(payload: dict, code_root: Path) -> None:
@@ -166,6 +179,13 @@ def _verify_source_closure(payload: dict, code_root: Path) -> None:
     if not _REQUIRED_REAL_AL_CLOSURE.issubset(closure):
         missing = sorted(_REQUIRED_REAL_AL_CLOSURE - set(closure))
         raise ValueError(f"B2A source closure is incomplete: {', '.join(missing)}")
+    if any(job.get("circuit_type") == "SampleHold" for job in payload["jobs"]):
+        missing = sorted(_REQUIRED_SAMPLE_HOLD_CLOSURE - set(closure))
+        if missing:
+            raise ValueError(
+                "B2A SampleHold source closure is incomplete: "
+                + ", ".join(missing)
+            )
     if payload.get("retry_policy", {}).get("rate_limit_mode") == "job_deadline" and (
             "ActiveLearning/batch_runner_v2/time_recovery.py" not in closure):
         raise ValueError("time-driven source closure is incomplete")

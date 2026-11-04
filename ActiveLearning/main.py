@@ -4,6 +4,7 @@ import argparse
 from copy import deepcopy
 import hashlib
 import json
+import math
 from pathlib import Path, PureWindowsPath
 
 import yaml
@@ -165,6 +166,57 @@ def _check_independent_d0(config, d0_path):
         raise AutoConfigError(f"independent D0 provenance does not match config: {manifest}")
 
 
+def _validate_sample_hold_pilot(
+    config,
+    runtime,
+    config_path,
+    d0_path,
+    target_specs,
+    performance_template,
+):
+    """Validate the frozen pilot and require exact Ubuntu acceptance evidence."""
+    from ActiveLearning.onboarding.sample_hold_batch import SampleHoldALExecutor
+    from ActiveLearning.onboarding.sample_hold_phase_a import validate_pilot_static
+    from ActiveLearning.onboarding.sample_hold_ubuntu import load_ubuntu_acceptance
+
+    if runtime.circuit_id not in {"circuit_0259", "circuit_0263"}:
+        raise AutoConfigError("SampleHold AL allows only circuit_0259/circuit_0263")
+    metric_names = set(
+        performance_template["performance_template"]["active_metrics"]
+    )
+    if (not isinstance(target_specs, dict)
+            or set(target_specs) != metric_names
+            or target_specs != config.get("target_specs")
+            or any(not isinstance(spec, dict) or spec.get("operator") != "<="
+                   or type(spec.get("value")) not in (int, float)
+                   or not math.isfinite(spec["value"]) or spec["value"] <= 0
+                   for spec in target_specs.values())):
+        raise AutoConfigError(
+            "SampleHold AL requires operator-selected positive <= targets"
+        )
+    settings = config.get("active_learning") or {}
+    if settings.get("prediction_prompt_version") != "compact_v1":
+        raise AutoConfigError(
+            "SampleHold AL requires prediction_prompt_version=compact_v1"
+        )
+    pilot = config.get("sample_hold_pilot") or {}
+    budget = pilot.get("budget") or {}
+    if budget.get("physical_attempts_max") != settings.get("max_iterations"):
+        raise AutoConfigError(
+            "SampleHold AL requires physical_attempts_max=max_iterations"
+        )
+    validate_pilot_static(
+        runtime, config, Path(config_path), Path(d0_path), performance_template,
+    )
+    acceptance = load_ubuntu_acceptance(runtime, config_path, d0_path)
+    effective_pilot = deepcopy(pilot)
+    effective_pilot["output_root"] = acceptance["output_root"]
+    return SampleHoldALExecutor(
+        runtime, Path(config_path), effective_pilot,
+        ubuntu_acceptance=acceptance,
+    )
+
+
 def _inspect_experiment_config(circuit_type, circuit_id, config_path=None):
     """Load optional experiment targets for config-only inspection.
 
@@ -300,15 +352,13 @@ def run_configured_active_learning(
         raise AutoConfigError("frozen D0 fingerprint mismatch")
     _check_independent_d0(config, d0_path)
     records = _load_jsonl(d0_path)
+    sample_hold_executor = None
     if circuit_type == "SampleHold":
-        from ActiveLearning.onboarding.sample_hold_phase_a import validate_pilot_static
-
-        validate_pilot_static(runtime, config, paths["config"], d0_path,
-                              performance_template)
-        raise AutoConfigError(
-            "SampleHold Phase A is static only: Ubuntu native closure and "
-            "physical AL authorization must be reviewed before execution"
+        sample_hold_executor = _validate_sample_hold_pilot(
+            config, runtime, paths["config"], d0_path, target_specs,
+            performance_template,
         )
+        runtime.testbench_config["_al_executor"] = sample_hold_executor
     circuit_info = dict(parameter_template["circuit"])
     circuit_info.update(config.get("circuit_info", {}))
     settings = config.get("active_learning", {})
@@ -395,6 +445,10 @@ def run_configured_active_learning(
         ),
         deadline_check=deadline_check,
     )
+    if sample_hold_executor is not None:
+        result["sample_hold_pilot_execution"] = (
+            sample_hold_executor.execution_statistics()
+        )
     write_completed_run(
         selected_runs_root,
         run_context,

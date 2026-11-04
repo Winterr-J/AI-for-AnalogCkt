@@ -56,4 +56,9 @@ def run_isolated(command: list[str], *, cwd: Path, timeout: float,
     if _group_exists(process.pid):
         _kill_and_reap(process)
         raise ProcessGroupUncertain("native child left a live descendant")
-    return subprocess.CompletedProcess(command, process.returncode, stdout, stderr)
+    completed = subprocess.CompletedProcess(command, process.returncode, stdout, stderr)
+    completed.job_evidence = {
+        "contained_before_resume": True,
+        "active_processes_at_return": 0,
+    }
+    return completed

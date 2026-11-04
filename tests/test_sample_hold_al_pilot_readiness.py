@@ -11,13 +11,12 @@ from types import SimpleNamespace
 import pytest
 import yaml
 
+from ActiveLearning import main as al_main
 from ActiveLearning.active_learning import run_active_learning
-from ActiveLearning.main import (
-    _validate_sample_hold_pilot,
-    run_configured_active_learning,
-)
+from ActiveLearning.main import run_configured_active_learning
 from ActiveLearning.onboarding import AutoConfigError, build_active_learning_circuit_config
 from ActiveLearning.onboarding import sample_hold_batch as batch
+from ActiveLearning.onboarding.sample_hold_phase_a import validate_pilot_static
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -166,16 +165,12 @@ def test_one_and_five_iteration_configs_pass_read_only_runtime_validation(
     performance_template = yaml.safe_load(
         runtime.performance_template_path.read_text(encoding="utf-8")
     )
-    executor = _validate_sample_hold_pilot(
-        config,
-        runtime,
-        config_path,
+    status = validate_pilot_static(
+        runtime, config, config_path,
         EXAMPLES / circuit_id / "d0" / "d0_v3_seed42.jsonl",
-        config["target_specs"],
         performance_template,
-        config["active_learning"],
     )
-    assert executor.budget["physical_attempts_max"] == expected_iterations
+    assert status["physical_attempts_max"] == expected_iterations
 
 
 @pytest.mark.parametrize("circuit_id", IDS)
@@ -369,7 +364,10 @@ def test_configured_main_runs_one_mock_iteration_and_keeps_d0_separate(
             return {"physical_attempts_reserved": len(evaluations),
                     "physical_attempts_max": 1, "outcomes": ["complete"]}
 
-    monkeypatch.setattr(batch, "SampleHoldALExecutor", lambda *_args, **_kwargs: FakeExecutor())
+    monkeypatch.setattr(
+        al_main, "_validate_sample_hold_pilot",
+        lambda *_args, **_kwargs: FakeExecutor(),
+    )
 
     nominal = {item["name"]: item["nominal_value"] for item in
                build_active_learning_circuit_config(
@@ -444,7 +442,8 @@ def test_configured_main_runs_five_feedback_iterations_with_accumulated_history(
             }
 
     monkeypatch.setattr(
-        batch, "SampleHoldALExecutor", lambda *_args, **_kwargs: FakeExecutor(),
+        al_main, "_validate_sample_hold_pilot",
+        lambda *_args, **_kwargs: FakeExecutor(),
     )
     nominal = {item["name"]: item["nominal_value"] for item in
                build_active_learning_circuit_config(
