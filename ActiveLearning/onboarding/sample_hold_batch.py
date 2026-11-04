@@ -64,6 +64,43 @@ _SOURCE_PATHS = (
     "ActiveLearning/circuit_types/SampleHold/performance_template.yaml",
     "run/single_stage_amplifier/run_ideal_dataset_simulations.py",
 )
+_AL_SOURCE_PATHS = tuple(dict.fromkeys((
+    "ActiveLearning/onboarding/sample_hold.py",
+    "ActiveLearning/onboarding/sample_hold_batch.py",
+    "ActiveLearning/onboarding/sample_hold_batch_child.py",
+    "ActiveLearning/onboarding/sample_hold_phase_a.py",
+    "ActiveLearning/onboarding/sample_hold_ubuntu.py",
+    "ActiveLearning/onboarding/models.py",
+    "ActiveLearning/onboarding/runtime_provider.py",
+    "ActiveLearning/sc_sample_hold_generic.py",
+    "ActiveLearning/sc_sample_hold_canary_child.py",
+    "ActiveLearning/sc_0259_canary.py",
+    "ActiveLearning/sample_hold_linux_canary.py",
+    "ActiveLearning/sample_hold_offline.py",
+    "ActiveLearning/sample_hold_posix.py",
+    "ActiveLearning/main.py",
+    "ActiveLearning/active_learning.py",
+    "ActiveLearning/experiment_logging.py",
+    "ActiveLearning/real_evaluation/real_evaluator.py",
+    "ActiveLearning/d0_initialization.py",
+    "ActiveLearning/onboarding/auto_config.py",
+    "ActiveLearning/InitializeD0/validation/parameter_validator.py",
+    "ActiveLearning/InitializeD0/validation/spec_validator.py",
+    "ActiveLearning/InitializeD0/sampling/initial_sampler.py",
+    "ActiveLearning/InitializeD0/d0_builder.py",
+    "ActiveLearning/circuit_types/SampleHold/performance_template.yaml",
+    "run/__init__.py",
+    "run/single_stage_amplifier/__init__.py",
+    "run/single_stage_amplifier/run_ideal_dataset_simulations.py",
+    "conversion/__init__.py",
+    "conversion/cadence_to_pyspice.py",
+    "simulation_metrics/__init__.py",
+    "simulation_metrics/ac.py",
+    "simulation_metrics/dc.py",
+    "simulation_metrics/loop_gain.py",
+    "simulation_metrics/op.py",
+    "simulation_metrics/transient.py",
+)))
 
 
 def _parameterized_native_launcher(command, *, cwd, timeout, environment):
@@ -137,6 +174,13 @@ def _frozen_plan(runtime: Any) -> dict:
     return load_plan(path)
 
 
+def _al_plan(runtime: Any) -> dict:
+    if os.name == "posix":
+        from ActiveLearning.onboarding.sample_hold_ubuntu import load_al_plan
+        return load_al_plan(runtime.circuit_id)
+    return _frozen_plan(runtime)
+
+
 def _source_hashes(runtime: Any) -> dict[str, str]:
     dataset = f"dataset/{runtime.circuit_id}"
     paths = (*_SOURCE_PATHS, f"{dataset}/parameters/tunable_parameters.yaml",
@@ -181,7 +225,7 @@ def operator_contract(runtime: Any, config_path: Path, output_root: Path,
 def al_pilot_contract(runtime: Any, config_path: Path, output_root: Path,
                       execution_id: str, budget: Mapping[str, Any]) -> dict:
     """Bind one explicitly configured AL pilot to the reviewed native worker."""
-    plan = _frozen_plan(runtime)
+    plan = _al_plan(runtime)
     al_paths = (
         "ActiveLearning/active_learning.py",
         "ActiveLearning/experiment_logging.py",
@@ -204,7 +248,14 @@ def al_pilot_contract(runtime: Any, config_path: Path, output_root: Path,
         "fixture_sha256": plan["fixture"].fixture_hash,
         "stimulus_sha256": plan["config"]["stimulus_sha256"],
         "source_hashes": {
-            **_source_hashes(runtime),
+            **({name: sha256_file(ROOT / name) for name in (
+                *_AL_SOURCE_PATHS,
+                f"dataset/{runtime.circuit_id}/parameters/tunable_parameters.yaml",
+                f"dataset/{runtime.circuit_id}/parameters/ideal_design_space.yaml",
+                f"dataset/{runtime.circuit_id}/topology/{runtime.circuit_id}.py",
+                f"dataset/{runtime.circuit_id}/topology/{runtime.circuit_id}.cir",
+                f"dataset/{runtime.circuit_id}/simulation/parameter/ideal_param.yaml",
+            )} if os.name == "posix" else _source_hashes(runtime)),
             **{name: sha256_file(ROOT / name) for name in al_paths},
         },
         "output_root": str(output_root),
@@ -466,8 +517,9 @@ class SampleHoldBatchExecutor:
                 or evidence.get("active_processes_at_return") != 0):
             raise AutoConfigError("candidate process reaping not proven")
         raw = json.loads(result_path.read_text(encoding="utf-8"))
-        plan = _frozen_plan(self.runtime)
-        expected_mock = self.launcher is not _native_launcher
+        plan = (_al_plan(self.runtime) if self.contract_key == "execution_contract_sha256"
+                and isinstance(self, SampleHoldALExecutor) else _frozen_plan(self.runtime))
+        expected_mock = self.launcher not in {_native_launcher, _parameterized_native_launcher}
         if (raw.get("vector_sha256") != vector_sha
                 or raw.get("mock") is not expected_mock
                 or raw.get("fixture_sha256") != plan["fixture"].fixture_hash
@@ -777,7 +829,8 @@ class SampleHoldBatchExecutor:
                 if result.returncode != 0:
                     raise AutoConfigError(f"D0 native child exited {result.returncode}")
                 raw = json.loads((candidate / "native_result.json").read_text(encoding="utf-8"))
-                plan = _frozen_plan(self.runtime)
+                plan = (_al_plan(self.runtime) if isinstance(self, SampleHoldALExecutor)
+                        else _frozen_plan(self.runtime))
                 expected_mock = self.launcher not in {
                     _native_launcher, _parameterized_native_launcher,
                 }
@@ -870,10 +923,10 @@ class SampleHoldALExecutor(SampleHoldBatchExecutor):
 
     def __init__(self, runtime: Any, config_path: Path, pilot: Mapping[str, Any],
                  *, launcher: Callable | None = None,
-                 ubuntu_acceptance: Mapping[str, Any] | None = None):
+                 runtime_preflight: Mapping[str, Any] | None = None,
+                 d0_path: Path | None = None):
         self.runtime = runtime
         self.config_path = Path(config_path).resolve(strict=True)
-        native_default = launcher is None
         self.launcher = launcher or _parameterized_native_launcher
         if not isinstance(pilot, Mapping):
             raise AutoConfigError("invalid bounded SampleHold AL pilot contract")
@@ -902,20 +955,14 @@ class SampleHoldALExecutor(SampleHoldBatchExecutor):
                 or budget["overall_timeout_s"] < budget["single_attempt_timeout_s"]):
             raise AutoConfigError("invalid bounded SampleHold AL pilot contract")
         self.root = root.resolve()
-        self.ubuntu_acceptance = dict(ubuntu_acceptance or {})
-        if native_default and os.name == "posix":
-            acceptance_path = Path(
-                self.ubuntu_acceptance.get("acceptance_path") or ""
-            )
-            if (self.ubuntu_acceptance.get("circuit_id") != runtime.circuit_id
-                    or self.ubuntu_acceptance.get("output_root") != str(self.root)
-                    or not acceptance_path.is_absolute()
-                    or not acceptance_path.is_file()
-                    or sha256_file(acceptance_path)
-                    != self.ubuntu_acceptance.get("acceptance_sha256")):
-                raise AutoConfigError(
-                    "SampleHold POSIX executor requires exact Ubuntu acceptance"
-                )
+        self.runtime_preflight = dict(runtime_preflight or {})
+        self.d0_path = Path(d0_path).resolve(strict=True) if d0_path else None
+        if self.launcher is _parameterized_native_launcher and os.name == "posix":
+            if self.d0_path is None:
+                raise AutoConfigError("SampleHold POSIX executor requires frozen D0")
+            from ActiveLearning.onboarding.sample_hold_ubuntu import runtime_preflight as verify
+            if self.runtime_preflight != verify(runtime, self.config_path, self.d0_path, pilot):
+                raise AutoConfigError("SampleHold Ubuntu runtime preflight changed")
         self.experiment_id = execution_id
         self.budget = dict(budget)
         self.contract_key = "execution_contract_sha256"
@@ -942,16 +989,18 @@ class SampleHoldALExecutor(SampleHoldBatchExecutor):
         self.lock = self.root / (execution_id + ".lock")
 
     def _assert_identity(self) -> None:
+        if (self.launcher is _parameterized_native_launcher and os.name == "posix"
+                and not self.runtime_preflight):
+            raise AutoConfigError("SampleHold POSIX executor requires runtime preflight")
         if _canonical_sha(al_pilot_contract(
                 self.runtime, self.config_path, self.root,
                 self.experiment_id, self.budget)) != self.approval_sha:
             raise AutoConfigError("SampleHold AL pilot execution contract changed")
-        if self.ubuntu_acceptance:
-            acceptance_path = Path(self.ubuntu_acceptance["acceptance_path"])
-            if (not acceptance_path.is_file()
-                    or sha256_file(acceptance_path)
-                    != self.ubuntu_acceptance["acceptance_sha256"]):
-                raise AutoConfigError("SampleHold Ubuntu acceptance changed")
+        if self.runtime_preflight:
+            from ActiveLearning.onboarding.sample_hold_ubuntu import runtime_preflight as verify
+            pilot = {"execution_id": self.experiment_id, "budget": self.budget}
+            if verify(self.runtime, self.config_path, self.d0_path, pilot) != self.runtime_preflight:
+                raise AutoConfigError("SampleHold Ubuntu runtime preflight changed")
         if (self.launcher is _parameterized_native_launcher
                 and os.name != "posix"
                 and self.runtime.circuit_id != "circuit_0259"):
@@ -959,6 +1008,18 @@ class SampleHoldALExecutor(SampleHoldBatchExecutor):
 
             if not _native_environment_verified(_frozen_plan(self.runtime)["closure"]):
                 raise AutoConfigError("AL pilot native environment differs from frozen closure")
+
+    def _initialize_or_verify(self) -> dict:
+        fresh = not self.experiment.exists()
+        if not fresh and self.runtime_preflight:
+            path = self.experiment / "runtime_preflight.json"
+            if (not path.is_file() or json.loads(path.read_text(encoding="utf-8"))
+                    != self.runtime_preflight):
+                raise AutoConfigError("SampleHold Ubuntu preflight record missing or changed")
+        identity = super()._initialize_or_verify()
+        if fresh and self.runtime_preflight:
+            _write_json(self.experiment / "runtime_preflight.json", self.runtime_preflight)
+        return identity
 
     def _child_command(self, candidate: Path, token: str) -> list[str]:
         return [

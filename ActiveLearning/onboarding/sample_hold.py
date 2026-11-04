@@ -10,6 +10,7 @@ from dataclasses import dataclass
 import hashlib
 import json
 import math
+import os
 from pathlib import Path
 from typing import Any, Mapping
 
@@ -159,10 +160,12 @@ def build_sample_hold_circuit_config(circuit_type: str, circuit_id: str, *,
                                     rel_tol=1e-12)):
             raise AutoConfigError("circuit_0259 archive and frozen canary nominal disagree")
     else:
-        from .sample_hold_phase_a import verify_static_candidate
-
-        # This admits the reviewed mapping, not the Windows native source closure.
-        verify_static_candidate(docs / _ASSETS[circuit_id])
+        if os.name == "posix" and circuit_id == "circuit_0263":
+            from .sample_hold_ubuntu import load_al_plan
+            load_al_plan(circuit_id)
+        else:
+            from .sample_hold_phase_a import verify_static_candidate
+            verify_static_candidate(docs / _ASSETS[circuit_id])
         mapping, conditions = evidence["mapping"], evidence["conditions"]
         fixed = {key: spec["value"] for key, spec in evidence["assembly"]["constructor_arguments"].items()
                  if spec["kind"] == "fixed"}

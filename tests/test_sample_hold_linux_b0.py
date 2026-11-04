@@ -3,19 +3,24 @@
 from __future__ import annotations
 
 import json
+import os
 import subprocess
+import sys
 from types import SimpleNamespace
 from datetime import datetime, timezone
 from pathlib import Path
 from unittest.mock import Mock
 
 import pytest
+import yaml
 
 from ActiveLearning import sample_hold_linux_canary as canary
+from ActiveLearning import sc_0259_canary as legacy_canary
 from ActiveLearning import sample_hold_posix as posix
 from ActiveLearning.onboarding import sample_hold_batch as batch
 from ActiveLearning.onboarding import sample_hold_ubuntu as ubuntu
 from ActiveLearning.onboarding.errors import AutoConfigError
+from ActiveLearning.onboarding import build_active_learning_circuit_config
 
 
 def _draft(tmp_path: Path, monkeypatch) -> tuple[Path, Path]:
@@ -222,7 +227,7 @@ def test_parameterized_launcher_maps_uncertain_posix_cleanup_fail_closed(
         )
 
 
-def test_posix_executor_cannot_bypass_ubuntu_acceptance(tmp_path, monkeypatch):
+def test_posix_executor_requires_runtime_preflight_and_frozen_d0(tmp_path, monkeypatch):
     config = tmp_path / "pilot.yaml"
     config.write_text("pilot: reviewed\n", encoding="utf-8")
     pilot = {
@@ -237,37 +242,92 @@ def test_posix_executor_cannot_bypass_ubuntu_acceptance(tmp_path, monkeypatch):
         },
     }
     monkeypatch.setattr(batch, "os", SimpleNamespace(name="posix"))
-    with pytest.raises(AutoConfigError, match="requires exact Ubuntu acceptance"):
+    with pytest.raises(AutoConfigError, match="requires frozen D0"):
         batch.SampleHoldALExecutor(
             SimpleNamespace(circuit_id="circuit_0259"), config, pilot,
         )
 
 
-def test_ubuntu_acceptance_binds_exact_config_d0_and_output(
+def test_linux_al_plan_ignores_windows_closure_but_verifies_real_assets(
         tmp_path, monkeypatch):
-    config = tmp_path / "pilot.yaml"
-    d0 = tmp_path / "d0.jsonl"
-    config.write_text("pilot: reviewed\n", encoding="utf-8")
-    d0.write_text('{"sample_id":"d0_0"}\n', encoding="utf-8")
-    acceptance = tmp_path / "acceptance.json"
-    payload = {
-        "schema": ubuntu.SCHEMA,
-        "status": "ubuntu_physical_accepted",
-        "circuit_id": "circuit_0259",
-        "config_sha256": canary._sha(config),
-        "d0_sha256": canary._sha(d0),
-        "repository_root": str(Path(ubuntu.__file__).resolve().parents[2]),
-        "python_executable": str(Path(ubuntu.sys.executable).resolve()),
-        "output_root": str((tmp_path / "physical").resolve()),
-        "accepted_by": "offline-test-operator",
-        "accepted_at": datetime.now(timezone.utc).isoformat(),
-    }
-    acceptance.write_text(json.dumps(payload), encoding="utf-8")
-    monkeypatch.setattr(ubuntu, "_is_ubuntu", lambda: True)
-    monkeypatch.setenv(ubuntu.ENVIRONMENT_VARIABLE, str(acceptance.resolve()))
-    runtime = SimpleNamespace(circuit_id="circuit_0259")
-    loaded = ubuntu.load_ubuntu_acceptance(runtime, config, d0)
-    assert loaded["acceptance_sha256"] == canary._sha(acceptance)
-    d0.write_text('{"sample_id":"changed"}\n', encoding="utf-8")
-    with pytest.raises(AutoConfigError, match="exact runtime"):
-        ubuntu.load_ubuntu_acceptance(runtime, config, d0)
+    monkeypatch.setattr(batch, "os", SimpleNamespace(name="posix"))
+    monkeypatch.setattr(legacy_canary, "load_plan",
+                        Mock(side_effect=AssertionError("legacy Windows closure used")))
+    plan = batch._al_plan(SimpleNamespace(circuit_id="circuit_0259"))
+    assert plan["fixture"].fixture_hash == plan["config"]["abstract_fixture_sha256"]
+    assert "closure" not in plan
+    assert batch._al_plan(SimpleNamespace(circuit_id="circuit_0263"))["config"]["circuit_id"] == "circuit_0263"
+    with pytest.raises(AutoConfigError, match="only circuit_0259/circuit_0263"):
+        batch._al_plan(SimpleNamespace(circuit_id="circuit_0605"))
+    asset = tmp_path / "topology.py"
+    asset.write_bytes(b"reviewed")
+    monkeypatch.setattr(ubuntu, "ROOT", tmp_path)
+    with pytest.raises(AutoConfigError, match="hash mismatch"):
+        ubuntu._asset({"path": "topology.py", "sha256": "0" * 64})
+    asset.unlink()
+    with pytest.raises(FileNotFoundError):
+        ubuntu._asset({"path": "topology.py", "sha256": "0" * 64})
+
+
+def test_0259_linux_mock_preflight_initializes_parameterized_al_executor(
+        tmp_path, monkeypatch):
+    runtime = build_active_learning_circuit_config("SampleHold", "circuit_0259")
+    config = ubuntu.ROOT / "ActiveLearning/experiments/SampleHold/circuit_0259/one_iteration_pilot_v1.yaml"
+    pilot = yaml.safe_load(config.read_text(encoding="utf-8"))["sample_hold_pilot"]
+    d0 = ubuntu.ROOT / "ActiveLearning/InitializeD0/examples/SampleHold/circuit_0259/d0/d0_v3_seed42.jsonl"
+    monkeypatch.setenv(ubuntu.OUTPUT_ROOT_ENV, str(tmp_path / "physical"))
+    monkeypatch.setenv(ubuntu.LIBRARY_ENV, "/usr/lib/libngspice.so.0")
+    monkeypatch.setattr(batch, "os", SimpleNamespace(name="posix"))
+    monkeypatch.setattr(ubuntu, "os", SimpleNamespace(
+        name="posix", getenv=os.getenv, access=os.access, W_OK=os.W_OK,
+    ))
+    monkeypatch.setattr(ubuntu, "sys", SimpleNamespace(platform="linux", executable=sys.executable))
+    monkeypatch.setattr(ubuntu, "_linux_environment", lambda path: {
+        "python_executable": sys.executable, "ngspice_library": {
+            "path": str(path), "sha256": "a" * 64,
+        },
+    })
+    evidence = ubuntu.runtime_preflight(runtime, config, d0, pilot)
+    effective = {**pilot, "output_root": evidence["output_root"]}
+    executor = batch.SampleHoldALExecutor(
+        runtime, config, effective, runtime_preflight=evidence, d0_path=d0,
+    )
+    from ActiveLearning.main import main as cli_main
+    cli_result = cli_main([
+        "--circuit-type", "SampleHold", "--circuit-id", "circuit_0259",
+        "--config", str(config), "--preflight-only",
+    ])
+    assert cli_result == evidence
+    assert not (tmp_path / "physical").exists()
+    assert executor._child_command(tmp_path / "candidate", "token")[2] == (
+        "ActiveLearning.onboarding.sample_hold_batch_child"
+    )
+    assert evidence["evidence_sha256"] == batch._canonical_sha({
+        key: value for key, value in evidence.items() if key != "evidence_sha256"
+    })
+    d0_copy = tmp_path / "changed_d0.jsonl"
+    d0_copy.write_bytes(d0.read_bytes() + b"changed")
+    executor.d0_path = d0_copy
+    with pytest.raises(AutoConfigError, match="preflight changed"):
+        executor._assert_identity()
+
+
+def test_ubuntu_preflight_rejects_duplicate_physical_reservation(tmp_path):
+    experiment = tmp_path / "sc0259_al_pilot_v1"
+    experiment.mkdir()
+    identity = {"execution_contract_sha256": "c" * 64,
+                "circuit_id": "circuit_0259",
+                "experiment_id": "sc0259_al_pilot_v1"}
+    (experiment / "identity.json").write_text(json.dumps(identity), encoding="utf-8")
+    intent = {"event": "native_attempt_reserved", "attempt": 1,
+              "vector_sha256": "v" * 64, "token": "token"}
+    ledger = experiment / "physical_attempt_ledger.jsonl"
+    ledger.write_text(json.dumps(intent) + "\n", encoding="utf-8")
+    ubuntu._check_attempt_ledger(experiment, "c" * 64,
+                                 "circuit_0259", "sc0259_al_pilot_v1", 5)
+    ledger.write_text(json.dumps(intent) + "\n" + json.dumps({
+        **intent, "attempt": 2, "token": "another",
+    }) + "\n", encoding="utf-8")
+    with pytest.raises(AutoConfigError, match="duplicate reservation"):
+        ubuntu._check_attempt_ledger(experiment, "c" * 64,
+                                     "circuit_0259", "sc0259_al_pilot_v1", 5)

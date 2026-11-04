@@ -174,10 +174,10 @@ def _validate_sample_hold_pilot(
     target_specs,
     performance_template,
 ):
-    """Validate the frozen pilot and require exact Ubuntu acceptance evidence."""
+    """Validate the frozen pilot and automatically bind the Ubuntu runtime."""
     from ActiveLearning.onboarding.sample_hold_batch import SampleHoldALExecutor
     from ActiveLearning.onboarding.sample_hold_phase_a import validate_pilot_static
-    from ActiveLearning.onboarding.sample_hold_ubuntu import load_ubuntu_acceptance
+    from ActiveLearning.onboarding.sample_hold_ubuntu import runtime_preflight
 
     if runtime.circuit_id not in {"circuit_0259", "circuit_0263"}:
         raise AutoConfigError("SampleHold AL allows only circuit_0259/circuit_0263")
@@ -208,12 +208,12 @@ def _validate_sample_hold_pilot(
     validate_pilot_static(
         runtime, config, Path(config_path), Path(d0_path), performance_template,
     )
-    acceptance = load_ubuntu_acceptance(runtime, config_path, d0_path)
+    preflight = runtime_preflight(runtime, config_path, d0_path, pilot)
     effective_pilot = deepcopy(pilot)
-    effective_pilot["output_root"] = acceptance["output_root"]
+    effective_pilot["output_root"] = preflight["output_root"]
     return SampleHoldALExecutor(
         runtime, Path(config_path), effective_pilot,
-        ubuntu_acceptance=acceptance,
+        runtime_preflight=preflight, d0_path=Path(d0_path),
     )
 
 
@@ -672,6 +672,10 @@ def main(argv=None):
         action="store_true",
         help="initialize or inspect configured D0 without entering Active Learning",
     )
+    parser.add_argument(
+        "--preflight-only", action="store_true",
+        help="validate SampleHold Ubuntu AL inputs without SPICE, LLM or experiment writes",
+    )
     args = parser.parse_args(argv)
 
     runtime = build_active_learning_circuit_config(
@@ -716,6 +720,19 @@ def main(argv=None):
         )
         _print_d0_summary(result)
         return result
+
+    if args.preflight_only:
+        if args.circuit_type != "SampleHold":
+            raise AutoConfigError("Ubuntu AL preflight is only for SampleHold")
+        paths, config, target_specs, d0_path = _resolve_experiment(
+            args.circuit_type, args.circuit_id, args.config, runtime)
+        _check_independent_d0(config, d0_path)
+        executor = _validate_sample_hold_pilot(
+            config, runtime, paths["config"], d0_path, target_specs,
+            _load_yaml(paths["performance_template"]),
+        )
+        print(json.dumps(executor.runtime_preflight, sort_keys=True, indent=2))
+        return executor.runtime_preflight
 
     result = run_configured_active_learning(
         args.circuit_type,

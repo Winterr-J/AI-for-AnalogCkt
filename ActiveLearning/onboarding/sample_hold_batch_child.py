@@ -48,7 +48,7 @@ def main(argv: list[str] | None = None) -> int:
     import yaml
     from ActiveLearning.onboarding import build_active_learning_circuit_config
     from ActiveLearning.onboarding.sample_hold_batch import (
-        ROOT, _canonical_sha, _frozen_plan, al_pilot_contract,
+        ROOT, _canonical_sha, _frozen_plan, _al_plan, al_pilot_contract,
         operator_contract, validate_approval,
     )
     from ActiveLearning.onboarding.d0_execution_windows import read_window
@@ -72,6 +72,17 @@ def main(argv: list[str] | None = None) -> int:
         contract_sha = _canonical_sha(al_pilot_contract(
             runtime, config_path, root, experiment_id, pilot["budget"],
         ))
+        if os.name == "posix":
+            from ActiveLearning.onboarding.sample_hold_ubuntu import runtime_preflight
+            from ActiveLearning.main import _resolve_experiment
+            d0_path = _resolve_experiment(
+                "SampleHold", circuit_id, config_path, runtime,
+            )[3].resolve(strict=True)
+            actual_preflight = runtime_preflight(runtime, config_path, d0_path, pilot)
+            record_path = root / experiment_id / "runtime_preflight.json"
+            if (not record_path.is_file() or
+                    json.loads(record_path.read_text(encoding="utf-8")) != actual_preflight):
+                raise RuntimeError("Ubuntu AL runtime preflight record changed")
     else:
         if args.output_root is not None:
             raise RuntimeError("D0 execution does not accept an AL output root")
@@ -109,7 +120,7 @@ def main(argv: list[str] | None = None) -> int:
         )
         if window is None or time.time() >= window["deadline_unix_s"]:
             raise RuntimeError("D0 continuation execution window not active")
-    plan = _frozen_plan(runtime)
+    plan = _al_plan(runtime) if args.al_pilot else _frozen_plan(runtime)
     if circuit_id != "circuit_0259" and os.name != "posix":
         from ActiveLearning.sc_sample_hold_canary import _native_environment_verified
         if not _native_environment_verified(plan["closure"]):
