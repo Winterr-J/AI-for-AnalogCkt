@@ -189,7 +189,7 @@ def call_inverse_design_llm(
     usage_context=None,
     *,
     provider: str | None = None,
-    request_timeout: float = 30.0,
+    request_timeout: float = 120.0,
     max_attempts: int = 3,
 ) -> str:
     """Return raw text for the existing inverse-design/prediction JSON parsers."""
