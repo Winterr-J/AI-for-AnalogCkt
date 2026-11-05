@@ -1,0 +1,102 @@
+{
+  "schema_version": "sc_integrator_preparation_candidate_batch_v1",
+  "batch_id": "MTV2_SCI_PREP_060",
+  "circuit_type": "SCIntegrator",
+  "status": "CANDIDATE_IDS_ONLY_NOT_PREPARATION_READY",
+  "master_manifest": "../master_manifest.json",
+  "master_sha256": "9a985607acb87731e7fea8c8292d16a76bd15ad651d598169d49a9cac9a8b28d",
+  "circuit_ids": [
+    "circuit_3055",
+    "circuit_3056",
+    "circuit_3057",
+    "circuit_3058",
+    "circuit_3059",
+    "circuit_3060",
+    "circuit_3061",
+    "circuit_3062",
+    "circuit_3063",
+    "circuit_3064"
+  ],
+  "candidates": [
+    {
+      "circuit_id": "circuit_3055",
+      "classification_confidence": "MEDIUM",
+      "screening_status": "BATCH_CANDIDATE",
+      "structural_issue": "",
+      "missing_resources": [],
+      "preparation_status": "NOT_STARTED"
+    },
+    {
+      "circuit_id": "circuit_3056",
+      "classification_confidence": "MEDIUM",
+      "screening_status": "BATCH_CANDIDATE",
+      "structural_issue": "",
+      "missing_resources": [],
+      "preparation_status": "NOT_STARTED"
+    },
+    {
+      "circuit_id": "circuit_3057",
+      "classification_confidence": "MEDIUM",
+      "screening_status": "BATCH_CANDIDATE",
+      "structural_issue": "",
+      "missing_resources": [],
+      "preparation_status": "NOT_STARTED"
+    },
+    {
+      "circuit_id": "circuit_3058",
+      "classification_confidence": "MEDIUM",
+      "screening_status": "BATCH_CANDIDATE",
+      "structural_issue": "",
+      "missing_resources": [],
+      "preparation_status": "NOT_STARTED"
+    },
+    {
+      "circuit_id": "circuit_3059",
+      "classification_confidence": "MEDIUM",
+      "screening_status": "BATCH_CANDIDATE",
+      "structural_issue": "",
+      "missing_resources": [],
+      "preparation_status": "NOT_STARTED"
+    },
+    {
+      "circuit_id": "circuit_3060",
+      "classification_confidence": "MEDIUM",
+      "screening_status": "BATCH_CANDIDATE",
+      "structural_issue": "",
+      "missing_resources": [],
+      "preparation_status": "NOT_STARTED"
+    },
+    {
+      "circuit_id": "circuit_3061",
+      "classification_confidence": "MEDIUM",
+      "screening_status": "BATCH_CANDIDATE",
+      "structural_issue": "",
+      "missing_resources": [],
+      "preparation_status": "NOT_STARTED"
+    },
+    {
+      "circuit_id": "circuit_3062",
+      "classification_confidence": "MEDIUM",
+      "screening_status": "BATCH_CANDIDATE",
+      "structural_issue": "",
+      "missing_resources": [],
+      "preparation_status": "NOT_STARTED"
+    },
+    {
+      "circuit_id": "circuit_3063",
+      "classification_confidence": "MEDIUM",
+      "screening_status": "BATCH_CANDIDATE",
+      "structural_issue": "",
+      "missing_resources": [],
+      "preparation_status": "NOT_STARTED"
+    },
+    {
+      "circuit_id": "circuit_3064",
+      "classification_confidence": "MEDIUM",
+      "screening_status": "BATCH_CANDIDATE",
+      "structural_issue": "",
+      "missing_resources": [],
+      "preparation_status": "NOT_STARTED"
+    }
+  ]
+}

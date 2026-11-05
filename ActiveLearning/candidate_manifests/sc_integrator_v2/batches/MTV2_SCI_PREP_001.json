@@ -1,0 +1,102 @@
+{
+  "schema_version": "sc_integrator_preparation_candidate_batch_v1",
+  "batch_id": "MTV2_SCI_PREP_001",
+  "circuit_type": "SCIntegrator",
+  "status": "CANDIDATE_IDS_ONLY_NOT_PREPARATION_READY",
+  "master_manifest": "../master_manifest.json",
+  "master_sha256": "9a985607acb87731e7fea8c8292d16a76bd15ad651d598169d49a9cac9a8b28d",
+  "circuit_ids": [
+    "circuit_0611",
+    "circuit_0616",
+    "circuit_0643",
+    "circuit_0644",
+    "circuit_0645",
+    "circuit_0662",
+    "circuit_2471",
+    "circuit_2472",
+    "circuit_2473",
+    "circuit_2474"
+  ],
+  "candidates": [
+    {
+      "circuit_id": "circuit_0611",
+      "classification_confidence": "HIGH",
+      "screening_status": "REVIEW_NEEDED",
+      "structural_issue": "Known M8 gate/bulk bias conflict in studied fixture",
+      "missing_resources": [],
+      "preparation_status": "NOT_STARTED"
+    },
+    {
+      "circuit_id": "circuit_0616",
+      "classification_confidence": "HIGH",
+      "screening_status": "REVIEW_NEEDED",
+      "structural_issue": "Floating-well and tail supply semantics unresolved",
+      "missing_resources": [],
+      "preparation_status": "NOT_STARTED"
+    },
+    {
+      "circuit_id": "circuit_0643",
+      "classification_confidence": "HIGH",
+      "screening_status": "REVIEW_NEEDED",
+      "structural_issue": "Known M8 gate/bulk bias conflict in studied fixture",
+      "missing_resources": [],
+      "preparation_status": "NOT_STARTED"
+    },
+    {
+      "circuit_id": "circuit_0644",
+      "classification_confidence": "HIGH",
+      "screening_status": "ALREADY_TESTED",
+      "structural_issue": "Local formal AL completion evidenced",
+      "missing_resources": [],
+      "preparation_status": "NOT_STARTED"
+    },
+    {
+      "circuit_id": "circuit_0645",
+      "classification_confidence": "HIGH",
+      "screening_status": "REVIEW_NEEDED",
+      "structural_issue": "Shares studied 0643 bias core; multi-input measurement review",
+      "missing_resources": [],
+      "preparation_status": "NOT_STARTED"
+    },
+    {
+      "circuit_id": "circuit_0662",
+      "classification_confidence": "HIGH",
+      "screening_status": "ALREADY_TESTED",
+      "structural_issue": "Local formal AL completion evidenced",
+      "missing_resources": [],
+      "preparation_status": "NOT_STARTED"
+    },
+    {
+      "circuit_id": "circuit_2471",
+      "classification_confidence": "MEDIUM",
+      "screening_status": "BATCH_CANDIDATE",
+      "structural_issue": "",
+      "missing_resources": [],
+      "preparation_status": "NOT_STARTED"
+    },
+    {
+      "circuit_id": "circuit_2472",
+      "classification_confidence": "MEDIUM",
+      "screening_status": "BATCH_CANDIDATE",
+      "structural_issue": "",
+      "missing_resources": [],
+      "preparation_status": "NOT_STARTED"
+    },
+    {
+      "circuit_id": "circuit_2473",
+      "classification_confidence": "MEDIUM",
+      "screening_status": "BATCH_CANDIDATE",
+      "structural_issue": "",
+      "missing_resources": [],
+      "preparation_status": "NOT_STARTED"
+    },
+    {
+      "circuit_id": "circuit_2474",
+      "classification_confidence": "MEDIUM",
+      "screening_status": "BATCH_CANDIDATE",
+      "structural_issue": "",
+      "missing_resources": [],
+      "preparation_status": "NOT_STARTED"
+    }
+  ]
+}
