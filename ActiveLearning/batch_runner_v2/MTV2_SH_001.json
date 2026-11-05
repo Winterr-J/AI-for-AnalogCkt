@@ -1,0 +1,21 @@
+{
+  "schema_version": "sample_hold_batch_v1",
+  "batch_id": "MTV2_SH_001",
+  "output_root": "/home/ubuntu/sc_al_batches",
+  "credential_scope": "bytecat_ubuntu",
+  "continue_on_verified_failure": true,
+  "jobs": [
+    {
+      "job_id": "sc0259",
+      "circuit_id": "circuit_0259",
+      "config_path": "ActiveLearning/experiments/SampleHold/circuit_0259/five_iteration_validation_v1.yaml",
+      "max_iterations": 5
+    },
+    {
+      "job_id": "sc0263",
+      "circuit_id": "circuit_0263",
+      "config_path": "ActiveLearning/experiments/SampleHold/circuit_0263/five_iteration_validation_v1.yaml",
+      "max_iterations": 5
+    }
+  ]
+}

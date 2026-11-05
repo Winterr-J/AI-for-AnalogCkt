@@ -99,11 +99,13 @@ def _save(directory: Path, state: dict) -> None:
 def _initial_state(
     manifest: dict, *, offline_only: bool,
     authorization: dict | None = None,
+    execution_scope: str | None = None,
 ) -> dict:
     return {"batch_id": manifest["batch_id"],
             "manifest_sha256": manifest["manifest_sha256"],
             "offline_only": offline_only,
-            "execution_scope": ("offline_mock" if authorization is None
+            "execution_scope": (execution_scope if execution_scope is not None else
+                                "offline_mock" if authorization is None
                                 else authorization["execution_scope"]),
             "authorization_id": (None if authorization is None
                                  else authorization["authorization_id"]),
@@ -245,6 +247,7 @@ def _run_batch(
     manifest: dict, output_root: str | Path,
     worker: Callable[[dict, Path], dict], *, offline_only: bool,
     authorization: dict | None = None,
+    execution_scope: str | None = None,
 ) -> dict:
     directory = _batch_dir(output_root, manifest["batch_id"])
     if directory.is_symlink():
@@ -261,13 +264,16 @@ def _run_batch(
                                       else authorization["authorization_sha256"])
             if state.get("authorization_sha256") != expected_authorization:
                 raise ValueError("batch authorization changed")
+            if execution_scope is not None and state.get("execution_scope") != execution_scope:
+                raise ValueError("batch execution scope changed")
             if set(state.get("jobs", {})) != {job["job_id"] for job in manifest["jobs"]}:
                 raise ValueError("persisted job set differs from manifest")
         else:
             if any(child.name != ".runner.lock" for child in directory.iterdir()):
                 raise ValueError("refusing to adopt an existing non-V2 batch directory")
             state = _initial_state(
-                manifest, offline_only=offline_only, authorization=authorization)
+                manifest, offline_only=offline_only, authorization=authorization,
+                execution_scope=execution_scope)
             atomic_json(directory / "manifest.json", manifest)
             _save(directory, state)
         if state.get("orphan_unverified"):
@@ -422,6 +428,10 @@ def _run_batch(
                           "d0_record_count": outcome.get("d0_record_count"),
                           "result_path": outcome.get("result_path"),
                           "al_result_sha256": outcome.get("al_result_sha256")}
+                if execution_scope == "sample_hold_production":
+                    result.update({name: outcome.get(name) for name in (
+                        "llm_calls", "total_tokens", "total_timing", "physical_ledger_path",
+                    )})
                 result_path = attempt_dir / "result.json"
                 atomic_json(result_path, result)
                 row["attempts"][-1]["result_sha256"] = sha256_file(result_path)
@@ -436,6 +446,10 @@ def _run_batch(
                 row["stop_reason"] = outcome["stop_reason"]
                 row["final_metrics"] = outcome.get("final_metrics")
                 row["d0_record_count"] = outcome.get("d0_record_count")
+                if execution_scope == "sample_hold_production":
+                    row.update({name: outcome.get(name) for name in (
+                        "llm_calls", "total_tokens", "total_timing", "physical_ledger_path",
+                    )})
                 _save(directory, state)
                 _event(directory, job_id, "COMPLETED", attempt_id)
             except Exception:
@@ -568,7 +582,7 @@ def report_batch(batch_id: str, output_root: str | Path) -> dict:
                 "total_tokens": None if unknown else sum(
                     item["total_tokens"] for item in own_finished
                     if type(item.get("total_tokens")) is int)}
-    return {"batch_id": batch_id, "offline_only": state.get("offline_only", True),
+    summary = {"batch_id": batch_id, "offline_only": state.get("offline_only", True),
             "execution_scope": state.get("execution_scope", "offline_mock"),
             "authorization_id": state.get("authorization_id"),
             "completed": sum(row["state"] == "COMPLETED" for row in rows.values()),
@@ -630,3 +644,42 @@ def report_batch(batch_id: str, output_root: str | Path) -> dict:
                            "d0_record_count": row.get("d0_record_count"),
                            "api_usage": per_job_usage(key)}
                      for key, row in rows.items()}}
+    if state.get("execution_scope") == "sample_hold_production":
+        for key, row in rows.items():
+            summary["jobs"][key].update({name: row.get(name) for name in (
+                "llm_calls", "total_tokens", "total_timing", "physical_ledger_path",
+            )})
+            tokens = (row.get("total_tokens") or {}).get("total_tokens")
+            summary["jobs"][key]["api_usage"] = {
+                "logical_requests": row.get("llm_calls"),
+                "physical_attempts": None,
+                "reported_total_tokens": tokens,
+                "usage_unknown": row["state"] != "COMPLETED",
+                "total_tokens": tokens if row["state"] == "COMPLETED" else None,
+            }
+        completed = [row for row in rows.values() if row["state"] == "COMPLETED"]
+        summary["sample_hold_usage"] = {
+            "llm_calls": sum(row.get("llm_calls") or 0 for row in completed),
+            "reported_total_tokens": sum(
+                (row.get("total_tokens") or {}).get("total_tokens") or 0
+                for row in completed),
+            "usage_unknown": any(row["state"] in {"FAILED_TERMINAL", "INTERRUPTED_UNCERTAIN"}
+                                 for row in rows.values()),
+        }
+        # The existing AL usage log counts completed calls and tokens, but not
+        # hidden transport attempts. Never report zero physical requests as fact.
+        summary["api_usage"] = {
+            "logical_requests": summary["sample_hold_usage"]["llm_calls"],
+            "physical_attempts": None,
+            "successful_responses": summary["sample_hold_usage"]["llm_calls"],
+            "failed_attempts": None,
+            "reported_total_tokens": summary["sample_hold_usage"]["reported_total_tokens"],
+            "request_seconds": None, "retry_wait_seconds": None,
+            "logical_wall_seconds": sum(
+                (row.get("total_timing") or {}).get("total_seconds") or 0
+                for row in completed),
+            "usage_unknown": summary["sample_hold_usage"]["usage_unknown"],
+            "total_tokens": (None if summary["sample_hold_usage"]["usage_unknown"]
+                             else summary["sample_hold_usage"]["reported_total_tokens"]),
+        }
+    return summary

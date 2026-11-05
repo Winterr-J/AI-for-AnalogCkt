@@ -159,7 +159,8 @@ def verify_job(manifest: dict, job: dict) -> None:
         raise ValueError("configured D0 path must be relative")
     if (base / raw).resolve() != d0_path:
         raise ValueError("manifest D0 differs from configured D0")
-    if manifest["schema_version"] == "batch_runner_v2b2a_candidate_v1":
+    if manifest["schema_version"] in {
+            "batch_runner_v2b2a_candidate_v1", "sample_hold_batch_runtime_v1"}:
         target_specs = config.get("target_specs")
         if not isinstance(target_specs, dict) or not target_specs:
             raise ValueError("B2A requires a fixed nonempty performance specification")
