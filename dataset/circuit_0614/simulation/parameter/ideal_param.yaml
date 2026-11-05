@@ -1,0 +1,430 @@
+schema_version: 1
+circuit:
+  id: circuit_0614
+  analoggenie_folder_id: 760
+  category: sample-and-hold and translinear circuits
+  actual_circuit_type: sample_hold
+simulation_stage: ideal_functional_reassessment
+functional_status: PASS
+model_defaults:
+  NMOS_IDEAL:
+    level: 1
+    VTO_V: 0.7
+    KP_uA_per_V2: 200.0
+    LAMBDA_per_V: 0.02
+  PMOS_IDEAL:
+    level: 1
+    VTO_V: -0.7
+    KP_uA_per_V2: 100.0
+    LAMBDA_per_V: 0.02
+  NPN_IDEAL:
+    IS: 1.0e-15
+    BF: 100.0
+    VAF: 100.0
+    EG: 1.11
+    XTI: 3.0
+  PNP_IDEAL:
+    IS: 1.0e-15
+    BF: 100.0
+    VAF: 100.0
+    EG: 1.11
+    XTI: 3.0
+device_parameters:
+  Q23:
+    device_type: npn
+    model: NPN_IDEAL
+    AREA: 1.0
+    m: 1
+  Q22:
+    device_type: npn
+    model: NPN_IDEAL
+    AREA: 1.0
+    m: 1
+  Q20:
+    device_type: npn
+    model: NPN_IDEAL
+    AREA: 1.0
+    m: 1
+  Q19:
+    device_type: npn
+    model: NPN_IDEAL
+    AREA: 1.0
+    m: 1
+  Q17:
+    device_type: npn
+    model: NPN_IDEAL
+    AREA: 1.0
+    m: 1
+  Q16:
+    device_type: npn
+    model: NPN_IDEAL
+    AREA: 1.0
+    m: 1
+  Q13:
+    device_type: npn
+    model: NPN_IDEAL
+    AREA: 1.0
+    m: 1
+  Q12:
+    device_type: npn
+    model: NPN_IDEAL
+    AREA: 1.0
+    m: 1
+  Q10:
+    device_type: npn
+    model: NPN_IDEAL
+    AREA: 1.0
+    m: 1
+  Q9:
+    device_type: npn
+    model: NPN_IDEAL
+    AREA: 1.0
+    m: 1
+  Q7:
+    device_type: npn
+    model: NPN_IDEAL
+    AREA: 1.0
+    m: 1
+  Q6:
+    device_type: npn
+    model: NPN_IDEAL
+    AREA: 1.0
+    m: 1
+  Q4:
+    device_type: npn
+    model: NPN_IDEAL
+    AREA: 1.0
+    m: 1
+  Q3:
+    device_type: npn
+    model: NPN_IDEAL
+    AREA: 1.0
+    m: 1
+  Q2:
+    device_type: npn
+    model: NPN_IDEAL
+    AREA: 1.0
+    m: 1
+  Q1:
+    device_type: npn
+    model: NPN_IDEAL
+    AREA: 1.0
+    m: 1
+  Q0:
+    device_type: npn
+    model: NPN_IDEAL
+    AREA: 1.0
+    m: 1
+  M28:
+    device_type: nmos4
+    model: NMOS_IDEAL
+    W_um: 10.0
+    L_um: 1.0
+    m: 1
+  M27:
+    device_type: nmos4
+    model: NMOS_IDEAL
+    W_um: 10.0
+    L_um: 1.0
+    m: 1
+  M26:
+    device_type: nmos4
+    model: NMOS_IDEAL
+    W_um: 10.0
+    L_um: 1.0
+    m: 1
+  M24:
+    device_type: nmos4
+    model: NMOS_IDEAL
+    W_um: 10.0
+    L_um: 1.0
+    m: 1
+  M20:
+    device_type: nmos4
+    model: NMOS_IDEAL
+    W_um: 10.0
+    L_um: 1.0
+    m: 1
+  M18:
+    device_type: nmos4
+    model: NMOS_IDEAL
+    W_um: 10.0
+    L_um: 1.0
+    m: 1
+  M14:
+    device_type: nmos4
+    model: NMOS_IDEAL
+    W_um: 10.0
+    L_um: 1.0
+    m: 1
+  M13:
+    device_type: nmos4
+    model: NMOS_IDEAL
+    W_um: 10.0
+    L_um: 1.0
+    m: 1
+  M12:
+    device_type: nmos4
+    model: NMOS_IDEAL
+    W_um: 10.0
+    L_um: 1.0
+    m: 1
+  M11:
+    device_type: nmos4
+    model: NMOS_IDEAL
+    W_um: 10.0
+    L_um: 1.0
+    m: 1
+  M8:
+    device_type: nmos4
+    model: NMOS_IDEAL
+    W_um: 10.0
+    L_um: 1.0
+    m: 1
+  M1:
+    device_type: nmos4
+    model: NMOS_IDEAL
+    W_um: 10.0
+    L_um: 1.0
+    m: 1
+  M0:
+    device_type: nmos4
+    model: NMOS_IDEAL
+    W_um: 10.0
+    L_um: 1.0
+    m: 1
+  M25:
+    device_type: pmos4
+    model: PMOS_IDEAL
+    W_um: 20.0
+    L_um: 1.0
+    m: 1
+  M23:
+    device_type: pmos4
+    model: PMOS_IDEAL
+    W_um: 20.0
+    L_um: 1.0
+    m: 1
+  M22:
+    device_type: pmos4
+    model: PMOS_IDEAL
+    W_um: 20.0
+    L_um: 1.0
+    m: 1
+  M21:
+    device_type: pmos4
+    model: PMOS_IDEAL
+    W_um: 20.0
+    L_um: 1.0
+    m: 1
+  M19:
+    device_type: pmos4
+    model: PMOS_IDEAL
+    W_um: 20.0
+    L_um: 1.0
+    m: 1
+  M17:
+    device_type: pmos4
+    model: PMOS_IDEAL
+    W_um: 20.0
+    L_um: 1.0
+    m: 1
+  M16:
+    device_type: pmos4
+    model: PMOS_IDEAL
+    W_um: 20.0
+    L_um: 1.0
+    m: 1
+  M15:
+    device_type: pmos4
+    model: PMOS_IDEAL
+    W_um: 20.0
+    L_um: 1.0
+    m: 1
+  M10:
+    device_type: pmos4
+    model: PMOS_IDEAL
+    W_um: 20.0
+    L_um: 1.0
+    m: 1
+  M9:
+    device_type: pmos4
+    model: PMOS_IDEAL
+    W_um: 20.0
+    L_um: 1.0
+    m: 1
+  M7:
+    device_type: pmos4
+    model: PMOS_IDEAL
+    W_um: 20.0
+    L_um: 1.0
+    m: 1
+  M6:
+    device_type: pmos4
+    model: PMOS_IDEAL
+    W_um: 20.0
+    L_um: 1.0
+    m: 1
+  M5:
+    device_type: pmos4
+    model: PMOS_IDEAL
+    W_um: 20.0
+    L_um: 1.0
+    m: 1
+  M4:
+    device_type: pmos4
+    model: PMOS_IDEAL
+    W_um: 20.0
+    L_um: 1.0
+    m: 1
+  M3:
+    device_type: pmos4
+    model: PMOS_IDEAL
+    W_um: 20.0
+    L_um: 1.0
+    m: 1
+  M2:
+    device_type: pmos4
+    model: PMOS_IDEAL
+    W_um: 20.0
+    L_um: 1.0
+    m: 1
+  R14:
+    device_type: resistor
+    model: ideal_resistor
+    R_ohm: 10000.0
+  R13:
+    device_type: resistor
+    model: ideal_resistor
+    R_ohm: 10000.0
+  R12:
+    device_type: resistor
+    model: ideal_resistor
+    R_ohm: 10000.0
+  R11:
+    device_type: resistor
+    model: ideal_resistor
+    R_ohm: 10000.0
+  R10:
+    device_type: resistor
+    model: ideal_resistor
+    R_ohm: 10000.0
+  R9:
+    device_type: resistor
+    model: ideal_resistor
+    R_ohm: 10000.0
+  R8:
+    device_type: resistor
+    model: ideal_resistor
+    R_ohm: 10000.0
+  R7:
+    device_type: resistor
+    model: ideal_resistor
+    R_ohm: 10000.0
+  R6:
+    device_type: resistor
+    model: ideal_resistor
+    R_ohm: 10000.0
+  R5:
+    device_type: resistor
+    model: ideal_resistor
+    R_ohm: 10000.0
+  R4:
+    device_type: resistor
+    model: ideal_resistor
+    R_ohm: 10000.0
+  R3:
+    device_type: resistor
+    model: ideal_resistor
+    R_ohm: 10000.0
+  R2:
+    device_type: resistor
+    model: ideal_resistor
+    R_ohm: 10000.0
+  R1:
+    device_type: resistor
+    model: ideal_resistor
+    R_ohm: 10000.0
+  R0:
+    device_type: resistor
+    model: ideal_resistor
+    R_ohm: 10000.0
+  C2:
+    device_type: capacitor
+    model: ideal_capacitor
+    C_F: 1.0e-12
+  C1:
+    device_type: capacitor
+    model: ideal_capacitor
+    C_F: 1.0e-12
+  C0:
+    device_type: capacitor
+    model: ideal_capacitor
+    C_F: 1.0e-12
+  Q24:
+    device_type: pnp
+    model: PNP_IDEAL
+    AREA: 1.0
+    m: 1
+  Q21:
+    device_type: pnp
+    model: PNP_IDEAL
+    AREA: 1.0
+    m: 1
+  Q18:
+    device_type: pnp
+    model: PNP_IDEAL
+    AREA: 1.0
+    m: 1
+  Q15:
+    device_type: pnp
+    model: PNP_IDEAL
+    AREA: 1.0
+    m: 1
+  Q14:
+    device_type: pnp
+    model: PNP_IDEAL
+    AREA: 1.0
+    m: 1
+  Q11:
+    device_type: pnp
+    model: PNP_IDEAL
+    AREA: 1.0
+    m: 1
+  Q8:
+    device_type: pnp
+    model: PNP_IDEAL
+    AREA: 1.0
+    m: 1
+  Q5:
+    device_type: pnp
+    model: PNP_IDEAL
+    AREA: 1.0
+    m: 1
+operating_parameters:
+  VDD: 3.3
+  VSS: 0.0
+  VIN1: 1.2
+  VB1: 1.65
+  VB2: 1.65
+  VB3: 1.65
+  IB1: -0.0001
+  VCLK1: 0.0
+  VCLK2: 0.0
+  VCLK3: 0.0
+  VOUT1: 1.65
+adjusted_parameters: []
+search_policy: global ideal defaults -> operating bias sweep -> synchronized W/L groups;
+  first Functional PASS/WARN; no performance optimization
+analysis_overall_status: WARN
+functional_assessment:
+  actual_type: sample_hold
+  core_metric:
+    output_tail_vpp: 8.067514354063044e-05
+    output_final: 0.006454205305137477
+    oscillation_frequency_Hz: 2076156.4960631516
+  warning_type:
+  - numerical
+  - non_core_operating_point
+  topology_limitation: false
+  PDK_eligible: true

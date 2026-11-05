@@ -1,0 +1,131 @@
+schema_version: 1
+circuit:
+  id: circuit_0619
+  analoggenie_folder_id: 765
+  category: sample-and-hold and translinear circuits
+  actual_circuit_type: sample_hold
+simulation_stage: gf180mcu_mos
+pdk:
+  technology: GF180MCU
+  corner: typical
+  voltage_class: 3.3V
+replacement_scope: MOS only; ideal R/C retained
+device_parameters:
+  Q11:
+    device_type: npn
+    model: NPN_IDEAL
+    AREA: 1.0
+    m: 1
+  Q10:
+    device_type: npn
+    model: NPN_IDEAL
+    AREA: 1.0
+    m: 1
+  Q9:
+    device_type: npn
+    model: NPN_IDEAL
+    AREA: 1.0
+    m: 1
+  Q8:
+    device_type: npn
+    model: NPN_IDEAL
+    AREA: 1.0
+    m: 1
+  Q7:
+    device_type: npn
+    model: NPN_IDEAL
+    AREA: 1.0
+    m: 1
+  Q1:
+    device_type: npn
+    model: NPN_IDEAL
+    AREA: 1.0
+    m: 1
+  Q0:
+    device_type: npn
+    model: NPN_IDEAL
+    AREA: 1.0
+    m: 1
+  Q2:
+    device_type: npn
+    model: NPN_IDEAL
+    AREA: 1.0
+    m: 1
+  Q3:
+    device_type: npn
+    model: NPN_IDEAL
+    AREA: 1.0
+    m: 1
+  Q4:
+    device_type: npn
+    model: NPN_IDEAL
+    AREA: 1.0
+    m: 1
+  Q5:
+    device_type: npn
+    model: NPN_IDEAL
+    AREA: 1.0
+    m: 1
+  Q6:
+    device_type: npn
+    model: NPN_IDEAL
+    AREA: 1.0
+    m: 1
+  R6:
+    device_type: resistor
+    model: ideal_resistor
+    R_ohm: 10000.0
+  R5:
+    device_type: resistor
+    model: ideal_resistor
+    R_ohm: 10000.0
+  R4:
+    device_type: resistor
+    model: ideal_resistor
+    R_ohm: 10000.0
+  R3:
+    device_type: resistor
+    model: ideal_resistor
+    R_ohm: 10000.0
+  R0:
+    device_type: resistor
+    model: ideal_resistor
+    R_ohm: 10000.0
+  R1:
+    device_type: resistor
+    model: ideal_resistor
+    R_ohm: 10000.0
+  R2:
+    device_type: resistor
+    model: ideal_resistor
+    R_ohm: 10000.0
+  C3:
+    device_type: capacitor
+    model: ideal_capacitor
+    C_F: 1.0e-12
+  C2:
+    device_type: capacitor
+    model: ideal_capacitor
+    C_F: 1.0e-12
+  C1:
+    device_type: capacitor
+    model: ideal_capacitor
+    C_F: 1.0e-12
+  C0:
+    device_type: capacitor
+    model: ideal_capacitor
+    C_F: 1.0e-12
+operating_parameters:
+  VDD: 3.3
+  VSS: 0.0
+  VIN1: 1.2
+  VIN2: 1.2
+  VHOLD1: 0.0
+  VTRACK1: 0.0
+  VOUT1: 1.65
+  VOUT2: 1.65
+adjusted_parameters: []
+functional_status: PASS
+remaining_issues: []
+search_policy: ideal working point first -> input/VCM/clock/VCTRL -> VB -> IB -> grouped W -> L/m harimo;
+  first usable functional point

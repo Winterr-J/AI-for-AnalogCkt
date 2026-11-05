@@ -1,0 +1,6 @@
+circuit_id: circuit_0260
+circuit_number: 0260
+analoggenie_folder_id: 386
+circuit_type: intro to switched capacitor circuits
+circuit_name: CMOS transmission-gate sample-and-hold
+circuit_function: Samples, transfers, or processes charge under clock control using the cmos transmission-gate sample-and-hold topology.

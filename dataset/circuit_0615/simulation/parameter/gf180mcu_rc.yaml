@@ -1,0 +1,267 @@
+schema_version: 1
+circuit:
+  id: circuit_0615
+  analoggenie_folder_id: 761
+  category: sample-and-hold and translinear circuits
+  actual_circuit_type: sample_hold
+simulation_stage: gf180mcu_rc
+pdk:
+  technology: GF180MCU
+  corner: typical
+  voltage_class: 3.3V
+replacement_scope: MOS plus ppolyf_u resistors and cap_mim_1p0fF capacitors
+device_parameters:
+  M19:
+    device_type: pmos4
+    model: pfet_03v3
+    simulator_subcircuit: pmos_3p3
+    W_um: 20.0
+    L_um: 1.0
+    m: 1
+  M12:
+    device_type: pmos4
+    model: pfet_03v3
+    simulator_subcircuit: pmos_3p3
+    W_um: 20.0
+    L_um: 1.0
+    m: 1
+  M11:
+    device_type: pmos4
+    model: pfet_03v3
+    simulator_subcircuit: pmos_3p3
+    W_um: 20.0
+    L_um: 1.0
+    m: 1
+  M10:
+    device_type: pmos4
+    model: pfet_03v3
+    simulator_subcircuit: pmos_3p3
+    W_um: 20.0
+    L_um: 1.0
+    m: 1
+  M3:
+    device_type: pmos4
+    model: pfet_03v3
+    simulator_subcircuit: pmos_3p3
+    W_um: 20.0
+    L_um: 1.0
+    m: 1
+  M2:
+    device_type: pmos4
+    model: pfet_03v3
+    simulator_subcircuit: pmos_3p3
+    W_um: 20.0
+    L_um: 1.0
+    m: 1
+  M1:
+    device_type: pmos4
+    model: pfet_03v3
+    simulator_subcircuit: pmos_3p3
+    W_um: 20.0
+    L_um: 1.0
+    m: 1
+  M0:
+    device_type: pmos4
+    model: pfet_03v3
+    simulator_subcircuit: pmos_3p3
+    W_um: 20.0
+    L_um: 1.0
+    m: 1
+  M27:
+    device_type: nmos4
+    model: nfet_03v3
+    simulator_subcircuit: nmos_3p3
+    W_um: 10.0
+    L_um: 1.0
+    m: 1
+  M26:
+    device_type: nmos4
+    model: nfet_03v3
+    simulator_subcircuit: nmos_3p3
+    W_um: 10.0
+    L_um: 1.0
+    m: 1
+  M25:
+    device_type: nmos4
+    model: nfet_03v3
+    simulator_subcircuit: nmos_3p3
+    W_um: 10.0
+    L_um: 1.0
+    m: 1
+  M24:
+    device_type: nmos4
+    model: nfet_03v3
+    simulator_subcircuit: nmos_3p3
+    W_um: 10.0
+    L_um: 1.0
+    m: 1
+  M23:
+    device_type: nmos4
+    model: nfet_03v3
+    simulator_subcircuit: nmos_3p3
+    W_um: 10.0
+    L_um: 1.0
+    m: 1
+  M22:
+    device_type: nmos4
+    model: nfet_03v3
+    simulator_subcircuit: nmos_3p3
+    W_um: 10.0
+    L_um: 1.0
+    m: 1
+  M21:
+    device_type: nmos4
+    model: nfet_03v3
+    simulator_subcircuit: nmos_3p3
+    W_um: 10.0
+    L_um: 1.0
+    m: 1
+  M20:
+    device_type: nmos4
+    model: nfet_03v3
+    simulator_subcircuit: nmos_3p3
+    W_um: 10.0
+    L_um: 1.0
+    m: 1
+  M18:
+    device_type: nmos4
+    model: nfet_03v3
+    simulator_subcircuit: nmos_3p3
+    W_um: 10.0
+    L_um: 1.0
+    m: 1
+  M17:
+    device_type: nmos4
+    model: nfet_03v3
+    simulator_subcircuit: nmos_3p3
+    W_um: 10.0
+    L_um: 1.0
+    m: 1
+  M16:
+    device_type: nmos4
+    model: nfet_03v3
+    simulator_subcircuit: nmos_3p3
+    W_um: 10.0
+    L_um: 1.0
+    m: 1
+  M15:
+    device_type: nmos4
+    model: nfet_03v3
+    simulator_subcircuit: nmos_3p3
+    W_um: 10.0
+    L_um: 1.0
+    m: 1
+  M14:
+    device_type: nmos4
+    model: nfet_03v3
+    simulator_subcircuit: nmos_3p3
+    W_um: 10.0
+    L_um: 1.0
+    m: 1
+  M13:
+    device_type: nmos4
+    model: nfet_03v3
+    simulator_subcircuit: nmos_3p3
+    W_um: 10.0
+    L_um: 1.0
+    m: 1
+  M9:
+    device_type: nmos4
+    model: nfet_03v3
+    simulator_subcircuit: nmos_3p3
+    W_um: 10.0
+    L_um: 1.0
+    m: 1
+  M8:
+    device_type: nmos4
+    model: nfet_03v3
+    simulator_subcircuit: nmos_3p3
+    W_um: 10.0
+    L_um: 1.0
+    m: 1
+  M7:
+    device_type: nmos4
+    model: nfet_03v3
+    simulator_subcircuit: nmos_3p3
+    W_um: 10.0
+    L_um: 1.0
+    m: 1
+  M6:
+    device_type: nmos4
+    model: nfet_03v3
+    simulator_subcircuit: nmos_3p3
+    W_um: 10.0
+    L_um: 1.0
+    m: 1
+  M5:
+    device_type: nmos4
+    model: nfet_03v3
+    simulator_subcircuit: nmos_3p3
+    W_um: 10.0
+    L_um: 1.0
+    m: 1
+  M4:
+    device_type: nmos4
+    model: nfet_03v3
+    simulator_subcircuit: nmos_3p3
+    W_um: 10.0
+    L_um: 1.0
+    m: 1
+  C3:
+    device_type: capacitor
+    model: cap_mim_1p0fF
+    target_C_F: 1.0e-12
+    W_um: 31.168680881917563
+    L_um: 31.168680881917563
+    m: 1
+  C2:
+    device_type: capacitor
+    model: cap_mim_1p0fF
+    target_C_F: 1.0e-12
+    W_um: 31.168680881917563
+    L_um: 31.168680881917563
+    m: 1
+  C1:
+    device_type: capacitor
+    model: cap_mim_1p0fF
+    target_C_F: 1.0e-12
+    W_um: 31.168680881917563
+    L_um: 31.168680881917563
+    m: 1
+  C0:
+    device_type: capacitor
+    model: cap_mim_1p0fF
+    target_C_F: 1.0e-12
+    W_um: 31.168680881917563
+    L_um: 31.168680881917563
+    m: 1
+  R0:
+    device_type: resistor
+    model: ppolyf_u
+    target_R_ohm: 10000.0
+    W_um: 0.8
+    L_um: 21.057182857142855
+    m: 1
+operating_parameters:
+  VDD: 3.3
+  VSS: 0.0
+  VIN1: 1.2
+  VB1: 1.65
+  VB2: 1.65
+  VB3: 1.65
+  VB4: 1.65
+  VB5: 1.65
+  VB6: 1.65
+  IB1: 0.0001
+  IB2: 0.0001
+  VCLK1: 0.0
+  VCLK2: 0.0
+  VCLK3: 0.0
+  VCLK4: 0.0
+  VCLK5: 0.0
+  VOUT1: 1.65
+adjusted_parameters: []
+functional_status: PASS
+remaining_issues: []
+search_policy: ideal working point first -> input/VCM/clock/VCTRL -> VB -> IB -> grouped W -> L/m harimo;
+  first usable functional point

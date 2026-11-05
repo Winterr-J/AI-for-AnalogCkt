@@ -1,0 +1,6 @@
+circuit_id: circuit_0262
+circuit_number: 0262
+analoggenie_folder_id: 388
+circuit_type: intro to switched capacitor circuits
+circuit_name: Charge-injection sample-and-hold model
+circuit_function: Samples, transfers, or processes charge under clock control using the charge-injection sample-and-hold model topology.

@@ -1,0 +1,6 @@
+circuit_id: circuit_0259
+circuit_number: 0259
+analoggenie_folder_id: 385
+circuit_type: intro to switched capacitor circuits
+circuit_name: NMOS sample-and-hold switch
+circuit_function: Samples, transfers, or processes charge under clock control using the nmos sample-and-hold switch topology.

@@ -1,0 +1,49 @@
+circuit:
+  id: circuit_0259
+  original_id: 385
+  original_type: intro to switched capacitor circuits
+  topology_name: NMOS sample-and-hold switch
+pdk:
+  name: GF180MCU
+  corner: typical
+  voltage_class: 3.3V
+models:
+  nmos: nfet_03v3
+  capacitor: cap_mim_1p0fF
+device_parameters:
+  MOS:
+    M0:
+      model: nfet_03v3
+      simulator_subcircuit: nmos_3p3
+      W_um: 10.0
+      L_um: 1.0
+      m: 1
+  C:
+    C0:
+      model: cap_mim_1p0fF
+      W_um: 31.168680881917563
+      L_um: 31.168680881917563
+      m: 1
+      target_C_f: 1.0e-12
+      estimated_C_f: 1.0e-12
+operating_parameters:
+  VDD: 3.3
+  VIN1: 1.2
+  VCLK1: 0.0
+  VSS: 0.0
+  clock_frequency: 1000000.0
+  clock_amplitude: 3.3
+mapping_from_ideal:
+  changed_models:
+  - 'M0: NMOS_IDEAL -> nfet_03v3'
+  - 'C0: ideal_capacitor -> cap_mim_1p0fF'
+  changed_parameters: []
+  retained_ideal_devices: []
+  retained_ideal_device_classes:
+  - independent_voltage_current_sources
+migration_stage: final
+final_status: PASS
+stage_status:
+  gf180_active_mos_bjt: PASS
+  gf180_full_rc: PASS
+pdk_scan_eligible: true

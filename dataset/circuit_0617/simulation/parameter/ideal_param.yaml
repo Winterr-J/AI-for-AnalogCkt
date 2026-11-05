@@ -1,0 +1,213 @@
+schema_version: 1
+circuit:
+  id: circuit_0617
+  analoggenie_folder_id: 763
+  category: sample-and-hold and translinear circuits
+  actual_circuit_type: sample_hold
+simulation_stage: ideal_functional_reassessment
+functional_status: PASS
+model_defaults:
+  NMOS_IDEAL:
+    level: 1
+    VTO_V: 0.7
+    KP_uA_per_V2: 200.0
+    LAMBDA_per_V: 0.02
+  PMOS_IDEAL:
+    level: 1
+    VTO_V: -0.7
+    KP_uA_per_V2: 100.0
+    LAMBDA_per_V: 0.02
+  NPN_IDEAL:
+    IS: 1.0e-15
+    BF: 100.0
+    VAF: 100.0
+    EG: 1.11
+    XTI: 3.0
+  PNP_IDEAL:
+    IS: 1.0e-15
+    BF: 100.0
+    VAF: 100.0
+    EG: 1.11
+    XTI: 3.0
+device_parameters:
+  Q6:
+    device_type: pnp
+    model: PNP_IDEAL
+    AREA: 1.0
+    m: 1
+  Q5:
+    device_type: pnp
+    model: PNP_IDEAL
+    AREA: 1.0
+    m: 1
+  Q4:
+    device_type: pnp
+    model: PNP_IDEAL
+    AREA: 1.0
+    m: 1
+  Q3:
+    device_type: pnp
+    model: PNP_IDEAL
+    AREA: 1.0
+    m: 1
+  Q2:
+    device_type: pnp
+    model: PNP_IDEAL
+    AREA: 1.0
+    m: 1
+  Q1:
+    device_type: pnp
+    model: PNP_IDEAL
+    AREA: 1.0
+    m: 1
+  Q0:
+    device_type: pnp
+    model: PNP_IDEAL
+    AREA: 1.0
+    m: 1
+  M11:
+    device_type: pmos4
+    model: PMOS_IDEAL
+    W_um: 20.0
+    L_um: 1.0
+    m: 1
+  M10:
+    device_type: pmos4
+    model: PMOS_IDEAL
+    W_um: 20.0
+    L_um: 1.0
+    m: 1
+  M9:
+    device_type: pmos4
+    model: PMOS_IDEAL
+    W_um: 20.0
+    L_um: 1.0
+    m: 1
+  M8:
+    device_type: pmos4
+    model: PMOS_IDEAL
+    W_um: 20.0
+    L_um: 1.0
+    m: 1
+  M7:
+    device_type: pmos4
+    model: PMOS_IDEAL
+    W_um: 20.0
+    L_um: 1.0
+    m: 1
+  M6:
+    device_type: pmos4
+    model: PMOS_IDEAL
+    W_um: 20.0
+    L_um: 1.0
+    m: 1
+  M5:
+    device_type: pmos4
+    model: PMOS_IDEAL
+    W_um: 20.0
+    L_um: 1.0
+    m: 1
+  M4:
+    device_type: pmos4
+    model: PMOS_IDEAL
+    W_um: 20.0
+    L_um: 1.0
+    m: 1
+  M3:
+    device_type: pmos4
+    model: PMOS_IDEAL
+    W_um: 20.0
+    L_um: 1.0
+    m: 1
+  M2:
+    device_type: pmos4
+    model: PMOS_IDEAL
+    W_um: 20.0
+    L_um: 1.0
+    m: 1
+  M1:
+    device_type: pmos4
+    model: PMOS_IDEAL
+    W_um: 20.0
+    L_um: 1.0
+    m: 1
+  M0:
+    device_type: pmos4
+    model: PMOS_IDEAL
+    W_um: 20.0
+    L_um: 1.0
+    m: 1
+  D5:
+    device_type: diode
+    model: DIODE_IDEAL
+    AREA: 1.0
+    m: 1
+  D4:
+    device_type: diode
+    model: DIODE_IDEAL
+    AREA: 1.0
+    m: 1
+  D3:
+    device_type: diode
+    model: DIODE_IDEAL
+    AREA: 1.0
+    m: 1
+  D2:
+    device_type: diode
+    model: DIODE_IDEAL
+    AREA: 1.0
+    m: 1
+  D1:
+    device_type: diode
+    model: DIODE_IDEAL
+    AREA: 1.0
+    m: 1
+  D0:
+    device_type: diode
+    model: DIODE_IDEAL
+    AREA: 1.0
+    m: 1
+  C1:
+    device_type: capacitor
+    model: ideal_capacitor
+    C_F: 1.0e-12
+  C0:
+    device_type: capacitor
+    model: ideal_capacitor
+    C_F: 1.0e-12
+  R2:
+    device_type: resistor
+    model: ideal_resistor
+    R_ohm: 10000.0
+  R1:
+    device_type: resistor
+    model: ideal_resistor
+    R_ohm: 10000.0
+  R0:
+    device_type: resistor
+    model: ideal_resistor
+    R_ohm: 10000.0
+operating_parameters:
+  VDD: 3.3
+  VSS: 0.0
+  VIN1: 1.2
+  IB1: 0.0001
+  IB2: 0.0001
+  IB3: 0.0001
+  VHOLD1: 0.0
+  VTRACK1: 0.0
+  VOUT1: 1.65
+adjusted_parameters: []
+search_policy: global ideal defaults -> operating bias sweep -> synchronized W/L groups;
+  first Functional PASS/WARN; no performance optimization
+analysis_overall_status: PASS
+functional_assessment:
+  actual_type: sample_hold
+  core_metric:
+    output_tail_vpp: 0.0138231390547503
+    output_final: 3.2680139819760847
+    oscillation_frequency_Hz: 2104196.0264132707
+  warning_type:
+  - none
+  topology_limitation: false
+  PDK_eligible: true

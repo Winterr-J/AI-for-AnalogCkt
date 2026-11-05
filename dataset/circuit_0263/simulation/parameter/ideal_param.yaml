@@ -1,0 +1,45 @@
+circuit:
+  id: circuit_0263
+  original_id: 389
+  original_type: intro to switched capacitor circuits
+  topology_name: Differential NMOS sampling pair
+models:
+  nmos:
+    name: NMOS_IDEAL
+    level: 1
+    VTO: 0.7
+    KP_uA_per_V2: 200.0
+    LAMBDA: 0.02
+devices:
+  MOS:
+    M2:
+      model: NMOS_IDEAL
+      W_um: 10.0
+      L_um: 1.0
+      m: 1
+    M1:
+      model: NMOS_IDEAL
+      W_um: 10.0
+      L_um: 1.0
+      m: 1
+  C:
+    C1:
+      model: ideal_capacitor
+      C_f: 1.0e-12
+    C0:
+      model: ideal_capacitor
+      C_f: 1.0e-12
+operating_parameters:
+  VDD: 3.3
+  VIN1: 1.2
+  VIN2: 1.2
+  VCLK1: 0.0
+  VSS: 0.0
+  clock_frequency: 1000000.0
+  clock_amplitude: 3.3
+pnp_devices: null
+adjusted_from_global_default: []
+search_policy: first topology-aware functional operating point; no performance optimization
+functional_summary:
+  overall_status: PASS
+  reasons: null

@@ -1,0 +1,6 @@
+circuit_id: circuit_0263
+circuit_number: 0263
+analoggenie_folder_id: 389
+circuit_type: intro to switched capacitor circuits
+circuit_name: Differential NMOS sampling pair
+circuit_function: Samples, transfers, or processes charge under clock control using the differential nmos sampling pair topology.

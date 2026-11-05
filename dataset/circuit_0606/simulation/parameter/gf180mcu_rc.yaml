@@ -1,0 +1,60 @@
+schema_version: 1
+circuit:
+  id: circuit_0606
+  analoggenie_folder_id: 751
+  category: sample-and-hold and translinear circuits
+  actual_circuit_type: sample_hold
+simulation_stage: gf180mcu_rc
+pdk:
+  technology: GF180MCU
+  corner: typical
+  voltage_class: 3.3V
+replacement_scope: MOS plus ppolyf_u resistors and cap_mim_1p0fF capacitors
+device_parameters:
+  M2:
+    device_type: nmos4
+    model: nfet_03v3
+    simulator_subcircuit: nmos_3p3
+    W_um: 10.0
+    L_um: 1.0
+    m: 1
+  M0:
+    device_type: nmos4
+    model: nfet_03v3
+    simulator_subcircuit: nmos_3p3
+    W_um: 10.0
+    L_um: 1.0
+    m: 1
+  M1:
+    device_type: nmos4
+    model: nfet_03v3
+    simulator_subcircuit: nmos_3p3
+    W_um: 10.0
+    L_um: 1.0
+    m: 1
+  C0:
+    device_type: capacitor
+    model: cap_mim_1p0fF
+    target_C_F: 1.0e-12
+    W_um: 31.168680881917563
+    L_um: 31.168680881917563
+    m: 1
+  R0:
+    device_type: resistor
+    model: ppolyf_u
+    target_R_ohm: 10000.0
+    W_um: 0.8
+    L_um: 21.057182857142855
+    m: 1
+operating_parameters:
+  VDD: 3.3
+  VSS: 0.0
+  VIN1: 1.2
+  VCLK1: 0.0
+  VCLK2: 0.0
+  VOUT1: 1.65
+adjusted_parameters: []
+functional_status: PASS
+remaining_issues: []
+search_policy: ideal working point first -> input/VCM/clock/VCTRL -> VB -> IB -> grouped W -> L/m harimo;
+  first usable functional point

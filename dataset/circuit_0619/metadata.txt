@@ -1,0 +1,8 @@
+circuit_id: circuit_0619
+circuit_number: 0619
+analoggenie_folder_id: 765
+circuit_type: sample-and-hold and translinear circuits
+circuit_name: Clocked bipolar sample-and-hold cell (AnalogGenie 765)
+circuit_function: Samples and holds an analog quantity or implements a nonlinear current/voltage relation using the clocked bipolar sample-and-hold cell topology.
+source_ports: VDD, VSS, VIN1, VIN2, VOUT1, VOUT2, VHOLD1, VTRACK1
+device_summary: capacitor=4, npn=12, resistor=7

@@ -1,0 +1,8 @@
+circuit_id: circuit_0607
+circuit_number: 0607
+analoggenie_folder_id: 752
+circuit_type: sample-and-hold and translinear circuits
+circuit_name: Clocked CMOS sample-and-hold cell (AnalogGenie 752)
+circuit_function: Samples and holds an analog quantity or implements a nonlinear current/voltage relation using the clocked cmos sample-and-hold cell topology.
+source_ports: VDD, VSS, VIN1, VOUT1, VCLK1, VCLK2
+device_summary: capacitor=1, nmos=3, resistor=1

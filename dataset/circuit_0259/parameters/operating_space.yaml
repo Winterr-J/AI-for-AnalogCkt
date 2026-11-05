@@ -1,0 +1,47 @@
+schema_version: 1
+circuit_id: circuit_0259
+circuit_type: intro to switched capacitor circuits
+scope: operating_parameters_only
+conditional_constraints:
+  voltage_class_compatibility: VDD must not exceed the lowest voltage rating among selected device models
+  bias_voltage_compatibility: VIN*, VB*, VCM*, VCONT*, VCLK*, and LOGIC* values must remain within VSS and VDD
+  current_compatibility: IB*, IREF*, and IIN* magnitudes must not exceed 0.01 A and sign must follow the simulation testbench
+    direction
+VDD:
+  parameter_type: supply_voltage
+  value_type: continuous
+  optimizable: true
+  default: 3.3
+  unit: V
+  range:
+    minimum: 1.8
+    maximum: 10.0
+VSS:
+  parameter_type: supply_voltage
+  value_type: continuous
+  optimizable: false
+  fixed_value: 0.0
+  unit: V
+VIN1_DC:
+  source_port: VIN1
+  parameter_type: input_bias
+  value_type: continuous
+  optimizable: true
+  default: 1.2
+  unit: V
+  range:
+    minimum: 0.0
+    maximum: 10.0
+  relational_constraint: VSS <= value <= VDD
+VCLK1:
+  source_port: VCLK1
+  parameter_type: clock_voltage
+  value_type: continuous
+  optimizable: true
+  default: 0.0
+  unit: V
+  range:
+    minimum: 0.0
+    maximum: 10.0
+  relational_constraint: VSS <= value <= VDD
+  waveform_constraint: clock low/high levels must remain within VSS and VDD
