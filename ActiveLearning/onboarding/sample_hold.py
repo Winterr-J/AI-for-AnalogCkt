@@ -126,6 +126,13 @@ def _constructor_names(path: Path) -> set[str]:
 def build_sample_hold_circuit_config(circuit_type: str, circuit_id: str, *,
                                      repository_root: str | Path | None = None,
                                      runtime_provider: Any) -> ActiveLearningCircuitConfig:
+    from .sample_hold_bulk_core import BULK_IDS, build_bulk_runtime
+    if circuit_id in BULK_IDS:
+        return build_bulk_runtime(
+            circuit_type, circuit_id,
+            repository_root=Path(repository_root) if repository_root else Path(__file__).resolve().parents[2],
+            runtime_provider=runtime_provider,
+        )
     if circuit_id not in _ASSETS:
         raise AutoConfigError(f"No reviewed SampleHold mapping for {circuit_id}")
     root = (Path(repository_root) if repository_root else Path(__file__).resolve().parents[2]).resolve()

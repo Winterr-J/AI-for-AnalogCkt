@@ -132,6 +132,45 @@ def configuration_identity(config: dict, config_sha256: str) -> str:
 
 
 def verify_job(manifest: dict, job: dict) -> None:
+    if manifest.get("schema_version") == "sample_hold_bulk_runtime_v1":
+        from .sample_hold_bulk_production import EXPECTED, _receipt, inspect_manifest
+
+        spec = inspect_manifest(Path(manifest["manifest_path"]))
+        if (manifest.get("batch_id") != spec["batch_id"]
+                or manifest.get("preparation_root") != spec["preparation_root"]
+                or job.get("circuit_type") != "SampleHold"
+                or job.get("circuit_id", "")[-4:] not in EXPECTED[spec["batch_id"]]
+                or job.get("job_id") != "sc" + job["circuit_id"][-4:]
+                or job.get("max_iterations") != 5 or job.get("seed") != 42
+                or job.get("execution_mode") != "al_only"
+                or job.get("sample_hold_execution_id") != "native/" + job["job_id"]):
+            raise ValueError("SampleHold bulk job identity/policy mismatch")
+        item = next(row for row in spec["jobs"] if row["job_id"] == job["job_id"])
+        saved = _receipt(spec, item)
+        if saved.get("status") != "PREPARATION_READY":
+            raise ValueError("SampleHold bulk job has no READY preparation")
+        prep = Path(spec["preparation_root"]) / job["circuit_id"]
+        config_path = (prep / saved["config_path"]).resolve(strict=True)
+        d0_path = (prep / saved["d0_path"]).resolve(strict=True)
+        root = Path(manifest["repository_root"]).resolve(strict=True)
+        source_path = (root / job["source_path"]).resolve(strict=True)
+        config = _load_config(config_path)
+        if (Path(job["config_path"]).resolve(strict=True) != config_path
+                or Path(job["d0_path"]).resolve(strict=True) != d0_path
+                or not source_path.is_relative_to(root)
+                or sha256_file(config_path) != job["config_sha256"]
+                or sha256_file(d0_path) != job["d0_sha256"]
+                or sha256_file(source_path) != job["source_sha256"]
+                or canonical_sha256(config.get("target_specs")) != job["target_spec_sha256"]
+                or config.get("active_learning", {}).get("max_iterations") != 5
+                or config["active_learning"].get("stop_on_meets_spec") is not False
+                or config.get("data", {}).get("d0_mode") != "independent"
+                or config["data"].get("seed") != 42
+                or config["data"].get("n_samples") != 20):
+            raise ValueError("SampleHold bulk job config/D0/source hash mismatch")
+        for name, digest in manifest["source_closure"].items():
+            _asset(root, name, digest)
+        return
     root = Path(manifest["repository_root"])
     config_path = _asset(root, job["config_path"], job["config_sha256"])
     d0_path = _asset(root, job["d0_path"], job["d0_sha256"])

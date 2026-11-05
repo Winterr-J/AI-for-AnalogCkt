@@ -1,0 +1,17 @@
+{
+  "circuit_0260": {"inputs": ["VIN1"], "outputs": ["VOUT1"], "track_clock": "VCLK1", "track_level": "HIGH", "complement_clocks": ["VCLK2"]},
+  "circuit_0262": {"inputs": ["VIN1"], "outputs": ["VOUT1"], "track_clock": "VCLK1", "track_level": "HIGH", "complement_clocks": ["VCLK2"]},
+  "circuit_0605": {"inputs": ["VIN1"], "outputs": ["VOUT1"], "track_clock": "VCLK1", "track_level": "HIGH", "complement_clocks": []},
+  "circuit_0606": {"inputs": ["VIN1"], "outputs": ["VOUT1"], "track_clock": "VCLK1", "track_level": "HIGH", "complement_clocks": ["VCLK2"]},
+  "circuit_0607": {"inputs": ["VIN1"], "outputs": ["VOUT1"], "track_clock": "VCLK1", "track_level": "HIGH", "complement_clocks": ["VCLK2"]},
+  "circuit_0608": {"inputs": ["VIN1"], "outputs": ["VOUT1"], "track_clock": "VCLK1", "track_level": "HIGH", "complement_clocks": []},
+  "circuit_0609": {"inputs": ["VIN1"], "outputs": ["VOUT1"], "track_clock": "VCLK1", "track_level": "HIGH", "complement_clocks": ["VCLK2"]},
+  "circuit_0610": {"inputs": ["VIN1"], "outputs": ["VOUT1"], "track_clock": "VCLK1", "track_level": "HIGH", "complement_clocks": ["VCLK2"]},
+  "circuit_0612": {"inputs": ["VIN1"], "outputs": ["VOUT1"], "track_clock": "VCLK1", "track_level": "HIGH", "complement_clocks": []},
+  "circuit_0614": {"inputs": ["VIN1"], "outputs": ["VOUT1"], "track_clock": "VCLK1", "track_level": "HIGH", "complement_clocks": ["VCLK2", "VCLK3"]},
+  "circuit_0615": {"inputs": ["VIN1"], "outputs": ["VOUT1"], "track_clock": "VCLK1", "track_level": "HIGH", "complement_clocks": ["VCLK2", "VCLK3", "VCLK4", "VCLK5"]},
+  "circuit_0617": {"inputs": ["VIN1"], "outputs": ["VOUT1"], "track_clock": "VTRACK1", "track_level": "HIGH", "complement_clocks": ["VHOLD1"]},
+  "circuit_0618": {"inputs": ["VIN1"], "outputs": ["VOUT1", "VOUT2"], "track_clock": "VTRACK1", "track_level": "HIGH", "complement_clocks": ["VHOLD1"]},
+  "circuit_0619": {"inputs": ["VIN1", "VIN2"], "outputs": ["VOUT1", "VOUT2"], "track_clock": "VTRACK1", "track_level": "HIGH", "complement_clocks": ["VHOLD1"]},
+  "circuit_0658": {"inputs": ["VIN1"], "outputs": ["VOUT1"], "track_clock": "VCLK1", "track_level": "HIGH", "complement_clocks": []}
+}

@@ -165,6 +165,29 @@ def _real_point_evaluator(runtime: Any) -> Callable[[Mapping[str, Any]], dict[st
             check_current_mirror_functionality,
             functional_config,
         )
+    if runtime.circuit_type == "SampleHold" and runtime.testbench_config.get("_bulk_executor"):
+        evaluator = runtime.create_evaluator()
+        validator = runtime.create_functional_validator()
+
+        def evaluate_sample(sample):
+            params = dict(sample["params"])
+            parameter = validate_parameters(params, runtime.param_template)
+            if not parameter["parameter_valid"]:
+                return {"sample_id": sample["sample_id"], "params": params,
+                        "parameter_valid": False, "simulation_valid": False,
+                        "functional_valid": False, "failure_reasons": ["parameter_invalid"]}
+            physical = evaluator.evaluate(params)
+            checked = validator.validate(params, physical)
+            status = checked["status"]
+            return {"sample_id": sample["sample_id"], "params": params,
+                    "parameter_valid": status["parameter_valid"],
+                    "simulation_valid": status["simulation_valid"],
+                    "functional_valid": status["functional_valid"],
+                    "measurement_valid": status["measurement_valid"],
+                    "failure_reasons": checked["failure_reasons"],
+                    **checked["metrics"]}
+
+        return evaluate_sample
     raise ValueError(f"Unsupported circuit type: {runtime.circuit_type}")
 
 

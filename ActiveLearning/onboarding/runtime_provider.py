@@ -171,7 +171,8 @@ def _sample_hold_evaluator_factory(
 
     if testbench_overrides:
         raise AutoConfigError("SampleHold fixture overrides require a reviewed source closure")
-    executor = (runtime.testbench_config.get("_al_executor")
+    executor = (runtime.testbench_config.get("_bulk_executor")
+                or runtime.testbench_config.get("_al_executor")
                 or runtime.testbench_config.get("_d0_executor"))
     return SampleHoldEvaluatorAdapter(runtime, executor)
 

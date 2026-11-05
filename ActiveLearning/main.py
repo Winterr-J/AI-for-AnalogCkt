@@ -175,6 +175,9 @@ def _validate_sample_hold_pilot(
     performance_template,
 ):
     """Validate the frozen pilot and automatically bind the Ubuntu runtime."""
+    if config.get("sample_hold_bulk") is not None:
+        from ActiveLearning.onboarding.sample_hold_bulk_core import validate_bulk_al
+        return validate_bulk_al(runtime, config, Path(config_path), Path(d0_path))
     from ActiveLearning.onboarding.sample_hold_batch import SampleHoldALExecutor
     from ActiveLearning.onboarding.sample_hold_phase_a import validate_pilot_static
     from ActiveLearning.onboarding.sample_hold_ubuntu import runtime_preflight

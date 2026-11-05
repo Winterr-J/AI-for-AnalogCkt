@@ -1,0 +1,16 @@
+{
+  "schema_version": "sample_hold_bulk_v1",
+  "batch_id": "MTV2_SH_003",
+  "output_root": "/home/ubuntu/sc_al_batches",
+  "preparation_root": "/home/ubuntu/sc_al_preparations/MTV2_SH_003",
+  "credential_scope": "bytecat_ubuntu",
+  "continue_on_verified_failure": true,
+  "preparation": {"seed": 42, "independent_d0_samples": 20, "sampling_mode": "v4", "profile_attempts_max": 40, "d0_attempts_max": 20},
+  "jobs": [
+    {"job_id": "sc0615", "circuit_id": "circuit_0615", "max_iterations": 5},
+    {"job_id": "sc0617", "circuit_id": "circuit_0617", "max_iterations": 5},
+    {"job_id": "sc0618", "circuit_id": "circuit_0618", "max_iterations": 5},
+    {"job_id": "sc0619", "circuit_id": "circuit_0619", "max_iterations": 5},
+    {"job_id": "sc0658", "circuit_id": "circuit_0658", "max_iterations": 5}
+  ]
+}
