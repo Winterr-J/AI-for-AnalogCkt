@@ -7,6 +7,7 @@ No physical failure is retried automatically, including interrupted preparation.
 from __future__ import annotations
 
 import argparse
+import copy
 import json
 import os
 from pathlib import Path, PurePosixPath
@@ -21,6 +22,11 @@ EXPECTED = {
                     "0610", "0612", "0614"),
     "MTV2_SH_003": ("0615", "0617", "0618", "0619", "0658"),
 }
+_MTV2_SH_002_RECOVERY_JOBS = frozenset({"sc0607", "sc0608", "sc0609"})
+_RECOVERY_SOURCE_DRIFT = frozenset({
+    "ActiveLearning/batch_runner_v2/runner.py",
+    "ActiveLearning/batch_runner_v2/sample_hold_bulk_production.py",
+})
 
 
 def inspect_manifest(path: Path) -> dict:
@@ -363,6 +369,81 @@ def preflight(path: Path) -> tuple[dict, dict]:
     return manifest, blocked
 
 
+def _resume_manifest_for_abandoned_orphan(
+    manifest: dict, output_root: str | Path,
+    abandoned_orphan_job_ids: frozenset[str],
+) -> dict:
+    """Bind the reviewed MTV2_SH_002 recovery to its existing batch identity."""
+    from .schema import canonical_sha256
+    from .storage import read_json
+
+    if manifest.get("batch_id") != "MTV2_SH_002" or abandoned_orphan_job_ids != {"sc0605"}:
+        raise ValueError("SampleHold bulk recovery permits only MTV2_SH_002/sc0605")
+    directory = Path(output_root) / "MTV2_SH_002"
+    persisted = read_json(directory / "manifest.json")
+    state = read_json(directory / "status.json")
+    if (persisted.get("manifest_sha256") != state.get("manifest_sha256")
+            or persisted.get("batch_id") != "MTV2_SH_002"
+            or set(state.get("jobs", {})) != {job["job_id"] for job in manifest["jobs"]}
+            or state["jobs"].get("sc0262", {}).get("state") != "COMPLETED"
+            or state["jobs"].get("sc0605", {}).get("state") != "INTERRUPTED_UNCERTAIN"
+            or state["jobs"]["sc0605"].get("error_code") != "ORPHAN_UNVERIFIED"
+            or state.get("orphan_unverified") is not True):
+        raise ValueError("MTV2_SH_002 persisted recovery state changed")
+    pending = {job_id for job_id, row in state["jobs"].items()
+               if row.get("state") == "PENDING"}
+    if not pending.issubset(_MTV2_SH_002_RECOVERY_JOBS):
+        raise ValueError(f"MTV2_SH_002 has unexpected PENDING jobs: {sorted(pending)}")
+
+    old_sources = persisted.get("source_closure")
+    new_sources = manifest.get("source_closure")
+    if not isinstance(old_sources, dict) or not isinstance(new_sources, dict):
+        raise ValueError("MTV2_SH_002 source closure missing")
+    changed_sources = {
+        name for name in set(old_sources) | set(new_sources)
+        if old_sources.get(name) != new_sources.get(name)
+    }
+    if changed_sources != _RECOVERY_SOURCE_DRIFT:
+        raise ValueError(
+            "MTV2_SH_002 recovery source drift differs from the reviewed patch: "
+            f"{sorted(changed_sources)}")
+
+    def stable_payload(value: dict) -> dict:
+        payload = copy.deepcopy(value)
+        payload.pop("manifest_sha256", None)
+        payload.pop("source_closure", None)
+        payload.pop("_resume_manifest_sha256", None)
+        return payload
+
+    if canonical_sha256(stable_payload(persisted)) != canonical_sha256(
+            stable_payload(manifest)):
+        raise ValueError("MTV2_SH_002 jobs, assets, policy, or runtime identity changed")
+    resumed = copy.deepcopy(manifest)
+    resumed["manifest_sha256"] = persisted["manifest_sha256"]
+    resumed["_resume_manifest_sha256"] = persisted["manifest_sha256"]
+    return resumed
+
+
+def _resume_child_manifest_identity(
+    manifest: dict, attempt: Path, expected_manifest_sha256: str,
+) -> dict:
+    """Restore the reviewed parent identity; _child_result rechecks it again."""
+    from .storage import read_json
+
+    if (not isinstance(expected_manifest_sha256, str)
+            or len(expected_manifest_sha256) != 64
+            or any(ch not in "0123456789abcdef" for ch in expected_manifest_sha256)):
+        raise ValueError("invalid resume manifest SHA-256")
+    intent = read_json(attempt / "child_spawn_intent.json")
+    state = read_json(attempt.parents[3] / "status.json")
+    if (intent.get("manifest_sha256") != expected_manifest_sha256
+            or state.get("manifest_sha256") != expected_manifest_sha256):
+        raise PermissionError("SampleHold recovery child identity changed")
+    resumed = copy.deepcopy(manifest)
+    resumed["manifest_sha256"] = expected_manifest_sha256
+    return resumed
+
+
 def _worker(manifest: dict, job: dict, attempt: Path) -> dict:
     from ActiveLearning.sample_hold_posix import ProcessGroupUncertain, run_isolated
     from .runner import UnverifiedOrphanError
@@ -374,6 +455,8 @@ def _worker(manifest: dict, job: dict, attempt: Path) -> dict:
     command = [sys.executable, "-m", "ActiveLearning.batch_runner_v2.sample_hold_bulk_production",
                "child", "--manifest", manifest["manifest_path"],
                "--job-id", job["job_id"], "--attempt", str(attempt)]
+    if manifest.get("_resume_manifest_sha256"):
+        command.extend(["--resume-manifest-sha256", manifest["_resume_manifest_sha256"]])
     try:
         completed = run_isolated(command, cwd=ROOT, timeout=2400,
                                  environment=dict(os.environ))
@@ -407,7 +490,13 @@ def main(argv=None) -> int:
     parser.add_argument("--allow-llm", action="store_true")
     parser.add_argument("--job-id")
     parser.add_argument("--attempt", type=Path)
+    parser.add_argument("--abandoned-orphan-job-id", action="append", default=[])
+    parser.add_argument("--resume-manifest-sha256", help=argparse.SUPPRESS)
     args = parser.parse_args(argv)
+    if args.abandoned_orphan_job_id and args.command != "run":
+        parser.error("--abandoned-orphan-job-id is valid only for run")
+    if args.resume_manifest_sha256 and args.command != "child":
+        parser.error("--resume-manifest-sha256 is internal to the child command")
     if args.command == "inspect":
         result = inspect_manifest(args.manifest)
     elif args.command == "preparation":
@@ -443,12 +532,22 @@ def main(argv=None) -> int:
                         if item["job_id"] == args.job_id), None)
             if job is None:
                 raise ValueError("SampleHold child job not in ready Batch set")
+            if args.resume_manifest_sha256:
+                manifest = _resume_child_manifest_identity(
+                    manifest, args.attempt.resolve(strict=True),
+                    args.resume_manifest_sha256)
             result = _child_result(manifest, job, args.attempt.resolve(strict=True))
         else:
             from .runner import _run_batch
-            result = _run_batch(manifest, inspect_manifest(args.manifest)["output_root"],
+            output_root = inspect_manifest(args.manifest)["output_root"]
+            abandoned_orphans = frozenset(args.abandoned_orphan_job_id)
+            if abandoned_orphans:
+                manifest = _resume_manifest_for_abandoned_orphan(
+                    manifest, output_root, abandoned_orphans)
+            result = _run_batch(manifest, output_root,
                                 lambda job, attempt: _worker(manifest, job, attempt),
-                                offline_only=False, execution_scope="sample_hold_production")
+                                offline_only=False, execution_scope="sample_hold_production",
+                                abandoned_orphan_job_ids=abandoned_orphans)
     print(json.dumps(result, ensure_ascii=False, indent=2, default=str))
     return 0
 

@@ -248,7 +248,11 @@ def _run_batch(
     worker: Callable[[dict, Path], dict], *, offline_only: bool,
     authorization: dict | None = None,
     execution_scope: str | None = None,
+    abandoned_orphan_job_ids: set[str] | frozenset[str] | None = None,
 ) -> dict:
+    abandoned_orphans = frozenset(abandoned_orphan_job_ids or ())
+    if any(not isinstance(job_id, str) for job_id in abandoned_orphans):
+        raise TypeError("abandoned orphan job IDs must be strings")
     directory = _batch_dir(output_root, manifest["batch_id"])
     if directory.is_symlink():
         raise ValueError("batch directory must not be a symbolic link")
@@ -276,8 +280,25 @@ def _run_batch(
                 execution_scope=execution_scope)
             atomic_json(directory / "manifest.json", manifest)
             _save(directory, state)
-        if state.get("orphan_unverified"):
-            raise UnverifiedOrphanError("an earlier child may still be running; manual review required")
+        orphan_rows = {
+            job_id for job_id, row in state["jobs"].items()
+            if row.get("state") == "INTERRUPTED_UNCERTAIN"
+            and row.get("error_code") == "ORPHAN_UNVERIFIED"
+        }
+        invalid_abandonments = abandoned_orphans - orphan_rows
+        if invalid_abandonments:
+            raise ValueError(
+                "only persisted INTERRUPTED_UNCERTAIN/ORPHAN_UNVERIFIED jobs "
+                f"may be abandoned: {sorted(invalid_abandonments)}")
+        if state.get("orphan_unverified") and not orphan_rows:
+            raise UnverifiedOrphanError(
+                "persisted orphan marker has no matching interrupted job; "
+                "manual review required")
+        unapproved_orphans = orphan_rows - abandoned_orphans
+        if unapproved_orphans:
+            raise UnverifiedOrphanError(
+                "an earlier child may still be running; explicitly abandon only "
+                f"the reviewed jobs to continue: {sorted(unapproved_orphans)}")
         for job in manifest["jobs"]:
             job_id = job["job_id"]
             row = state["jobs"][job_id]
@@ -301,6 +322,8 @@ def _run_batch(
                 _event(directory, job_id, "INTERRUPTED_UNCERTAIN", row["error_code"])
                 break
             if row["state"] == "INTERRUPTED_UNCERTAIN":
+                if job_id in abandoned_orphans:
+                    continue
                 if row.get("error_code") in {
                         "INVALID_WORKER_RESULT", "SAFE_STOP_ARTIFACT_INVALID"}:
                     break
@@ -462,12 +485,17 @@ def _run_batch(
 def run_mock_batch(
     manifest_path: str | Path, output_root: str | Path,
     worker: Callable[[dict, Path], dict],
+    *,
+    abandoned_orphan_job_ids: set[str] | frozenset[str] | None = None,
 ) -> dict:
     """Execute only an explicitly injected mock worker."""
     if not callable(worker):
         raise TypeError("an injected mock worker is required")
     manifest = load_manifest(manifest_path)
-    return _run_batch(manifest, output_root, worker, offline_only=True)
+    return _run_batch(
+        manifest, output_root, worker, offline_only=True,
+        abandoned_orphan_job_ids=abandoned_orphan_job_ids,
+    )
 
 
 def run_authorized_batch(
@@ -478,6 +506,7 @@ def run_authorized_batch(
     *,
     enable_production: bool = False,
     offline_scenarios: dict[str, str] | None = None,
+    abandoned_orphan_job_ids: set[str] | frozenset[str] | None = None,
 ) -> dict:
     """Run only a B2A batch whose exact approval digest was pinned externally.
 
@@ -521,6 +550,7 @@ def run_authorized_batch(
         manifest, output_root, authorized_worker,
         offline_only=authorization["execution_scope"] != "production",
         authorization=authorization,
+        abandoned_orphan_job_ids=abandoned_orphan_job_ids,
     )
 
 
@@ -640,6 +670,7 @@ def report_batch(batch_id: str, output_root: str | Path) -> dict:
                            "functional_unverified": classifications[key]["functional_unverified"],
                            "success_evidence_inconsistent": classifications[key]["success_evidence_inconsistent"],
                            "attempts": len(row["attempts"]),
+                           "error_code": row.get("error_code"),
                            "final_metrics": row.get("final_metrics"),
                            "d0_record_count": row.get("d0_record_count"),
                            "api_usage": per_job_usage(key)}
