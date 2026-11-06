@@ -165,7 +165,7 @@ def _real_point_evaluator(runtime: Any) -> Callable[[Mapping[str, Any]], dict[st
             check_current_mirror_functionality,
             functional_config,
         )
-    if runtime.circuit_type == "SampleHold" and runtime.testbench_config.get("_bulk_executor"):
+    if runtime.circuit_type in {"SampleHold", "SCIntegrator"} and runtime.testbench_config.get("_bulk_executor"):
         evaluator = runtime.create_evaluator()
         validator = runtime.create_functional_validator()
 

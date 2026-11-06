@@ -132,6 +132,43 @@ def configuration_identity(config: dict, config_sha256: str) -> str:
 
 
 def verify_job(manifest: dict, job: dict) -> None:
+    if manifest.get("schema_version") == "sc_integrator_bulk_runtime_v1":
+        from .sc_integrator_production import _receipt, inspect_manifest
+        spec = inspect_manifest(manifest["batch_id"])
+        if (manifest.get("preparation_root") != spec["preparation_root"]
+                or manifest.get("candidate_manifest_sha256") != spec["candidate_manifest_sha256"]
+                or job.get("circuit_type") != "SCIntegrator"
+                or job.get("circuit_id") not in spec["circuit_ids"]
+                or job.get("job_id") != job.get("circuit_id")
+                or job.get("max_iterations") != 5 or job.get("seed") != 42
+                or job.get("execution_mode") != "al_only"
+                or job.get("sc_integrator_execution_id") != "native/" + job["circuit_id"]):
+            raise ValueError("SCIntegrator bulk job identity/policy mismatch")
+        saved = _receipt(spec, job["circuit_id"])
+        if saved.get("status") != "PREPARATION_READY":
+            raise ValueError("SCIntegrator job has no READY Preparation")
+        prep = Path(spec["preparation_root"]) / job["circuit_id"]
+        config_path = (prep / saved["config_path"]).resolve(strict=True)
+        d0_path = (prep / saved["d0_path"]).resolve(strict=True)
+        root = Path(manifest["repository_root"]).resolve(strict=True)
+        source_path = (root / job["source_path"]).resolve(strict=True)
+        config = _load_config(config_path)
+        if (Path(job["config_path"]).resolve(strict=True) != config_path
+                or Path(job["d0_path"]).resolve(strict=True) != d0_path
+                or not source_path.is_relative_to(root)
+                or sha256_file(config_path) != job["config_sha256"]
+                or sha256_file(d0_path) != job["d0_sha256"]
+                or sha256_file(source_path) != job["source_sha256"]
+                or canonical_sha256(config.get("target_specs")) != job["target_spec_sha256"]
+                or config.get("active_learning", {}).get("max_iterations") != 5
+                or config["active_learning"].get("stop_on_meets_spec") is not False
+                or config.get("data", {}).get("d0_mode") != "independent"
+                or config["data"].get("seed") != 42
+                or config["data"].get("n_samples") != 20):
+            raise ValueError("SCIntegrator bulk config/D0/source hash mismatch")
+        for name, digest in manifest["source_closure"].items():
+            _asset(root, name, digest)
+        return
     if manifest.get("schema_version") == "sample_hold_bulk_runtime_v1":
         from .sample_hold_bulk_production import EXPECTED, _receipt, inspect_manifest
 

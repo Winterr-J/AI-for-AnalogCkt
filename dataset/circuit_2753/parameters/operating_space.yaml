@@ -1,0 +1,69 @@
+schema_version: 1
+circuit_id: circuit_2753
+circuit_type: "switched-capacitor sampler"
+scope: operating_parameters_only
+conditional_constraints:
+  voltage_class_compatibility: "VDD and every driven voltage must respect the lowest voltage rating among selected device models"
+  bias_voltage_compatibility: "Analog DC biases and waveform extrema must remain between VSS and VDD"
+  clock_compatibility: "Clock low/high levels must remain between VSS and VDD and rise/fall times must be nonzero"
+  current_compatibility: "Driven current magnitude must not exceed 0.01 A and sign follows the testbench direction"
+VDD:
+  parameter_type: supply_voltage
+  value_type: continuous
+  optimizable: true
+  default: 3.3
+  unit: V
+  range:
+    minimum: 1.8
+    maximum: 10.0
+VSS:
+  parameter_type: supply_voltage
+  value_type: continuous
+  optimizable: false
+  fixed_value: 0.0
+  unit: V
+VIN1_DC:
+  source_port: VIN1
+  parameter_type: input_bias
+  value_type: continuous
+  optimizable: true
+  default: 1.2
+  unit: V
+  range:
+    minimum: 0.0
+    maximum: 10.0
+  relational_constraint: "VSS <= value <= VDD"
+VCLK1:
+  source_port: VCLK1
+  parameter_type: clock_or_switch_control
+  value_type: continuous
+  optimizable: true
+  default: 0.0
+  unit: V
+  range:
+    minimum: 0.0
+    maximum: 10.0
+  relational_constraint: "VSS <= value <= VDD"
+  waveform_constraints:
+    low_minimum: 0.0
+    high_maximum: 10.0
+    minimum_rise_fall_time: 1e-12
+    frequency_minimum_Hz: 1.0
+    frequency_maximum_Hz: 1000000000.0
+VCLK2:
+  source_port: VCLK2
+  parameter_type: clock_or_switch_control
+  value_type: continuous
+  optimizable: true
+  default: 0.0
+  unit: V
+  range:
+    minimum: 0.0
+    maximum: 10.0
+  relational_constraint: "VSS <= value <= VDD"
+  waveform_constraints:
+    low_minimum: 0.0
+    high_maximum: 10.0
+    minimum_rise_fall_time: 1e-12
+    frequency_minimum_Hz: 1.0
+    frequency_maximum_Hz: 1000000000.0

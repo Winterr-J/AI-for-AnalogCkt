@@ -1,0 +1,8 @@
+circuit_id: circuit_2903
+circuit_number: 2903
+analoggenie_folder_id: 3063
+circuit_type: switched-capacitor sampler
+circuit_name: CMOS clocked switched-capacitor sampler or charge-transfer cell (AnalogGenie 3063)
+circuit_function: Uses clocked switches and capacitors for sampling, holding, charge transfer, or discrete-time signal processing using the cmos clocked switched-capacitor sampler or charge-transfer cell topology.
+source_ports: VDD, VSS, VIN1, VOUT1, VCLK1, VCLK2
+device_summary: capacitor=2, nmos=7, pmos=4, resistor=3

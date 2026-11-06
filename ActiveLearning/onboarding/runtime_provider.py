@@ -183,6 +183,19 @@ def _sample_hold_validator_factory(runtime: Any) -> Any:
     return SampleHoldFunctionalValidator()
 
 
+def _sc_integrator_evaluator_factory(runtime: Any, testbench_overrides: Mapping[str, Any] | None) -> Any:
+    from .sc_integrator_bulk_core import SCIntegratorEvaluatorAdapter
+    if testbench_overrides:
+        raise AutoConfigError("SCIntegrator physical fixture overrides are not allowed")
+    return SCIntegratorEvaluatorAdapter(runtime, runtime.testbench_config.get("_bulk_executor")
+                                        or runtime.testbench_config.get("_al_executor"))
+
+
+def _sc_integrator_validator_factory(runtime: Any) -> Any:
+    from .sc_integrator_bulk_core import SCIntegratorFunctionalValidator
+    return SCIntegratorFunctionalValidator()
+
+
 def _opamp_nominal_smoke_factory(
     runtime: Any,
     target_specs: Mapping[str, Any] | None,
@@ -204,6 +217,17 @@ def _opamp_nominal_smoke_factory(
 
 
 _PROVIDERS = {
+    "SCIntegrator": CircuitTypeRuntimeProvider(
+        circuit_type="SCIntegrator",
+        semantic_resolver_name="SCIntegratorSourceBoundBulkV1",
+        evaluator_name="SCIntegratorTwoCaseTransientV1",
+        functional_validator_name="SCIntegratorFunctionalValidator",
+        performance_template_name="SCIntegrator",
+        testbench_defaults={},
+        structural_builder_name="_build_sc_integrator_bulk_config",
+        evaluator_factory=_sc_integrator_evaluator_factory,
+        validator_factory=_sc_integrator_validator_factory,
+    ),
     "SampleHold": CircuitTypeRuntimeProvider(
         circuit_type="SampleHold",
         semantic_resolver_name="SampleHoldSourceVerifiedV1",

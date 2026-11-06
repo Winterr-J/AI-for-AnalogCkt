@@ -1,0 +1,901 @@
+schema_version: 2
+circuit_id: circuit_2719
+circuit_type: "switched-capacitor sampler"
+scope: ideal_device_parameters_only
+model_library:
+  ideal_level1_nmos:
+    device_type: nmos
+    model_type: SPICE_level_1
+    level: 1
+    model_parameters:
+      VTO:
+        optimizable: false
+        default: 0.7
+        unit: V
+      KP:
+        optimizable: false
+        default: 200.0
+        unit: uA/V^2
+      LAMBDA:
+        optimizable: false
+        default: 0.02
+        unit: "1/V"
+  ideal_level1_pmos:
+    device_type: pmos
+    model_type: SPICE_level_1
+    level: 1
+    model_parameters:
+      VTO:
+        optimizable: false
+        default: -0.7
+        unit: V
+      KP:
+        optimizable: false
+        default: 100.0
+        unit: uA/V^2
+      LAMBDA:
+        optimizable: false
+        default: 0.02
+        unit: "1/V"
+  ideal_capacitor:
+    device_type: capacitor
+    model_type: ideal_linear_capacitor
+device_design_space:
+  MM3:
+    device_type: nmos
+    model_parameter: MM3_model
+    selectable_models:
+      - ideal_level1_nmos
+    parameters:
+      W:
+        data_type: continuous
+        minimum: 0.22
+        maximum: 100.0
+        default: 10.0
+        unit: um
+        scale: log
+        constraint_source: GF180MCU_limit
+      L:
+        data_type: continuous
+        minimum: 0.28
+        maximum: 50.0
+        default: 1.0
+        unit: um
+        scale: log
+        constraint_source: GF180MCU_limit
+      m:
+        data_type: continuous
+        minimum: 1
+        maximum: 100
+        default: 1
+        unit: unitless
+        scale: linear
+        constraint_source: GF180MCU_limit
+        integer_only: true
+  MM0:
+    device_type: nmos
+    model_parameter: MM0_model
+    selectable_models:
+      - ideal_level1_nmos
+    parameters:
+      W:
+        data_type: continuous
+        minimum: 0.22
+        maximum: 100.0
+        default: 10.0
+        unit: um
+        scale: log
+        constraint_source: GF180MCU_limit
+      L:
+        data_type: continuous
+        minimum: 0.28
+        maximum: 50.0
+        default: 1.0
+        unit: um
+        scale: log
+        constraint_source: GF180MCU_limit
+      m:
+        data_type: continuous
+        minimum: 1
+        maximum: 100
+        default: 1
+        unit: unitless
+        scale: linear
+        constraint_source: GF180MCU_limit
+        integer_only: true
+  MM4:
+    device_type: nmos
+    model_parameter: MM4_model
+    selectable_models:
+      - ideal_level1_nmos
+    parameters:
+      W:
+        data_type: continuous
+        minimum: 0.22
+        maximum: 100.0
+        default: 10.0
+        unit: um
+        scale: log
+        constraint_source: GF180MCU_limit
+      L:
+        data_type: continuous
+        minimum: 0.28
+        maximum: 50.0
+        default: 1.0
+        unit: um
+        scale: log
+        constraint_source: GF180MCU_limit
+      m:
+        data_type: continuous
+        minimum: 1
+        maximum: 100
+        default: 1
+        unit: unitless
+        scale: linear
+        constraint_source: GF180MCU_limit
+        integer_only: true
+  MM6:
+    device_type: pmos
+    model_parameter: MM6_model
+    selectable_models:
+      - ideal_level1_pmos
+    parameters:
+      W:
+        data_type: continuous
+        minimum: 0.22
+        maximum: 50.0
+        default: 20.0
+        unit: um
+        scale: log
+        constraint_source: GF180MCU_limit
+      L:
+        data_type: continuous
+        minimum: 0.28
+        maximum: 100.0
+        default: 1.0
+        unit: um
+        scale: log
+        constraint_source: GF180MCU_limit
+      m:
+        data_type: continuous
+        minimum: 1
+        maximum: 100
+        default: 1
+        unit: unitless
+        scale: linear
+        constraint_source: GF180MCU_limit
+        integer_only: true
+  MM5:
+    device_type: pmos
+    model_parameter: MM5_model
+    selectable_models:
+      - ideal_level1_pmos
+    parameters:
+      W:
+        data_type: continuous
+        minimum: 0.22
+        maximum: 50.0
+        default: 20.0
+        unit: um
+        scale: log
+        constraint_source: GF180MCU_limit
+      L:
+        data_type: continuous
+        minimum: 0.28
+        maximum: 100.0
+        default: 1.0
+        unit: um
+        scale: log
+        constraint_source: GF180MCU_limit
+      m:
+        data_type: continuous
+        minimum: 1
+        maximum: 100
+        default: 1
+        unit: unitless
+        scale: linear
+        constraint_source: GF180MCU_limit
+        integer_only: true
+  MM1:
+    device_type: pmos
+    model_parameter: MM1_model
+    selectable_models:
+      - ideal_level1_pmos
+    parameters:
+      W:
+        data_type: continuous
+        minimum: 0.22
+        maximum: 50.0
+        default: 20.0
+        unit: um
+        scale: log
+        constraint_source: GF180MCU_limit
+      L:
+        data_type: continuous
+        minimum: 0.28
+        maximum: 100.0
+        default: 1.0
+        unit: um
+        scale: log
+        constraint_source: GF180MCU_limit
+      m:
+        data_type: continuous
+        minimum: 1
+        maximum: 100
+        default: 1
+        unit: unitless
+        scale: linear
+        constraint_source: GF180MCU_limit
+        integer_only: true
+  MM2:
+    device_type: pmos
+    model_parameter: MM2_model
+    selectable_models:
+      - ideal_level1_pmos
+    parameters:
+      W:
+        data_type: continuous
+        minimum: 0.22
+        maximum: 50.0
+        default: 20.0
+        unit: um
+        scale: log
+        constraint_source: GF180MCU_limit
+      L:
+        data_type: continuous
+        minimum: 0.28
+        maximum: 100.0
+        default: 1.0
+        unit: um
+        scale: log
+        constraint_source: GF180MCU_limit
+      m:
+        data_type: continuous
+        minimum: 1
+        maximum: 100
+        default: 1
+        unit: unitless
+        scale: linear
+        constraint_source: GF180MCU_limit
+        integer_only: true
+  MM1_dup2:
+    device_type: nmos
+    model_parameter: MM1_dup2_model
+    selectable_models:
+      - ideal_level1_nmos
+    parameters:
+      W:
+        data_type: continuous
+        minimum: 0.22
+        maximum: 100.0
+        default: 10.0
+        unit: um
+        scale: log
+        constraint_source: GF180MCU_limit
+      L:
+        data_type: continuous
+        minimum: 0.28
+        maximum: 50.0
+        default: 1.0
+        unit: um
+        scale: log
+        constraint_source: GF180MCU_limit
+      m:
+        data_type: continuous
+        minimum: 1
+        maximum: 100
+        default: 1
+        unit: unitless
+        scale: linear
+        constraint_source: GF180MCU_limit
+        integer_only: true
+  MM0_dup2:
+    device_type: nmos
+    model_parameter: MM0_dup2_model
+    selectable_models:
+      - ideal_level1_nmos
+    parameters:
+      W:
+        data_type: continuous
+        minimum: 0.22
+        maximum: 100.0
+        default: 10.0
+        unit: um
+        scale: log
+        constraint_source: GF180MCU_limit
+      L:
+        data_type: continuous
+        minimum: 0.28
+        maximum: 50.0
+        default: 1.0
+        unit: um
+        scale: log
+        constraint_source: GF180MCU_limit
+      m:
+        data_type: continuous
+        minimum: 1
+        maximum: 100
+        default: 1
+        unit: unitless
+        scale: linear
+        constraint_source: GF180MCU_limit
+        integer_only: true
+  MM8:
+    device_type: nmos
+    model_parameter: MM8_model
+    selectable_models:
+      - ideal_level1_nmos
+    parameters:
+      W:
+        data_type: continuous
+        minimum: 0.22
+        maximum: 100.0
+        default: 10.0
+        unit: um
+        scale: log
+        constraint_source: GF180MCU_limit
+      L:
+        data_type: continuous
+        minimum: 0.28
+        maximum: 50.0
+        default: 1.0
+        unit: um
+        scale: log
+        constraint_source: GF180MCU_limit
+      m:
+        data_type: continuous
+        minimum: 1
+        maximum: 100
+        default: 1
+        unit: unitless
+        scale: linear
+        constraint_source: GF180MCU_limit
+        integer_only: true
+  MM2_dup2:
+    device_type: pmos
+    model_parameter: MM2_dup2_model
+    selectable_models:
+      - ideal_level1_pmos
+    parameters:
+      W:
+        data_type: continuous
+        minimum: 0.22
+        maximum: 50.0
+        default: 20.0
+        unit: um
+        scale: log
+        constraint_source: GF180MCU_limit
+      L:
+        data_type: continuous
+        minimum: 0.28
+        maximum: 100.0
+        default: 1.0
+        unit: um
+        scale: log
+        constraint_source: GF180MCU_limit
+      m:
+        data_type: continuous
+        minimum: 1
+        maximum: 100
+        default: 1
+        unit: unitless
+        scale: linear
+        constraint_source: GF180MCU_limit
+        integer_only: true
+  MM3_dup2:
+    device_type: pmos
+    model_parameter: MM3_dup2_model
+    selectable_models:
+      - ideal_level1_pmos
+    parameters:
+      W:
+        data_type: continuous
+        minimum: 0.22
+        maximum: 50.0
+        default: 20.0
+        unit: um
+        scale: log
+        constraint_source: GF180MCU_limit
+      L:
+        data_type: continuous
+        minimum: 0.28
+        maximum: 100.0
+        default: 1.0
+        unit: um
+        scale: log
+        constraint_source: GF180MCU_limit
+      m:
+        data_type: continuous
+        minimum: 1
+        maximum: 100
+        default: 1
+        unit: unitless
+        scale: linear
+        constraint_source: GF180MCU_limit
+        integer_only: true
+  MM10:
+    device_type: pmos
+    model_parameter: MM10_model
+    selectable_models:
+      - ideal_level1_pmos
+    parameters:
+      W:
+        data_type: continuous
+        minimum: 0.22
+        maximum: 50.0
+        default: 20.0
+        unit: um
+        scale: log
+        constraint_source: GF180MCU_limit
+      L:
+        data_type: continuous
+        minimum: 0.28
+        maximum: 100.0
+        default: 1.0
+        unit: um
+        scale: log
+        constraint_source: GF180MCU_limit
+      m:
+        data_type: continuous
+        minimum: 1
+        maximum: 100
+        default: 1
+        unit: unitless
+        scale: linear
+        constraint_source: GF180MCU_limit
+        integer_only: true
+  MM11:
+    device_type: nmos
+    model_parameter: MM11_model
+    selectable_models:
+      - ideal_level1_nmos
+    parameters:
+      W:
+        data_type: continuous
+        minimum: 0.22
+        maximum: 100.0
+        default: 10.0
+        unit: um
+        scale: log
+        constraint_source: GF180MCU_limit
+      L:
+        data_type: continuous
+        minimum: 0.28
+        maximum: 50.0
+        default: 1.0
+        unit: um
+        scale: log
+        constraint_source: GF180MCU_limit
+      m:
+        data_type: continuous
+        minimum: 1
+        maximum: 100
+        default: 1
+        unit: unitless
+        scale: linear
+        constraint_source: GF180MCU_limit
+        integer_only: true
+  MM8_dup2:
+    device_type: nmos
+    model_parameter: MM8_dup2_model
+    selectable_models:
+      - ideal_level1_nmos
+    parameters:
+      W:
+        data_type: continuous
+        minimum: 0.22
+        maximum: 100.0
+        default: 10.0
+        unit: um
+        scale: log
+        constraint_source: GF180MCU_limit
+      L:
+        data_type: continuous
+        minimum: 0.28
+        maximum: 50.0
+        default: 1.0
+        unit: um
+        scale: log
+        constraint_source: GF180MCU_limit
+      m:
+        data_type: continuous
+        minimum: 1
+        maximum: 100
+        default: 1
+        unit: unitless
+        scale: linear
+        constraint_source: GF180MCU_limit
+        integer_only: true
+  MM9:
+    device_type: nmos
+    model_parameter: MM9_model
+    selectable_models:
+      - ideal_level1_nmos
+    parameters:
+      W:
+        data_type: continuous
+        minimum: 0.22
+        maximum: 100.0
+        default: 10.0
+        unit: um
+        scale: log
+        constraint_source: GF180MCU_limit
+      L:
+        data_type: continuous
+        minimum: 0.28
+        maximum: 50.0
+        default: 1.0
+        unit: um
+        scale: log
+        constraint_source: GF180MCU_limit
+      m:
+        data_type: continuous
+        minimum: 1
+        maximum: 100
+        default: 1
+        unit: unitless
+        scale: linear
+        constraint_source: GF180MCU_limit
+        integer_only: true
+  MM7:
+    device_type: nmos
+    model_parameter: MM7_model
+    selectable_models:
+      - ideal_level1_nmos
+    parameters:
+      W:
+        data_type: continuous
+        minimum: 0.22
+        maximum: 100.0
+        default: 10.0
+        unit: um
+        scale: log
+        constraint_source: GF180MCU_limit
+      L:
+        data_type: continuous
+        minimum: 0.28
+        maximum: 50.0
+        default: 1.0
+        unit: um
+        scale: log
+        constraint_source: GF180MCU_limit
+      m:
+        data_type: continuous
+        minimum: 1
+        maximum: 100
+        default: 1
+        unit: unitless
+        scale: linear
+        constraint_source: GF180MCU_limit
+        integer_only: true
+  MM2_dup3:
+    device_type: nmos
+    model_parameter: MM2_dup3_model
+    selectable_models:
+      - ideal_level1_nmos
+    parameters:
+      W:
+        data_type: continuous
+        minimum: 0.22
+        maximum: 100.0
+        default: 10.0
+        unit: um
+        scale: log
+        constraint_source: GF180MCU_limit
+      L:
+        data_type: continuous
+        minimum: 0.28
+        maximum: 50.0
+        default: 1.0
+        unit: um
+        scale: log
+        constraint_source: GF180MCU_limit
+      m:
+        data_type: continuous
+        minimum: 1
+        maximum: 100
+        default: 1
+        unit: unitless
+        scale: linear
+        constraint_source: GF180MCU_limit
+        integer_only: true
+  MM0_dup3:
+    device_type: nmos
+    model_parameter: MM0_dup3_model
+    selectable_models:
+      - ideal_level1_nmos
+    parameters:
+      W:
+        data_type: continuous
+        minimum: 0.22
+        maximum: 100.0
+        default: 10.0
+        unit: um
+        scale: log
+        constraint_source: GF180MCU_limit
+      L:
+        data_type: continuous
+        minimum: 0.28
+        maximum: 50.0
+        default: 1.0
+        unit: um
+        scale: log
+        constraint_source: GF180MCU_limit
+      m:
+        data_type: continuous
+        minimum: 1
+        maximum: 100
+        default: 1
+        unit: unitless
+        scale: linear
+        constraint_source: GF180MCU_limit
+        integer_only: true
+  MM10_dup2:
+    device_type: pmos
+    model_parameter: MM10_dup2_model
+    selectable_models:
+      - ideal_level1_pmos
+    parameters:
+      W:
+        data_type: continuous
+        minimum: 0.22
+        maximum: 50.0
+        default: 20.0
+        unit: um
+        scale: log
+        constraint_source: GF180MCU_limit
+      L:
+        data_type: continuous
+        minimum: 0.28
+        maximum: 100.0
+        default: 1.0
+        unit: um
+        scale: log
+        constraint_source: GF180MCU_limit
+      m:
+        data_type: continuous
+        minimum: 1
+        maximum: 100
+        default: 1
+        unit: unitless
+        scale: linear
+        constraint_source: GF180MCU_limit
+        integer_only: true
+  MM4_dup2:
+    device_type: pmos
+    model_parameter: MM4_dup2_model
+    selectable_models:
+      - ideal_level1_pmos
+    parameters:
+      W:
+        data_type: continuous
+        minimum: 0.22
+        maximum: 50.0
+        default: 20.0
+        unit: um
+        scale: log
+        constraint_source: GF180MCU_limit
+      L:
+        data_type: continuous
+        minimum: 0.28
+        maximum: 100.0
+        default: 1.0
+        unit: um
+        scale: log
+        constraint_source: GF180MCU_limit
+      m:
+        data_type: continuous
+        minimum: 1
+        maximum: 100
+        default: 1
+        unit: unitless
+        scale: linear
+        constraint_source: GF180MCU_limit
+        integer_only: true
+  MM3_dup3:
+    device_type: pmos
+    model_parameter: MM3_dup3_model
+    selectable_models:
+      - ideal_level1_pmos
+    parameters:
+      W:
+        data_type: continuous
+        minimum: 0.22
+        maximum: 50.0
+        default: 20.0
+        unit: um
+        scale: log
+        constraint_source: GF180MCU_limit
+      L:
+        data_type: continuous
+        minimum: 0.28
+        maximum: 100.0
+        default: 1.0
+        unit: um
+        scale: log
+        constraint_source: GF180MCU_limit
+      m:
+        data_type: continuous
+        minimum: 1
+        maximum: 100
+        default: 1
+        unit: unitless
+        scale: linear
+        constraint_source: GF180MCU_limit
+        integer_only: true
+  MM1_dup3:
+    device_type: pmos
+    model_parameter: MM1_dup3_model
+    selectable_models:
+      - ideal_level1_pmos
+    parameters:
+      W:
+        data_type: continuous
+        minimum: 0.22
+        maximum: 50.0
+        default: 20.0
+        unit: um
+        scale: log
+        constraint_source: GF180MCU_limit
+      L:
+        data_type: continuous
+        minimum: 0.28
+        maximum: 100.0
+        default: 1.0
+        unit: um
+        scale: log
+        constraint_source: GF180MCU_limit
+      m:
+        data_type: continuous
+        minimum: 1
+        maximum: 100
+        default: 1
+        unit: unitless
+        scale: linear
+        constraint_source: GF180MCU_limit
+        integer_only: true
+  M12:
+    device_type: nmos
+    model_parameter: M12_model
+    selectable_models:
+      - ideal_level1_nmos
+    parameters:
+      W:
+        data_type: continuous
+        minimum: 0.22
+        maximum: 100.0
+        default: 10.0
+        unit: um
+        scale: log
+        constraint_source: GF180MCU_limit
+      L:
+        data_type: continuous
+        minimum: 0.28
+        maximum: 50.0
+        default: 1.0
+        unit: um
+        scale: log
+        constraint_source: GF180MCU_limit
+      m:
+        data_type: continuous
+        minimum: 1
+        maximum: 100
+        default: 1
+        unit: unitless
+        scale: linear
+        constraint_source: GF180MCU_limit
+        integer_only: true
+  M13:
+    device_type: nmos
+    model_parameter: M13_model
+    selectable_models:
+      - ideal_level1_nmos
+    parameters:
+      W:
+        data_type: continuous
+        minimum: 0.22
+        maximum: 100.0
+        default: 10.0
+        unit: um
+        scale: log
+        constraint_source: GF180MCU_limit
+      L:
+        data_type: continuous
+        minimum: 0.28
+        maximum: 50.0
+        default: 1.0
+        unit: um
+        scale: log
+        constraint_source: GF180MCU_limit
+      m:
+        data_type: continuous
+        minimum: 1
+        maximum: 100
+        default: 1
+        unit: unitless
+        scale: linear
+        constraint_source: GF180MCU_limit
+        integer_only: true
+  C1:
+    device_type: capacitor
+    model_parameter: C1_model
+    selectable_models:
+      - ideal_capacitor
+    parameters:
+      C:
+        data_type: continuous
+        minimum: 2.5e-14
+        maximum: 2e-09
+        default: 1e-12
+        unit: F
+        scale: log
+        constraint_source: GF180MCU_MIM_area_and_multiplicity_envelope
+      W:
+        data_type: continuous
+        minimum: 5.0
+        maximum: 100.0
+        default: 10.0
+        unit: um
+        scale: log
+        constraint_source: GF180MCU_limit
+      L:
+        data_type: continuous
+        minimum: 5.0
+        maximum: 100.0
+        default: 10.0
+        unit: um
+        scale: log
+        constraint_source: GF180MCU_limit
+      m:
+        data_type: continuous
+        minimum: 1
+        maximum: 100
+        default: 1
+        unit: unitless
+        scale: linear
+        constraint_source: GF180MCU_limit
+        integer_only: true
+  C0:
+    device_type: capacitor
+    model_parameter: C0_model
+    selectable_models:
+      - ideal_capacitor
+    parameters:
+      C:
+        data_type: continuous
+        minimum: 2.5e-14
+        maximum: 2e-09
+        default: 1e-12
+        unit: F
+        scale: log
+        constraint_source: GF180MCU_MIM_area_and_multiplicity_envelope
+      W:
+        data_type: continuous
+        minimum: 5.0
+        maximum: 100.0
+        default: 10.0
+        unit: um
+        scale: log
+        constraint_source: GF180MCU_limit
+      L:
+        data_type: continuous
+        minimum: 5.0
+        maximum: 100.0
+        default: 10.0
+        unit: um
+        scale: log
+        constraint_source: GF180MCU_limit
+      m:
+        data_type: continuous
+        minimum: 1
+        maximum: 100
+        default: 1
+        unit: unitless
+        scale: linear
+        constraint_source: GF180MCU_limit
+        integer_only: true
+notes:
+  fixed_model_parameters: "Ideal MOS VTO/KP/LAMBDA, BJT IS/BF/VAF, and diode IS/N are defaults and are not optimizable"
+  geometry_alignment: "W, L, and m limits follow the corresponding GF180MCU envelopes where a native scalable primitive exists"
+  hierarchy_note: "Logic and transmission-gate symbols remain hierarchical blocks; wrapper-level W/L is not invented"
+  separation_note: "Operating values are stored separately in operating_space.yaml"

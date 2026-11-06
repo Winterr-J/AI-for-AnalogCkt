@@ -328,7 +328,7 @@ class ActiveLearningCircuitConfig:
 
     def summary(self) -> dict[str, Any]:
         if isinstance(self.semantic_mapping, OpAmpSemanticMapping) or (
-            self.circuit_type == "SampleHold" and hasattr(self.semantic_mapping, "to_dict")
+            self.circuit_type in {"SampleHold", "SCIntegrator"} and hasattr(self.semantic_mapping, "to_dict")
         ):
             semantic_mapping = self.semantic_mapping.to_dict()
         else:

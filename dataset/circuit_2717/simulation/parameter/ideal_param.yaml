@@ -1,0 +1,183 @@
+schema_version: 1
+circuit:
+  id: circuit_2717
+  analoggenie_folder_id: 2877
+  category: switched-capacitor sampler
+  actual_circuit_type: single_ended_switched_capacitor_sampler
+  base_topology: switched_capacitor
+simulation_stage: ideal_baseline
+functional_status: PASS
+model_defaults:
+  NMOS_IDEAL:
+    level: 1
+    VTO_V: 0.7
+    KP_uA_per_V2: 200.0
+    LAMBDA_per_V: 0.02
+  PMOS_IDEAL:
+    level: 1
+    VTO_V: -0.7
+    KP_uA_per_V2: 100.0
+    LAMBDA_per_V: 0.02
+  NPN_IDEAL:
+    IS: 1.0e-15
+    BF: 100.0
+    VAF: 100.0
+    EG: 1.11
+    XTI: 3.0
+  PNP_IDEAL:
+    IS: 1.0e-15
+    BF: 100.0
+    VAF: 100.0
+    EG: 1.11
+    XTI: 3.0
+device_parameters:
+  MM3:
+    device_type: nmos4
+    model: NMOS_IDEAL
+    W_um: 10.0
+    L_um: 1.0
+    m: 1
+  MM0:
+    device_type: nmos4
+    model: NMOS_IDEAL
+    W_um: 10.0
+    L_um: 1.0
+    m: 1
+  MM4:
+    device_type: nmos4
+    model: NMOS_IDEAL
+    W_um: 10.0
+    L_um: 1.0
+    m: 1
+  MM6:
+    device_type: pmos4
+    model: PMOS_IDEAL
+    W_um: 20.0
+    L_um: 1.0
+    m: 1
+  MM5:
+    device_type: pmos4
+    model: PMOS_IDEAL
+    W_um: 20.0
+    L_um: 1.0
+    m: 1
+  MM1:
+    device_type: pmos4
+    model: PMOS_IDEAL
+    W_um: 20.0
+    L_um: 1.0
+    m: 1
+  MM2:
+    device_type: pmos4
+    model: PMOS_IDEAL
+    W_um: 20.0
+    L_um: 1.0
+    m: 1
+  MM1_dup2:
+    device_type: nmos4
+    model: NMOS_IDEAL
+    W_um: 10.0
+    L_um: 1.0
+    m: 1
+  MM0_dup2:
+    device_type: nmos4
+    model: NMOS_IDEAL
+    W_um: 10.0
+    L_um: 1.0
+    m: 1
+  MM8:
+    device_type: nmos4
+    model: NMOS_IDEAL
+    W_um: 10.0
+    L_um: 1.0
+    m: 1
+  MM2_dup2:
+    device_type: pmos4
+    model: PMOS_IDEAL
+    W_um: 20.0
+    L_um: 1.0
+    m: 1
+  MM3_dup2:
+    device_type: pmos4
+    model: PMOS_IDEAL
+    W_um: 20.0
+    L_um: 1.0
+    m: 1
+  MM10:
+    device_type: pmos4
+    model: PMOS_IDEAL
+    W_um: 20.0
+    L_um: 1.0
+    m: 1
+  RR0:
+    device_type: resistor
+    model: ideal_resistor
+    R_ohm: 10000.0
+  MM2_dup3:
+    device_type: nmos4
+    model: NMOS_IDEAL
+    W_um: 10.0
+    L_um: 1.0
+    m: 1
+  MM0_dup3:
+    device_type: nmos4
+    model: NMOS_IDEAL
+    W_um: 10.0
+    L_um: 1.0
+    m: 1
+  MM3_dup3:
+    device_type: pmos4
+    model: PMOS_IDEAL
+    W_um: 20.0
+    L_um: 1.0
+    m: 1
+  MM1_dup3:
+    device_type: pmos4
+    model: PMOS_IDEAL
+    W_um: 20.0
+    L_um: 1.0
+    m: 1
+  M12:
+    device_type: nmos4
+    model: NMOS_IDEAL
+    W_um: 10.0
+    L_um: 1.0
+    m: 1
+  M13:
+    device_type: nmos4
+    model: NMOS_IDEAL
+    W_um: 10.0
+    L_um: 1.0
+    m: 1
+  C1:
+    device_type: capacitor
+    model: ideal_capacitor
+    C_F: 1.0e-12
+  C0:
+    device_type: capacitor
+    model: ideal_capacitor
+    C_F: 1.0e-12
+operating_parameters:
+  VDD: 3.3
+  VSS: 0.0
+  VIN1: 1.2
+  VB1: 1.65
+  VB2: 1.65
+  VCLK1: 0.0
+  VCLK2: 0.0
+  VOUT1: 1.65
+adjusted_parameters: []
+search_policy: global ideal defaults -> operating bias sweep -> synchronized W/L groups;
+  first Functional PASS/WARN; no performance optimization
+required_simulations:
+- tran
+functional_check: first reasonable operating point demonstrating the actual topology
+  core function; no paper-performance optimization
+original_status: FAIL
+performance_status: PASS
+numerical_status: PASS
+topology_limitation: false
+PDK_eligible: true
+classification_action: core-function criterion corrected; non-core/performance warning
+  separated; no parameter scan
+remaining_issue: null

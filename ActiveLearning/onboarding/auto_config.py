@@ -1727,6 +1727,16 @@ def _build_sample_hold_circuit_config(
     )
 
 
+def _build_sc_integrator_bulk_config(
+    circuit_type: str, circuit_id: str, *, repository_root: str | Path | None = None,
+    runtime_provider: Any,
+) -> ActiveLearningCircuitConfig:
+    from .sc_integrator_bulk_core import ROOT, build_runtime
+    return build_runtime(circuit_type, circuit_id,
+                         repository_root=Path(repository_root) if repository_root else ROOT,
+                         runtime_provider=runtime_provider)
+
+
 def build_active_learning_circuit_config(
     circuit_type: str,
     circuit_id: str,

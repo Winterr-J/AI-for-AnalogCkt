@@ -362,6 +362,10 @@ def run_configured_active_learning(
             performance_template,
         )
         runtime.testbench_config["_al_executor"] = sample_hold_executor
+    elif circuit_type == "SCIntegrator":
+        from ActiveLearning.onboarding.sc_integrator_bulk_core import validate_bulk_al
+        sample_hold_executor = validate_bulk_al(runtime, config, paths["config"], d0_path)
+        runtime.testbench_config["_al_executor"] = sample_hold_executor
     circuit_info = dict(parameter_template["circuit"])
     circuit_info.update(config.get("circuit_info", {}))
     settings = config.get("active_learning", {})
@@ -449,9 +453,10 @@ def run_configured_active_learning(
         deadline_check=deadline_check,
     )
     if sample_hold_executor is not None:
-        result["sample_hold_pilot_execution"] = (
-            sample_hold_executor.execution_statistics()
-        )
+        if circuit_type == "SampleHold":
+            result["sample_hold_pilot_execution"] = sample_hold_executor.execution_statistics()
+        else:
+            result["physical_execution"] = sample_hold_executor.execution_statistics()
     write_completed_run(
         selected_runs_root,
         run_context,
@@ -555,6 +560,11 @@ def _print_autoconfig_summary(runtime):
         print(f"      dc_measurement: {output['dc_section']}/{output['dc_name']}")
         print(f"    output_node: {semantic['output_node']}")
         print(f"    sweep_element: {semantic['sweep_element']}")
+    elif summary["circuit_type"] == "SCIntegrator":
+        print(f"    input: {semantic['input']}")
+        print(f"    output: {semantic['output']}")
+        print(f"    clocks: {', '.join(semantic['clocks'])}")
+        print(f"    virtual_ground: {semantic['virtual_ground']}")
     elif summary["circuit_type"] == "SampleHold":
         print(f"    inputs: {', '.join(semantic['inputs'])}")
         print(f"    outputs: {', '.join(semantic['outputs'])}")

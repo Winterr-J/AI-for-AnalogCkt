@@ -135,7 +135,56 @@ def _receipt(spec: dict, circuit_id: str) -> dict:
     return saved
 
 
-def preparation(batch_id: str, *, allow_spice: bool, allow_llm: bool) -> dict:
+def _preserve_autoconfig_blocked_receipt(spec: dict, circuit_id: str) -> None:
+    """Allow only the original pre-physical AutoConfig failure to be retried."""
+    directory = Path(spec["preparation_root"]) / circuit_id
+    receipt = directory / "result.json"
+    archive = directory / "result.blocked_autoconfig_original.json"
+    if (directory.is_symlink() or not receipt.is_file() or receipt.is_symlink()
+            or (OUTPUT_ROOT / spec["batch_id"] / "native" / circuit_id).exists()
+            or (OUTPUT_ROOT / spec["batch_id"] / "jobs" / circuit_id).exists()):
+        raise ValueError("SCIntegrator retry has an unsafe directory or physical history")
+    allowed = {"result.json", archive.name}
+    if {path.name for path in directory.iterdir()} - allowed:
+        raise ValueError("SCIntegrator retry has existing Preparation artifacts")
+    original = receipt.read_bytes()
+    saved = json.loads(original)
+    if (saved != {"status": "BLOCKED", "batch_id": spec["batch_id"],
+                  "circuit_id": circuit_id,
+                  "reason": "AutoConfigError: Unsupported AutoConfig circuit type: SCIntegrator"}):
+        raise ValueError("SCIntegrator retry is limited to the original AutoConfig failure")
+    if archive.exists():
+        if archive.is_symlink() or archive.read_bytes() != original:
+            raise ValueError("SCIntegrator original BLOCKED receipt archive changed")
+    else:
+        with archive.open("xb") as stream:
+            stream.write(original)
+            stream.flush()
+            os.fsync(stream.fileno())
+
+
+def _preserve_autoconfig_blocked_summary(spec: dict) -> None:
+    root = Path(spec["preparation_root"])
+    summary = root / "summary.json"
+    archive = root / "summary.blocked_autoconfig_original.json"
+    if not summary.exists():
+        return
+    if summary.is_symlink() or not summary.is_file():
+        raise ValueError("SCIntegrator Preparation summary is unsafe")
+    original = summary.read_bytes()
+    if json.loads(original).get("batch_id") != spec["batch_id"]:
+        raise ValueError("SCIntegrator Preparation summary identity changed")
+    if not archive.exists():
+        with archive.open("xb") as stream:
+            stream.write(original)
+            stream.flush()
+            os.fsync(stream.fileno())
+    elif archive.is_symlink():
+        raise ValueError("SCIntegrator original BLOCKED summary archive changed")
+
+
+def preparation(batch_id: str, *, allow_spice: bool, allow_llm: bool,
+                retry_autoconfig_blocked: bool = False) -> dict:
     _linux()
     if not allow_spice or not allow_llm:
         raise PermissionError("physical Preparation requires --allow-spice --allow-llm")
@@ -156,18 +205,32 @@ def preparation(batch_id: str, *, allow_spice: bool, allow_llm: bool) -> dict:
             or directory_root.is_relative_to(OUTPUT_ROOT)):
         raise ValueError("SCIntegrator output roots overlap repository or each other")
     directory_root.mkdir(parents=True, exist_ok=True)
+    if retry_autoconfig_blocked:
+        _preserve_autoconfig_blocked_summary(spec)
     results = {}
     for circuit_id in spec["circuit_ids"]:
         directory = directory_root / circuit_id
         receipt_path = directory / "result.json"
-        if directory.exists():
+        if directory.exists() and not retry_autoconfig_blocked:
             try:
                 results[circuit_id] = _receipt(spec, circuit_id)
             except Exception as error:
                 results[circuit_id] = {"status": "BLOCKED", "circuit_id": circuit_id,
                                        "reason": f"existing Preparation incomplete/changed: {error}"}
             continue
-        directory.mkdir()
+        if directory.exists():
+            try:
+                existing = _receipt(spec, circuit_id)
+                if existing.get("status") == "PREPARATION_READY":
+                    results[circuit_id] = existing
+                    continue
+                _preserve_autoconfig_blocked_receipt(spec, circuit_id)
+            except Exception as error:
+                results[circuit_id] = {"status": "BLOCKED", "circuit_id": circuit_id,
+                                       "reason": f"existing Preparation incomplete/changed: {error}"}
+                continue
+        else:
+            directory.mkdir()
         try:
             runtime = build_active_learning_circuit_config("SCIntegrator", circuit_id)
             plan = derive_plan(circuit_id)
@@ -442,6 +505,7 @@ def main(argv=None) -> int:
     parser.add_argument("--batch-id", required=True)
     parser.add_argument("--allow-spice", action="store_true")
     parser.add_argument("--allow-llm", action="store_true")
+    parser.add_argument("--retry-autoconfig-blocked", action="store_true")
     parser.add_argument("--job-id")
     parser.add_argument("--attempt", type=Path)
     args = parser.parse_args(argv)
@@ -449,7 +513,8 @@ def main(argv=None) -> int:
         result = inspect_manifest(args.batch_id)
     elif args.command == "preparation":
         result = preparation(args.batch_id, allow_spice=args.allow_spice,
-                             allow_llm=args.allow_llm)
+                             allow_llm=args.allow_llm,
+                             retry_autoconfig_blocked=args.retry_autoconfig_blocked)
     elif args.command in {"status", "report"}:
         from .runner import report_batch, status_batch
         spec = inspect_manifest(args.batch_id)

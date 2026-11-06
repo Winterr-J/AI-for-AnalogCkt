@@ -1,0 +1,137 @@
+schema_version: 1
+circuit:
+  id: circuit_0643
+  analoggenie_folder_id: 789
+  category: switched-capacitor circuits
+  actual_circuit_type: switched_capacitor
+simulation_stage: ideal_functional_reassessment
+functional_status: PASS
+model_defaults:
+  NMOS_IDEAL:
+    level: 1
+    VTO_V: 0.7
+    KP_uA_per_V2: 200.0
+    LAMBDA_per_V: 0.02
+  PMOS_IDEAL:
+    level: 1
+    VTO_V: -0.7
+    KP_uA_per_V2: 100.0
+    LAMBDA_per_V: 0.02
+  NPN_IDEAL:
+    IS: 1.0e-15
+    BF: 100.0
+    VAF: 100.0
+    EG: 1.11
+    XTI: 3.0
+  PNP_IDEAL:
+    IS: 1.0e-15
+    BF: 100.0
+    VAF: 100.0
+    EG: 1.11
+    XTI: 3.0
+device_parameters:
+  M3:
+    device_type: pmos4
+    model: PMOS_IDEAL
+    W_um: 20.0
+    L_um: 1.0
+    m: 1
+  M2:
+    device_type: pmos4
+    model: PMOS_IDEAL
+    W_um: 20.0
+    L_um: 1.0
+    m: 1
+  M1:
+    device_type: pmos4
+    model: PMOS_IDEAL
+    W_um: 20.0
+    L_um: 1.0
+    m: 1
+  M0:
+    device_type: pmos4
+    model: PMOS_IDEAL
+    W_um: 20.0
+    L_um: 1.0
+    m: 1
+  M13:
+    device_type: nmos4
+    model: NMOS_IDEAL
+    W_um: 10.0
+    L_um: 1.0
+    m: 1
+  M12:
+    device_type: nmos4
+    model: NMOS_IDEAL
+    W_um: 10.0
+    L_um: 1.0
+    m: 1
+  M9:
+    device_type: nmos4
+    model: NMOS_IDEAL
+    W_um: 10.0
+    L_um: 1.0
+    m: 1
+  M8:
+    device_type: nmos4
+    model: NMOS_IDEAL
+    W_um: 10.0
+    L_um: 1.0
+    m: 1
+  M7:
+    device_type: nmos4
+    model: NMOS_IDEAL
+    W_um: 10.0
+    L_um: 1.0
+    m: 1
+  M6:
+    device_type: nmos4
+    model: NMOS_IDEAL
+    W_um: 10.0
+    L_um: 1.0
+    m: 1
+  M5:
+    device_type: nmos4
+    model: NMOS_IDEAL
+    W_um: 10.0
+    L_um: 1.0
+    m: 1
+  M4:
+    device_type: nmos4
+    model: NMOS_IDEAL
+    W_um: 10.0
+    L_um: 1.0
+    m: 1
+  C1:
+    device_type: capacitor
+    model: ideal_capacitor
+    C_F: 1.0e-12
+  C0:
+    device_type: capacitor
+    model: ideal_capacitor
+    C_F: 1.0e-12
+operating_parameters:
+  VDD: 3.3
+  VSS: 0.0
+  VIN1: 1.2
+  VB1: 1.65
+  VB2: 1.65
+  VB3: 1.65
+  IB1: 0.0001
+  VCLK1: 0.0
+  VCLK2: 0.0
+  VOUT1: 1.65
+adjusted_parameters: []
+search_policy: global ideal defaults -> operating bias sweep -> synchronized W/L groups;
+  first Functional PASS/WARN; no performance optimization
+analysis_overall_status: PASS
+functional_assessment:
+  actual_type: switched_capacitor
+  core_metric:
+    output_tail_vpp: 0.2202910977170478
+    output_final: 0.6616980792257595
+    oscillation_frequency_Hz: 1000378.523964063
+  warning_type:
+  - none
+  topology_limitation: false
+  PDK_eligible: true
