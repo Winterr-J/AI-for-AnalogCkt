@@ -59,13 +59,40 @@ def _trace(analysis, node: str) -> list[float]:
     raise ValueError(f"required physical trace missing: {node}")
 
 
+def _run_transient(simulator, stimulus: dict, command_error_type):
+    """Only ngspice's failed transient run is a per-candidate invalid sample."""
+    try:
+        return simulator.transient(step_time=stimulus["step_time_s"],
+                                   end_time=stimulus["end_time_s"],
+                                   use_initial_condition=False), None
+    except command_error_type as error:
+        if str(error) != "Command 'run' failed":
+            raise
+        return None, {"exception_type": type(error).__name__, "message": str(error)}
+
+
+def _failed_transient_evaluation(case_id: str, failure: dict, attempts: int,
+                                 metric_names) -> dict:
+    return {"metrics": {name: None for name in metric_names},
+            "parameter_valid": True, "simulation_valid": False,
+            "measurement_valid": False, "functional_valid": False,
+            "meets_spec": False,
+            "failure_reasons": [f"spice_transient_run_failed:{case_id}"],
+            "functional_checks": {},
+            "diagnostics": {"failed_case": case_id,
+                            "spice_exception_type": failure["exception_type"],
+                            "spice_error": failure["message"],
+                            "native_simulator_attempts": attempts,
+                            "native_simulator_returns": attempts - 1}}
+
+
 def main(argv=None) -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--candidate", type=Path, required=True)
     parser.add_argument("--token", required=True)
     args = parser.parse_args(argv)
     from ActiveLearning.onboarding import build_active_learning_circuit_config
-    from .sc_integrator_bulk_core import ROOT, derive_plan, evaluate_traces
+    from .sc_integrator_bulk_core import ROOT, METRICS, derive_plan, evaluate_traces
 
     candidate = args.candidate.resolve(strict=True)
     stage = candidate.parent.parent
@@ -110,6 +137,7 @@ def main(argv=None) -> int:
     # Native boundary. No simulator is imported before all durable claims pass.
     from run.single_stage_amplifier.run_ideal_dataset_simulations import configure_ngspice
     configure_ngspice()
+    from PySpice.Spice.NgSpice.Shared import NgSpiceCommandError
     topology = ROOT / f"dataset/{identity['circuit_id']}/topology/{identity['circuit_id']}.py"
     module_spec = importlib.util.spec_from_file_location("sc_integrator_bulk_topology", topology)
     if module_spec is None or module_spec.loader is None:
@@ -117,7 +145,9 @@ def main(argv=None) -> int:
     module = importlib.util.module_from_spec(module_spec)
     module_spec.loader.exec_module(module)
     cases = {}
-    for case_id, perturbed in (("baseline", False), ("perturbed", True)):
+    evaluation = None
+    for attempts, (case_id, perturbed) in enumerate(
+            (("baseline", False), ("perturbed", True)), start=1):
         kwargs = dict(arguments)
         kwargs[plan["fixture"]["input"]] = _input(plan, perturbed)
         for clock in plan["fixture"]["clocks"]:
@@ -134,9 +164,11 @@ def main(argv=None) -> int:
             circuit.C("BULK_BIAS_DECOUPLE", shunt["node"], circuit.gnd,
                       shunt["capacitance_f"])
         simulator = circuit.simulator(temperature=27, nominal_temperature=27)
-        analysis = simulator.transient(step_time=plan["stimulus"]["step_time_s"],
-                                       end_time=plan["stimulus"]["end_time_s"],
-                                       use_initial_condition=False)
+        analysis, failure = _run_transient(
+            simulator, plan["stimulus"], NgSpiceCommandError)
+        if failure is not None:
+            evaluation = _failed_transient_evaluation(case_id, failure, attempts, METRICS)
+            break
         virtual = _trace(analysis, plan["fixture"]["virtual_ground"])
         reference = _trace(analysis, plan["fixture"]["virtual_ground_reference"])
         cases[case_id] = {"time_s": [float(t) for t in analysis.time],
@@ -146,9 +178,10 @@ def main(argv=None) -> int:
                           "clocks_v": {name: _trace(analysis, name)
                                        for name in plan["fixture"]["clocks"]}}
         _durable_json(candidate / f"{case_id}_waveforms.json", cases[case_id])
-    evaluation = evaluate_traces(plan["fixture"], cases["baseline"], cases["perturbed"])
-    evaluation["diagnostics"]["native_simulator_attempts"] = 2
-    evaluation["diagnostics"]["native_simulator_returns"] = 2
+    if evaluation is None:
+        evaluation = evaluate_traces(plan["fixture"], cases["baseline"], cases["perturbed"])
+        evaluation["diagnostics"]["native_simulator_attempts"] = 2
+        evaluation["diagnostics"]["native_simulator_returns"] = 2
     _durable_json(candidate / "native_result.json", {
         "mock": False, "identity_sha256": request["identity_sha256"],
         "vector_sha256": request["vector_sha256"], "evaluation": evaluation,

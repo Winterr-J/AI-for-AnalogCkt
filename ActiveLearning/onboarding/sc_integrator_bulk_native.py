@@ -81,6 +81,13 @@ class SCIntegratorPhysicalExecutor:
                 or len({row.get("vector_sha256") for row in reserved}) != len(reserved)
                 or any(row.get("identity_sha256") != self.identity_sha256 for row in reserved)):
             raise AutoConfigError("SCIntegrator physical budget/duplicate ledger invalid")
+        finished = [row for row in events if row.get("event") == "finished"]
+        if (len(finished) != len(reserved)
+                or any(end.get("attempt") != claim.get("attempt")
+                       or end.get("vector_sha256") != claim.get("vector_sha256")
+                       or end.get("outcome") != "complete"
+                       for claim, end in zip(reserved, finished))):
+            raise AutoConfigError("SCIntegrator physical ledger unclosed or failed")
 
     def __call__(self, arguments: Mapping[str, Any]) -> dict:
         self.verify_existing()

@@ -384,7 +384,8 @@ class SCIntegratorFunctionalValidator:
         status["meets_spec"] = (check_meets_spec(metrics, target_specs)["meets_spec"]
                                 if all(status[key] for key in ("parameter_valid", "simulation_valid",
                                                                     "measurement_valid", "functional_valid"))
-                                else False if target_specs else None)
+                                else False if target_specs or result.get("meets_spec") is False
+                                else None)
         return {"metrics": metrics, "status": status,
                 "failure_reasons": list(result.get("failure_reasons") or []),
                 "diagnostics": dict(result.get("diagnostics") or {}),
