@@ -96,6 +96,14 @@ def _save(directory: Path, state: dict) -> None:
     atomic_json(directory / "status.json", state)
 
 
+def _record_verified_isolation(directory: Path, state: dict, job_id: str) -> None:
+    row = state["jobs"][job_id]
+    if row.get("isolation_verified") is not True:
+        row["isolation_verified"] = True
+        _save(directory, state)
+        _event(directory, job_id, "ISOLATED_VERIFIED", row.get("error_code"))
+
+
 def _initial_state(
     manifest: dict, *, offline_only: bool,
     authorization: dict | None = None,
@@ -207,22 +215,79 @@ def _confirmed_failed_child(directory: Path, job_id: str, row: dict,
     """Continue only after the failed attempt is reaped and batch authority is intact."""
     try:
         attempt = row["attempts"][-1]
-        path = (directory / "jobs" / job_id / "attempts" /
-                attempt["attempt_id"] / "child_reaped.json")
-        if path.is_symlink():
+        attempt_dir = directory / "jobs" / job_id / "attempts" / attempt["attempt_id"]
+        path = attempt_dir / "child_reaped.json"
+        if (attempt.get("attempt_directory") != str(attempt_dir)
+                or attempt_dir.is_symlink() or path.is_symlink()):
             return False
         reaped = read_json(path)
         if reaped.get("attempt_id") != attempt["attempt_id"] or \
                 reaped.get("exit_confirmed") is not True or \
                 type(reaped.get("exit_code")) is not int:
             return False
+        state = read_json(directory / "status.json")
+        if state.get("offline_only") is False:
+            intent_path = attempt_dir / "child_spawn_intent.json"
+            if intent_path.is_symlink():
+                return False
+            intent = read_json(intent_path)
+            if (intent.get("attempt_id") != attempt["attempt_id"]
+                    or intent.get("job_id") != job_id
+                    or intent.get("manifest_sha256", state["manifest_sha256"])
+                    != state["manifest_sha256"]):
+                return False
         ledger = read_jsonl_strict(directory / "api_usage.jsonl")
         started = [item for item in ledger if item.get("event") == "attempt_started"]
         finished = [item for item in ledger if item.get("event") == "attempt_finished"]
         key = lambda item: (item.get("job_id"), item.get("attempt_id"),
                             item.get("logical_id"), item.get("attempt"))
-        if sorted(map(key, started), key=str) != sorted(map(key, finished), key=str):
+        started_keys, finished_keys = list(map(key, started)), list(map(key, finished))
+        if (len(started_keys) != len(set(started_keys))
+                or len(finished_keys) != len(set(finished_keys))
+                or sorted(started_keys, key=str) != sorted(finished_keys, key=str)):
             return False
+        job = next(item for item in manifest["jobs"] if item["job_id"] == job_id)
+        execution_ids = [value for name, value in job.items()
+                         if name.endswith("_execution_id")]
+        if len(execution_ids) > 1:
+            return False
+        if execution_ids:
+            native = directory / execution_ids[0]
+            if (native.is_symlink() or not native.resolve().is_relative_to(directory.resolve())
+                    or (native / ".lock").exists()):
+                return False
+            if native.exists():
+                identity_path = native / "identity.json"
+                physical_path = native / "physical_attempt_ledger.jsonl"
+                if identity_path.is_symlink() or physical_path.is_symlink():
+                    return False
+                identity = read_json(identity_path)
+                limit = manifest.get("resource_limits", {}).get(
+                    "per_circuit_native_attempts_max")
+                if (identity.get("circuit_id") != job["circuit_id"]
+                        or identity.get("stage") != "al"
+                        or type(limit) is not int or identity.get("limit") != limit
+                        or identity.get("extra", {}).get("batch_id") != manifest["batch_id"]
+                        or identity["extra"].get("config_sha256") != job["config_sha256"]
+                        or identity["extra"].get("d0_sha256") != job["d0_sha256"]):
+                    return False
+                from ActiveLearning.sc_sample_hold_generic import canonical_sha256
+                identity_sha = canonical_sha256(identity)
+                physical = read_jsonl_strict(physical_path)
+                reserved = [item for item in physical if item.get("event") == "reserved"]
+                closed = [item for item in physical if item.get("event") == "finished"]
+                physical_key = lambda item: (item.get("attempt"), item.get("vector_sha256"))
+                reservation_keys = list(map(physical_key, reserved))
+                if (len(reserved) > limit or len(reserved) != len(closed)
+                        or len(set(reservation_keys)) != len(reservation_keys)
+                        or [item.get("attempt") for item in reserved]
+                        != list(range(1, len(reserved) + 1))
+                        or any(item.get("identity_sha256") != identity_sha for item in reserved)
+                        or any(item.get("outcome") not in {
+                            "complete", "timeout_reaped", "failed_reaped"} for item in closed)
+                        or sorted(reservation_keys, key=str)
+                        != sorted(map(physical_key, closed), key=str)):
+                    return False
         if authorization is not None:
             from .authorization import (
                 validate_authorization, validate_authorization_claim,
@@ -236,8 +301,7 @@ def _confirmed_failed_child(directory: Path, job_id: str, row: dict,
                 authorization["authorization_sha256"], directory.parent)
             validate_authorization_claim(approved)
             verify_published_source_closure(current)
-            verify_job(current, next(job for job in current["jobs"]
-                                     if job["job_id"] == job_id))
+            verify_job(current, job)
     except Exception:
         return False
     return True
@@ -294,7 +358,12 @@ def _run_batch(
             raise UnverifiedOrphanError(
                 "persisted orphan marker has no matching interrupted job; "
                 "manual review required")
-        unapproved_orphans = orphan_rows - abandoned_orphans
+        verified_orphans = {
+            job_id for job_id in orphan_rows
+            if _confirmed_failed_child(directory, job_id, state["jobs"][job_id],
+                                       manifest, authorization)
+        }
+        unapproved_orphans = orphan_rows - verified_orphans - abandoned_orphans
         if unapproved_orphans:
             raise UnverifiedOrphanError(
                 "an earlier child may still be running; explicitly abandon only "
@@ -320,14 +389,15 @@ def _run_batch(
                     state["orphan_unverified"] = True
                 _save(directory, state)
                 _event(directory, job_id, "INTERRUPTED_UNCERTAIN", row["error_code"])
+                if _confirmed_failed_child(directory, job_id, row, manifest, authorization):
+                    _record_verified_isolation(directory, state, job_id)
+                    continue
                 break
             if row["state"] == "INTERRUPTED_UNCERTAIN":
                 if job_id in abandoned_orphans:
                     continue
-                if row.get("error_code") in {
-                        "INVALID_WORKER_RESULT", "SAFE_STOP_ARTIFACT_INVALID"}:
-                    break
                 if _confirmed_failed_child(directory, job_id, row, manifest, authorization):
+                    _record_verified_isolation(directory, state, job_id)
                     continue
                 break
             if row["state"] in {"SKIPPED_JOB_TIMEOUT", "SKIPPED_JOB_BUDGET"}:
@@ -337,6 +407,13 @@ def _run_batch(
                     _save(directory, state)
                     _event(directory, job_id, "INTERRUPTED_UNCERTAIN", row["error_code"])
                     break
+                continue
+            if row["state"] in {"FAILED_TERMINAL", "BLOCKED"} and row["attempts"]:
+                if not offline_only and not _confirmed_failed_child(
+                        directory, job_id, row, manifest, authorization):
+                    break
+                if not offline_only:
+                    _record_verified_isolation(directory, state, job_id)
                 continue
             if row["state"] != "PENDING":
                 continue
@@ -379,6 +456,9 @@ def _run_batch(
                 state["orphan_unverified"] = True
                 _save(directory, state)
                 _event(directory, job_id, "INTERRUPTED_UNCERTAIN", row["error_code"])
+                if _confirmed_failed_child(directory, job_id, row, manifest, authorization):
+                    _record_verified_isolation(directory, state, job_id)
+                    continue
                 break
             except Exception as error:
                 # Unexpected worker exceptions may have consumed LLM/SPICE work.
@@ -387,6 +467,7 @@ def _run_batch(
                 _save(directory, state)
                 _event(directory, job_id, "INTERRUPTED_UNCERTAIN", row["error_code"])
                 if _confirmed_failed_child(directory, job_id, row, manifest, authorization):
+                    _record_verified_isolation(directory, state, job_id)
                     continue
                 break
             if isinstance(outcome, dict) and outcome.get("state") in {
@@ -407,6 +488,11 @@ def _run_batch(
                 row["error_code"] = str(outcome.get("error_code") or "MOCK_TERMINAL")
                 _save(directory, state)
                 _event(directory, job_id, "FAILED_TERMINAL", row["error_code"])
+                if not offline_only and not _confirmed_failed_child(
+                        directory, job_id, row, manifest, authorization):
+                    break
+                if not offline_only:
+                    _record_verified_isolation(directory, state, job_id)
                 continue
             if isinstance(outcome, dict) and outcome.get("state") == "BLOCKED":
                 row["state"] = "BLOCKED"
@@ -415,6 +501,11 @@ def _run_batch(
                 row["error_code"] = str(outcome.get("error_code") or "REAL_AL_BLOCKED")
                 _save(directory, state)
                 _event(directory, job_id, "BLOCKED", row["error_code"])
+                if not offline_only and not _confirmed_failed_child(
+                        directory, job_id, row, manifest, authorization):
+                    break
+                if not offline_only:
+                    _record_verified_isolation(directory, state, job_id)
                 continue
             try:
                 classification = (
@@ -434,6 +525,9 @@ def _run_batch(
                 row["error_code"] = "INVALID_WORKER_RESULT"
                 _save(directory, state)
                 _event(directory, job_id, "INTERRUPTED_UNCERTAIN", row["error_code"])
+                if _confirmed_failed_child(directory, job_id, row, manifest, authorization):
+                    _record_verified_isolation(directory, state, job_id)
+                    continue
                 break
             # After the mock worker returns, any persistence failure must leave
             # RUNNING for uncertain restart reconciliation, not claim completion.
@@ -451,7 +545,7 @@ def _run_batch(
                           "d0_record_count": outcome.get("d0_record_count"),
                           "result_path": outcome.get("result_path"),
                           "al_result_sha256": outcome.get("al_result_sha256")}
-                if execution_scope == "sample_hold_production":
+                if execution_scope in {"sample_hold_production", "sc_integrator_production"}:
                     result.update({name: outcome.get(name) for name in (
                         "llm_calls", "total_tokens", "total_timing", "physical_ledger_path",
                     )})
@@ -469,7 +563,7 @@ def _run_batch(
                 row["stop_reason"] = outcome["stop_reason"]
                 row["final_metrics"] = outcome.get("final_metrics")
                 row["d0_record_count"] = outcome.get("d0_record_count")
-                if execution_scope == "sample_hold_production":
+                if execution_scope in {"sample_hold_production", "sc_integrator_production"}:
                     row.update({name: outcome.get(name) for name in (
                         "llm_calls", "total_tokens", "total_timing", "physical_ledger_path",
                     )})
@@ -671,11 +765,14 @@ def report_batch(batch_id: str, output_root: str | Path) -> dict:
                            "success_evidence_inconsistent": classifications[key]["success_evidence_inconsistent"],
                            "attempts": len(row["attempts"]),
                            "error_code": row.get("error_code"),
+                           "isolation_verified": row.get("isolation_verified", False),
                            "final_metrics": row.get("final_metrics"),
                            "d0_record_count": row.get("d0_record_count"),
                            "api_usage": per_job_usage(key)}
                      for key, row in rows.items()}}
-    if state.get("execution_scope") == "sample_hold_production":
+    if state.get("execution_scope") in {"sample_hold_production", "sc_integrator_production"}:
+        usage_key = ("sample_hold_usage" if state["execution_scope"] == "sample_hold_production"
+                     else "sc_integrator_usage")
         for key, row in rows.items():
             summary["jobs"][key].update({name: row.get(name) for name in (
                 "llm_calls", "total_tokens", "total_timing", "physical_ledger_path",
@@ -689,7 +786,7 @@ def report_batch(batch_id: str, output_root: str | Path) -> dict:
                 "total_tokens": tokens if row["state"] == "COMPLETED" else None,
             }
         completed = [row for row in rows.values() if row["state"] == "COMPLETED"]
-        summary["sample_hold_usage"] = {
+        summary[usage_key] = {
             "llm_calls": sum(row.get("llm_calls") or 0 for row in completed),
             "reported_total_tokens": sum(
                 (row.get("total_tokens") or {}).get("total_tokens") or 0
@@ -700,17 +797,17 @@ def report_batch(batch_id: str, output_root: str | Path) -> dict:
         # The existing AL usage log counts completed calls and tokens, but not
         # hidden transport attempts. Never report zero physical requests as fact.
         summary["api_usage"] = {
-            "logical_requests": summary["sample_hold_usage"]["llm_calls"],
+            "logical_requests": summary[usage_key]["llm_calls"],
             "physical_attempts": None,
-            "successful_responses": summary["sample_hold_usage"]["llm_calls"],
+            "successful_responses": summary[usage_key]["llm_calls"],
             "failed_attempts": None,
-            "reported_total_tokens": summary["sample_hold_usage"]["reported_total_tokens"],
+            "reported_total_tokens": summary[usage_key]["reported_total_tokens"],
             "request_seconds": None, "retry_wait_seconds": None,
             "logical_wall_seconds": sum(
                 (row.get("total_timing") or {}).get("total_seconds") or 0
                 for row in completed),
-            "usage_unknown": summary["sample_hold_usage"]["usage_unknown"],
-            "total_tokens": (None if summary["sample_hold_usage"]["usage_unknown"]
-                             else summary["sample_hold_usage"]["reported_total_tokens"]),
+            "usage_unknown": summary[usage_key]["usage_unknown"],
+            "total_tokens": (None if summary[usage_key]["usage_unknown"]
+                             else summary[usage_key]["reported_total_tokens"]),
         }
     return summary
