@@ -1,0 +1,7 @@
+SC INTEGRATOR BULK PERFORMANCE GUIDANCE
+
+Predict only the requested metrics using measured, functionally valid D0/AL
+neighbors. The integration-step metric is an absolute magnitude; do not
+infer an unreviewed response polarity. Missing or invalid measurements are
+not zero. Return the generic JSON-only prediction schema and do not claim
+that a prediction is a SPICE result.

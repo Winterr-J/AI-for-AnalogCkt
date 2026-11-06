@@ -7,6 +7,7 @@ separate runtime manifest only from immutable PREPARATION_READY receipts.
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import os
 from pathlib import Path
@@ -18,6 +19,13 @@ MANIFESTS = ROOT / "ActiveLearning/candidate_manifests/sc_integrator_v2/batches"
 MASTER = MANIFESTS.parent / "master_manifest.json"
 OUTPUT_ROOT = Path("/home/ubuntu/sc_integrator_batches")
 PREP_ROOT = Path("/home/ubuntu/sc_integrator_preparations")
+_AUTOCONFIG_ERROR = "AutoConfigError: Unsupported AutoConfig circuit type: SCIntegrator"
+_DEPLOYMENT_RESOURCES = (
+    "ActiveLearning/onboarding/sc_integrator_bulk_fixtures.json",
+    "ActiveLearning/circuit_types/SCIntegrator/performance_template.yaml",
+    "ActiveLearning/inverse_design/prompts/circuit_types/sc_integrator_bulk_v1.txt",
+    "ActiveLearning/performance_prediction/prompts/circuit_types/sc_integrator_bulk_v1.txt",
+)
 
 
 def _sha(path: Path) -> str:
@@ -136,7 +144,7 @@ def _receipt(spec: dict, circuit_id: str) -> dict:
 
 
 def _preserve_autoconfig_blocked_receipt(spec: dict, circuit_id: str) -> None:
-    """Allow only the original pre-physical AutoConfig failure to be retried."""
+    """Preserve one pre-physical AutoConfig or repaired deployment failure."""
     directory = Path(spec["preparation_root"]) / circuit_id
     receipt = directory / "result.json"
     archive = directory / "result.blocked_autoconfig_original.json"
@@ -144,23 +152,107 @@ def _preserve_autoconfig_blocked_receipt(spec: dict, circuit_id: str) -> None:
             or (OUTPUT_ROOT / spec["batch_id"] / "native" / circuit_id).exists()
             or (OUTPUT_ROOT / spec["batch_id"] / "jobs" / circuit_id).exists()):
         raise ValueError("SCIntegrator retry has an unsafe directory or physical history")
-    allowed = {"result.json", archive.name}
+    deployment_archive = directory / "result.blocked_missing_resource_original.json"
+    claim = directory / "retry_missing_resource_claim.json"
+    allowed = {"result.json", archive.name, deployment_archive.name, claim.name}
     if {path.name for path in directory.iterdir()} - allowed:
         raise ValueError("SCIntegrator retry has existing Preparation artifacts")
     original = receipt.read_bytes()
     saved = json.loads(original)
-    if (saved != {"status": "BLOCKED", "batch_id": spec["batch_id"],
-                  "circuit_id": circuit_id,
-                  "reason": "AutoConfigError: Unsupported AutoConfig circuit type: SCIntegrator"}):
-        raise ValueError("SCIntegrator retry is limited to the original AutoConfig failure")
-    if archive.exists():
-        if archive.is_symlink() or archive.read_bytes() != original:
+    expected = {"status": "BLOCKED", "batch_id": spec["batch_id"],
+                "circuit_id": circuit_id, "reason": _AUTOCONFIG_ERROR}
+    if saved == expected:
+        if deployment_archive.exists() or claim.exists():
+            raise ValueError("SCIntegrator deployment retry history conflicts with AutoConfig")
+        _archive_exact(archive, original)
+        return
+    if (set(saved) != {"status", "batch_id", "circuit_id", "reason"}
+            or any(saved.get(key) != expected[key] for key in ("status", "batch_id", "circuit_id"))
+            or not _deployment_missing_path(saved.get("reason"))):
+        raise ValueError("SCIntegrator retry is limited to the original AutoConfig failure or a repaired deployment resource")
+    if claim.exists() or claim.is_symlink():
+        raise ValueError("SCIntegrator deployment resource retry was already claimed")
+    if not archive.is_file() or archive.is_symlink() or json.loads(archive.read_bytes()) != expected:
+        raise ValueError("SCIntegrator original AutoConfig receipt is missing or changed")
+    source_hashes = _verify_historical_sources(circuit_id)
+    deployment_hashes = _verify_deployment_resources()
+    _archive_exact(deployment_archive, original)
+    claim_data = {"batch_id": spec["batch_id"], "circuit_id": circuit_id,
+                  "candidate_manifest_sha256": spec["candidate_manifest_sha256"],
+                  "master_sha256": spec["master_sha256"],
+                  "source_sha256": source_hashes,
+                  "deployment_resource_sha256": deployment_hashes,
+                  "previous_receipt_sha256": _sha(deployment_archive)}
+    with claim.open("xb") as stream:
+        stream.write((json.dumps(claim_data, sort_keys=True) + "\n").encode("utf-8"))
+        stream.flush()
+        os.fsync(stream.fileno())
+
+
+def _archive_exact(path: Path, original: bytes) -> None:
+    if path.exists() or path.is_symlink():
+        if not path.is_file() or path.is_symlink() or path.read_bytes() != original:
             raise ValueError("SCIntegrator original BLOCKED receipt archive changed")
-    else:
-        with archive.open("xb") as stream:
-            stream.write(original)
-            stream.flush()
-            os.fsync(stream.fileno())
+        return
+    with path.open("xb") as stream:
+        stream.write(original)
+        stream.flush()
+        os.fsync(stream.fileno())
+
+
+def _deployment_missing_path(reason: object) -> str | None:
+    if not isinstance(reason, str) or not reason.startswith("FileNotFoundError: "):
+        return None
+    detail = reason.removeprefix("FileNotFoundError: ")
+    for relative in _DEPLOYMENT_RESOURCES:
+        if detail in (relative, f"[Errno 2] No such file or directory: '{ROOT / relative}'"):
+            return relative
+    return None
+
+
+def _verify_historical_sources(circuit_id: str) -> dict[str, str]:
+    master = json.loads(MASTER.read_text(encoding="utf-8"))
+    rows = [row for row in master["candidates"] if row.get("circuit_id") == circuit_id]
+    if len(rows) != 1 or not rows[0].get("resources"):
+        raise ValueError("SCIntegrator historical source identity missing")
+    hashes = {}
+    for relative, record in rows[0]["resources"].items():
+        path = ROOT / relative
+        if (record.get("status") != "COPIED_AND_VERIFIED" or not path.is_file()
+                or path.is_symlink()):
+            raise ValueError("SCIntegrator historical source changed: " + relative)
+        data = path.read_bytes()
+        actual = hashlib.sha256(data).hexdigest()
+        if not _matches_archived_text(data, record.get("sha256")):
+            raise ValueError("SCIntegrator historical source changed: " + relative)
+        hashes[relative] = actual
+    return hashes
+
+
+def _matches_archived_text(data: bytes, archived_sha256: object) -> bool:
+    # The archive hashed Windows CRLF bytes; Git stores these text files as LF.
+    crlf = data.replace(b"\r\n", b"\n").replace(b"\n", b"\r\n")
+    return archived_sha256 in {hashlib.sha256(data).hexdigest(),
+                               hashlib.sha256(crlf).hexdigest()}
+
+
+def _verify_deployment_resources() -> dict[str, str]:
+    hashes = {}
+    for relative in _DEPLOYMENT_RESOURCES:
+        path = ROOT / relative
+        if not path.is_file() or path.is_symlink() or not path.stat().st_size:
+            raise ValueError("SCIntegrator deployment resource still missing: " + relative)
+        hashes[relative] = _sha(path)
+    fixtures = json.loads((ROOT / _DEPLOYMENT_RESOURCES[0]).read_text(encoding="utf-8"))
+    if (fixtures.get("schema_version") != "sc_integrator_bulk_fixture_overrides_v1"
+            or not isinstance(fixtures.get("circuits"), dict)):
+        raise ValueError("SCIntegrator deployment fixture invalid")
+    import yaml
+    template = yaml.safe_load((ROOT / _DEPLOYMENT_RESOURCES[1]).read_text(encoding="utf-8"))
+    if (template.get("schema_version") != "performance_template_v1"
+            or template.get("performance_template", {}).get("circuit_type") != "sc_integrator"):
+        raise ValueError("SCIntegrator deployment performance template invalid")
+    return hashes
 
 
 def _preserve_autoconfig_blocked_summary(spec: dict) -> None:
@@ -179,8 +271,12 @@ def _preserve_autoconfig_blocked_summary(spec: dict) -> None:
             stream.write(original)
             stream.flush()
             os.fsync(stream.fileno())
-    elif archive.is_symlink():
-        raise ValueError("SCIntegrator original BLOCKED summary archive changed")
+    else:
+        if (archive.is_symlink() or not archive.is_file()
+                or json.loads(archive.read_bytes()).get("batch_id") != spec["batch_id"]):
+            raise ValueError("SCIntegrator original BLOCKED summary archive changed")
+        if archive.read_bytes() != original:
+            _archive_exact(root / "summary.blocked_missing_resource_original.json", original)
 
 
 def preparation(batch_id: str, *, allow_spice: bool, allow_llm: bool,

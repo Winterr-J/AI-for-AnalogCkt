@@ -1,0 +1,16 @@
+schema_version: performance_template_v1
+performance_template:
+  circuit_type: sc_integrator
+  template_version: sc_integrator_bulk_v1
+  active_metrics:
+    - integration_step_magnitude_v
+    - zero_input_drift_v_per_cycle
+    - step_consistency_v
+    - virtual_ground_error_v
+    - output_headroom_v
+  metrics:
+    integration_step_magnitude_v: {name: integration_step_magnitude_v, unit: V, direction: maximize, description: Absolute baseline-corrected mean output step per cycle.}
+    zero_input_drift_v_per_cycle: {name: zero_input_drift_v_per_cycle, unit: V/cycle, direction: minimize, description: Mean absolute baseline output step with zero input.}
+    step_consistency_v: {name: step_consistency_v, unit: V, direction: minimize, description: Deviation of six baseline-corrected integration steps.}
+    virtual_ground_error_v: {name: virtual_ground_error_v, unit: V, direction: minimize, description: RMS virtual-ground voltage over six transfer samples.}
+    output_headroom_v: {name: output_headroom_v, unit: V, direction: maximize, description: Minimum measured distance from either supply rail.}

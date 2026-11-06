@@ -1,0 +1,8 @@
+SC INTEGRATOR BULK DESIGN GUIDANCE
+
+Use only the measured, functionally valid D0/AL observations and the current
+runtime parameter bounds. The sign of a response is topology-dependent; do
+not assume that every integrator is inverting. A failed simulator or missing
+measurement is not a zero-valued metric. Propose exactly one parameter vector
+in the generic JSON-only x_seed schema. Do not modify clocks, bias, models,
+topology, target specifications, or physical budget.

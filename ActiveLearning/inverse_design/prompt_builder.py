@@ -14,6 +14,7 @@ _CIRCUIT_TEMPLATE_FILES = {
     "currentmirror": "current_mirror_v1.txt",
     "opamp": "opamp_v1.txt",
     "samplehold": "sample_hold_v1.txt",
+    "scintegrator": "sc_integrator_bulk_v1.txt",
 }
 _STRUCTURED_SECTIONS = (
     "circuit_info",
