@@ -393,10 +393,12 @@ def predict_candidate_performance(
     llm_client=None,
 ):
     """Predict candidate metrics using retrieved context and an LLM committee."""
-    if prompt_version not in {"v1", "compact_v1"}:
+    if prompt_version not in {"v1", "compact_v1", "compact_v2"}:
         raise ValueError("Unsupported performance prediction prompt version")
     if prompt_version == "compact_v1" and circuit_info.get("circuit_type") != "SampleHold":
         raise ValueError("Compact Prompt V1 currently supports SampleHold only")
+    if prompt_version == "compact_v2" and circuit_info.get("circuit_type") != "SCIntegrator":
+        raise ValueError("Compact Prompt V2 currently supports SCIntegrator only")
     if not candidates:
         return []
 
@@ -421,6 +423,11 @@ def predict_candidate_performance(
 
         prompt = build_prompt(circuit_info, definitions, cases,
                               retrieval_diagnostics, parameter_template)
+    elif prompt_version == "compact_v2":
+        from .sc_integrator_compact_v2 import build_prompt
+
+        prompt = build_prompt(circuit_info, definitions, cases,
+                              retrieval_diagnostics)
     else:
         prompt = _build_prompt(circuit_info, definitions, cases)
     client = call_inverse_design_llm if llm_client is None else llm_client

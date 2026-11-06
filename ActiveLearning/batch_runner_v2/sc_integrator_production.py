@@ -280,8 +280,19 @@ def _preserve_autoconfig_blocked_summary(spec: dict) -> None:
 
 
 def preparation(batch_id: str, *, allow_spice: bool, allow_llm: bool,
-                retry_autoconfig_blocked: bool = False) -> dict:
+                retry_autoconfig_blocked: bool = False,
+                prediction_prompt_version: str = "v1") -> dict:
     _linux()
+    if prediction_prompt_version not in {"v1", "compact_v2"}:
+        raise ValueError("unsupported SCIntegrator prediction prompt version")
+    if prediction_prompt_version == "compact_v2":
+        for relative in (
+            "ActiveLearning/performance_prediction/sc_integrator_compact_v2.py",
+            "ActiveLearning/performance_prediction/prompts/circuit_types/sc_integrator_compact_v2.txt",
+            "ActiveLearning/performance_prediction/sample_hold_compact.py",
+        ):
+            if not (ROOT / relative).is_file():
+                raise FileNotFoundError(relative)
     if not allow_spice or not allow_llm:
         raise PermissionError("physical Preparation requires --allow-spice --allow-llm")
     from .sample_hold_bulk_production import _bytecat_settings
@@ -297,6 +308,17 @@ def preparation(batch_id: str, *, allow_spice: bool, allow_llm: bool,
 
     spec = inspect_manifest(batch_id)
     directory_root = Path(spec["preparation_root"])
+    for circuit_id in spec["circuit_ids"]:
+        receipt_path = directory_root / circuit_id / "result.json"
+        if not receipt_path.is_file():
+            continue
+        receipt = _receipt(spec, circuit_id)
+        if receipt.get("status") == "PREPARATION_READY":
+            existing_config = yaml.safe_load((directory_root / circuit_id /
+                receipt["config_path"]).read_text(encoding="utf-8"))
+            if (existing_config.get("active_learning", {}).get(
+                    "prediction_prompt_version") != prediction_prompt_version):
+                raise ValueError("existing Preparation uses another prediction prompt version")
     if (directory_root.is_relative_to(ROOT) or OUTPUT_ROOT.is_relative_to(ROOT)
             or directory_root.is_relative_to(OUTPUT_ROOT)):
         raise ValueError("SCIntegrator output roots overlap repository or each other")
@@ -352,7 +374,7 @@ def preparation(batch_id: str, *, allow_spice: bool, allow_llm: bool,
             config["circuit_info"] = {"circuit_type": "SCIntegrator", "circuit_id": circuit_id}
             config.setdefault("active_learning", {}).update({
                 "max_iterations": 5, "stop_on_meets_spec": False,
-                "prediction_prompt_version": "v1"})
+                "prediction_prompt_version": prediction_prompt_version})
             data = config["data"]
             data.update({"d0_mode": "independent", "d0_path_relative_to": "config",
                          "d0_path": "d0/d0_v4_seed42.jsonl", "initialize_if_missing": True,
@@ -488,6 +510,15 @@ def preflight(batch_id: str) -> tuple[dict, dict]:
         "ActiveLearning/inverse_design/prompts/circuit_types/sc_integrator_bulk_v1.txt",
         "ActiveLearning/performance_prediction/performance_predictor.py",
         "ActiveLearning/performance_prediction/prompts/circuit_types/sc_integrator_bulk_v1.txt")}
+    if any(yaml.safe_load(Path(job["config_path"]).read_text(encoding="utf-8"))
+           .get("active_learning", {}).get("prediction_prompt_version") == "compact_v2"
+           for job in jobs):
+        for name in (
+            "ActiveLearning/performance_prediction/sample_hold_compact.py",
+            "ActiveLearning/performance_prediction/sc_integrator_compact_v2.py",
+            "ActiveLearning/performance_prediction/prompts/circuit_types/sc_integrator_compact_v2.txt",
+        ):
+            sources[name] = _sha(ROOT / name)
     manifest = {"schema_version": "sc_integrator_bulk_runtime_v1",
                 "batch_id": batch_id, "provider": "openai", "model": model,
                 "provider_base_url": base_url, "transport": transport,
@@ -602,15 +633,20 @@ def main(argv=None) -> int:
     parser.add_argument("--allow-spice", action="store_true")
     parser.add_argument("--allow-llm", action="store_true")
     parser.add_argument("--retry-autoconfig-blocked", action="store_true")
+    parser.add_argument("--prediction-prompt-version", choices=("v1", "compact_v2"),
+                        default="v1", help="Preparation only; default preserves V1")
     parser.add_argument("--job-id")
     parser.add_argument("--attempt", type=Path)
     args = parser.parse_args(argv)
+    if args.command != "preparation" and args.prediction_prompt_version != "v1":
+        parser.error("--prediction-prompt-version is only valid for preparation")
     if args.command == "inspect":
         result = inspect_manifest(args.batch_id)
     elif args.command == "preparation":
         result = preparation(args.batch_id, allow_spice=args.allow_spice,
                              allow_llm=args.allow_llm,
-                             retry_autoconfig_blocked=args.retry_autoconfig_blocked)
+                             retry_autoconfig_blocked=args.retry_autoconfig_blocked,
+                             prediction_prompt_version=args.prediction_prompt_version)
     elif args.command in {"status", "report"}:
         from .runner import report_batch, status_batch
         spec = inspect_manifest(args.batch_id)

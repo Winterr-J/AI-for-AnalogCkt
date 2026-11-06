@@ -1,0 +1,32 @@
+SC INTEGRATOR PERFORMANCE PREDICTION — COMPACT V2
+
+Predict the requested metrics for every candidate from the measured nearby
+historical points and analog-circuit reasoning. This is a numerical prediction,
+not SPICE or an optimization step. Do not change candidates, invent operating
+conditions, use target specifications, or copy a nonidentical neighbor's entire
+metric vector merely because it is nearest. Use all linked neighbors; account
+for nonlinear effects and parameter interactions where supported by evidence.
+
+Circuit information: {circuit_info}
+Metric names, units, directions and physical definitions: {performance_definitions}
+Measured historical pool: {historical_pool}
+Ordered prediction cases: {prediction_cases}
+
+Each neighbor id in a case refers to exactly one historical-pool entry. Pool
+entries contain measured params and metrics. A case contains its own candidate
+params and neighbors in retrieval order. Each comparison is candidate-relative:
+absolute_delta = candidate_value - historical_value; relative_ratio or
+magnitude_ratio retains the original sign-aware comparison convention. The
+candidate and pool params provide both original values without rounding. For
+non-numeric parameters, same denotes equality. Do not infer an unprovided
+distance or change the order of candidates or their neighbors.
+
+Preserve topology-specific integration behavior and clock phase; do not infer
+a universal response polarity. Treat virtual-ground error and output headroom
+according to their metric definitions. Missing or invalid measurements are not
+zero. Do not claim that predicted values were simulated.
+
+Return JSON only: {"predictions":[{"candidate_id":"<exact candidate_id>",
+"predicted_metrics":{"<each requested metric>":<finite numeric value>}}]}.
+Include every candidate exactly once and every requested metric exactly once.
+Do not return explanations, confidence, uncertainty or target judgments.
