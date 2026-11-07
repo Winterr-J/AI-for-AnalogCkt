@@ -100,7 +100,7 @@ def _receipt(spec: dict, circuit_id: str) -> dict:
             or profile.get("anchor", {}).get("functional_valid") is not True
             or target.get("status") != "TARGET_VALIDATED"
             or config.get("active_learning", {}).get("max_iterations") != 5
-            or config["active_learning"].get("stop_on_meets_spec") is not False
+            or type(config["active_learning"].get("stop_on_meets_spec")) is not bool
             or config.get("data", {}).get("d0_mode") != "independent"
             or config["data"].get("seed") != 42 or config["data"].get("n_samples") != 20
             or canonical_sha256(config.get("target_specs")) != saved["target_spec_sha256"]):
@@ -373,7 +373,7 @@ def preparation(batch_id: str, *, allow_spice: bool, allow_llm: bool,
             config = yaml.safe_load(config_path.read_text(encoding="utf-8"))
             config["circuit_info"] = {"circuit_type": "SCIntegrator", "circuit_id": circuit_id}
             config.setdefault("active_learning", {}).update({
-                "max_iterations": 5, "stop_on_meets_spec": False,
+                "max_iterations": 5, "stop_on_meets_spec": True,
                 "prediction_prompt_version": prediction_prompt_version})
             data = config["data"]
             data.update({"d0_mode": "independent", "d0_path_relative_to": "config",

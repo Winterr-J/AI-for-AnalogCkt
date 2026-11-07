@@ -99,7 +99,8 @@ def _current_mirror_joint_success(status):
     return all(required)
 
 
-def _recompute_initial_meets_spec(records, target_specs, circuit_type=None):
+def _recompute_initial_meets_spec(records, target_specs, circuit_type=None,
+                                  stop_on_meets_spec=False):
     """Refresh initial-record feasibility for the current experiment targets."""
     first_feasible = None
     for record in records:
@@ -119,6 +120,13 @@ def _recompute_initial_meets_spec(records, target_specs, circuit_type=None):
             meets_spec = check_meets_spec(metrics, target_specs)["meets_spec"]
         else:
             meets_spec = None
+
+        if (circuit_type == "SCIntegrator" and stop_on_meets_spec and meets_spec is True
+                and (not isinstance(status, Mapping) or not all(
+                    status.get(field) is True for field in (
+                        "parameter_valid", "simulation_valid",
+                        "measurement_valid", "functional_valid")))):
+            meets_spec = False
 
         if isinstance(status, dict):
             status["meets_spec"] = meets_spec
@@ -283,11 +291,14 @@ def run_active_learning(
     is_current_mirror = circuit_info.get("circuit_type") == "CurrentMirror"
     initial_feasible_record = _recompute_initial_meets_spec(
         records, target_specs, circuit_type=circuit_info.get("circuit_type"),
+        stop_on_meets_spec=stop_on_meets_spec,
     )
     d0_meets_spec_count = sum(
         record.get("status", {}).get("meets_spec") is True for record in records
     )
     if stop_on_meets_spec and initial_feasible_record is not None:
+        if output_dir is not None and circuit_info.get("circuit_type") == "SCIntegrator":
+            _save_jsonl(records, output_dir, "active_learning_records.jsonl")
         return {
             "records": records,
             "iteration_log": iteration_log,
@@ -635,11 +646,14 @@ def run_active_learning(
                 iteration_entry,
             )
 
-        verified_success = (
-            new_record["status"]["joint_success"] is True
-            if is_current_mirror
-            else new_record["status"]["meets_spec"] is True
-        )
+        if is_current_mirror:
+            verified_success = new_record["status"]["joint_success"] is True
+        elif circuit_info.get("circuit_type") == "SCIntegrator":
+            verified_success = all(new_record["status"].get(field) is True for field in (
+                "parameter_valid", "simulation_valid", "measurement_valid",
+                "functional_valid", "meets_spec"))
+        else:
+            verified_success = new_record["status"]["meets_spec"] is True
         if stop_on_meets_spec and verified_success:
             stop_reason = "meets_spec"
             break
