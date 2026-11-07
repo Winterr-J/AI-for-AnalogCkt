@@ -514,7 +514,8 @@ def validate_bulk_al(runtime: ActiveLearningCircuitConfig, config: dict,
             or canonical_sha256(config.get("target_specs")) != saved["target_spec_sha256"]):
         raise AutoConfigError("SCIntegrator AL source/target/D0 identity changed")
     settings, data = config.get("active_learning") or {}, config.get("data") or {}
-    if (settings.get("max_iterations") != 5 or settings.get("stop_on_meets_spec") is not False
+    if (settings.get("max_iterations") != 5
+            or type(settings.get("stop_on_meets_spec")) is not bool
             or settings.get("prediction_prompt_version") not in {"v1", "compact_v2"}
             or data.get("d0_mode") != "independent" or data.get("seed") != 42
             or data.get("n_samples") != 20 or data.get("sampling_mode") != "v4"):

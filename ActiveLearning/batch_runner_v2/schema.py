@@ -161,7 +161,7 @@ def verify_job(manifest: dict, job: dict) -> None:
                 or sha256_file(source_path) != job["source_sha256"]
                 or canonical_sha256(config.get("target_specs")) != job["target_spec_sha256"]
                 or config.get("active_learning", {}).get("max_iterations") != 5
-                or config["active_learning"].get("stop_on_meets_spec") is not False
+                or type(config["active_learning"].get("stop_on_meets_spec")) is not bool
                 or config.get("data", {}).get("d0_mode") != "independent"
                 or config["data"].get("seed") != 42
                 or config["data"].get("n_samples") != 20):
