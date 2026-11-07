@@ -501,6 +501,7 @@ def preflight(batch_id: str) -> tuple[dict, dict]:
         "ActiveLearning/InitializeD0/validation/parameter_validator.py",
         "ActiveLearning/InitializeD0/validation/spec_validator.py",
         "ActiveLearning/active_learning.py",
+        "ActiveLearning/experiment_logging.py",
         "ActiveLearning/real_evaluation/real_evaluator.py",
         "ActiveLearning/circuit_types/SCIntegrator/performance_template.yaml",
         "ActiveLearning/onboarding/runtime_provider.py",
@@ -585,10 +586,92 @@ def _child_result(manifest: dict, job: dict, attempt: Path) -> dict:
                    encoding="utf-8").splitlines()),
                "result_path": str(summary), "al_result_sha256": sha256_file(summary),
                "llm_calls": completed["llm_calls"], "total_tokens": completed["total_tokens"],
+               "usage_unknown": completed.get("usage_unknown", False),
                "total_timing": completed["total_timing"],
                "physical_ledger_path": str(ledger)}
     atomic_json(attempt / "worker_result.json", outcome)
     return outcome
+
+
+def _failed_usage(manifest: dict, job: dict, attempt: Path) -> dict:
+    """Recover only complete, attributable usage rows after a confirmed child exit."""
+    from .storage import read_json
+
+    recovered = {"usage_unknown": True}
+    context_path = attempt / "al_run_context.json"
+    if (any(path.is_symlink() for path in (attempt, *attempt.parents[:4]))
+            or attempt.parent.name != "attempts"
+            or attempt.parent.parent.name != job["job_id"]
+            or attempt.parent.parent.parent.name != "jobs"
+            or attempt.parents[3].name != manifest["batch_id"]
+            or not context_path.is_file() or context_path.is_symlink()):
+        recovered["usage_recovery_issue"] = "USAGE_CONTEXT_MISSING_OR_UNOWNED"
+        return recovered
+    try:
+        reaped = read_json(attempt / "child_reaped.json")
+    except (OSError, TypeError, ValueError):
+        recovered["usage_recovery_issue"] = "USAGE_REAP_UNCONFIRMED"
+        return recovered
+    if reaped.get("exit_confirmed") is not True or reaped.get("attempt_id") != attempt.name:
+        recovered["usage_recovery_issue"] = "USAGE_REAP_UNCONFIRMED"
+        return recovered
+    try:
+        context = read_json(context_path)
+    except (OSError, TypeError, ValueError):
+        recovered["usage_recovery_issue"] = "USAGE_CONTEXT_INVALID"
+        return recovered
+    run_id = context.get("run_id")
+    raw_value = context.get("run_directory")
+    if (not isinstance(run_id, str) or not run_id or Path(run_id).name != run_id
+            or not isinstance(raw_value, str) or not Path(raw_value).is_absolute()):
+        recovered["usage_recovery_issue"] = "USAGE_IDENTITY_MISMATCH"
+        return recovered
+    raw_dir = Path(raw_value)
+    expected = attempt / "al_runs" / "SCIntegrator" / job["circuit_id"] / run_id
+    try:
+        if (any(path.is_symlink() for path in (
+                expected.parent.parent.parent, expected.parent.parent,
+                expected.parent, expected, expected / "llm_usage.jsonl"))
+                or raw_dir.resolve(strict=True) != expected.resolve(strict=True)
+                or not expected.resolve(strict=True).is_relative_to(attempt.resolve(strict=True))):
+            recovered["usage_recovery_issue"] = "USAGE_IDENTITY_MISMATCH"
+            return recovered
+        usage_path = expected / "llm_usage.jsonl"
+        if not usage_path.is_file():
+            recovered["usage_recovery_issue"] = "USAGE_LOG_MISSING"
+            return recovered
+        data = usage_path.read_bytes()
+    except (OSError, TypeError, ValueError):
+        recovered["usage_recovery_issue"] = "USAGE_READ_ERROR"
+        return recovered
+
+    fields = ("input_tokens", "output_tokens", "total_tokens")
+    totals = {field: 0 for field in fields}
+    count = 0
+    for line in data.splitlines(keepends=True):
+        if not line.endswith(b"\n"):
+            recovered["usage_recovery_issue"] = "USAGE_TRAILING_PARTIAL"
+            break
+        try:
+            row = json.loads(line.decode("utf-8"))
+        except (UnicodeDecodeError, json.JSONDecodeError):
+            recovered["usage_recovery_issue"] = "USAGE_CORRUPT_RECORD"
+            break
+        if not isinstance(row, dict) or any(
+                type(row.get(field)) is not int or row[field] < 0 for field in fields):
+            recovered["usage_recovery_issue"] = "USAGE_CORRUPT_RECORD"
+            break
+        if (row.get("run_id", run_id) != run_id
+                or row.get("job_id", job["job_id"]) != job["job_id"]
+                or row.get("attempt_id", attempt.name) != attempt.name):
+            recovered["usage_recovery_issue"] = "USAGE_RECORD_IDENTITY_MISMATCH"
+            break
+        count += 1
+        for field in fields:
+            totals[field] += row[field]
+    if count:
+        recovered.update({"llm_calls": count, "total_tokens": totals})
+    return recovered
 
 
 def _worker(manifest: dict, job: dict, attempt: Path) -> dict:
@@ -609,14 +692,16 @@ def _worker(manifest: dict, job: dict, attempt: Path) -> dict:
     except subprocess.TimeoutExpired:
         atomic_json(attempt / "child_reaped.json", {"attempt_id": attempt.name,
                     "exit_confirmed": True, "exit_code": 124})
-        return {"state": "FAILED_TERMINAL", "error_code": "WORKER_TIMEOUT_REAPED"}
+        return {"state": "FAILED_TERMINAL", "error_code": "WORKER_TIMEOUT_REAPED",
+                **_failed_usage(manifest, job, attempt)}
     atomic_json(attempt / "child_reaped.json", {"attempt_id": attempt.name,
                 "exit_confirmed": True, "exit_code": completed.returncode})
     (attempt / "worker_stdout.txt").write_text(completed.stdout, encoding="utf-8")
     (attempt / "worker_stderr.txt").write_text(completed.stderr, encoding="utf-8")
     if completed.returncode != 0:
         return {"state": "FAILED_TERMINAL",
-                "error_code": f"CHILD_EXIT_{completed.returncode}"}
+                "error_code": f"CHILD_EXIT_{completed.returncode}",
+                **_failed_usage(manifest, job, attempt)}
     result = read_json(attempt / "worker_result.json")
     path = Path(result["result_path"]).resolve(strict=True)
     if (result.get("state") != "COMPLETED" or not path.is_relative_to(attempt.resolve())

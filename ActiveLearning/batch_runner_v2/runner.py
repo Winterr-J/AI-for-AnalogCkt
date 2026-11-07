@@ -486,6 +486,10 @@ def _run_batch(
                 row["pipeline_success"] = False
                 row["meets_spec"] = None
                 row["error_code"] = str(outcome.get("error_code") or "MOCK_TERMINAL")
+                if execution_scope == "sc_integrator_production":
+                    row.update({name: outcome.get(name) for name in (
+                        "llm_calls", "total_tokens", "usage_unknown",
+                        "usage_recovery_issue")})
                 _save(directory, state)
                 _event(directory, job_id, "FAILED_TERMINAL", row["error_code"])
                 if not offline_only and not _confirmed_failed_child(
@@ -547,7 +551,7 @@ def _run_batch(
                           "al_result_sha256": outcome.get("al_result_sha256")}
                 if execution_scope in {"sample_hold_production", "sc_integrator_production"}:
                     result.update({name: outcome.get(name) for name in (
-                        "llm_calls", "total_tokens", "total_timing", "physical_ledger_path",
+                        "llm_calls", "total_tokens", "usage_unknown", "total_timing", "physical_ledger_path",
                     )})
                 result_path = attempt_dir / "result.json"
                 atomic_json(result_path, result)
@@ -565,7 +569,7 @@ def _run_batch(
                 row["d0_record_count"] = outcome.get("d0_record_count")
                 if execution_scope in {"sample_hold_production", "sc_integrator_production"}:
                     row.update({name: outcome.get(name) for name in (
-                        "llm_calls", "total_tokens", "total_timing", "physical_ledger_path",
+                        "llm_calls", "total_tokens", "usage_unknown", "total_timing", "physical_ledger_path",
                     )})
                 _save(directory, state)
                 _event(directory, job_id, "COMPLETED", attempt_id)
@@ -775,23 +779,31 @@ def report_batch(batch_id: str, output_root: str | Path) -> dict:
                      else "sc_integrator_usage")
         for key, row in rows.items():
             summary["jobs"][key].update({name: row.get(name) for name in (
-                "llm_calls", "total_tokens", "total_timing", "physical_ledger_path",
+                "llm_calls", "total_tokens", "usage_unknown", "total_timing",
+                "physical_ledger_path",
             )})
+            if state["execution_scope"] == "sc_integrator_production":
+                summary["jobs"][key]["usage_recovery_issue"] = row.get("usage_recovery_issue")
             tokens = (row.get("total_tokens") or {}).get("total_tokens")
             summary["jobs"][key]["api_usage"] = {
                 "logical_requests": row.get("llm_calls"),
                 "physical_attempts": None,
                 "reported_total_tokens": tokens,
-                "usage_unknown": row["state"] != "COMPLETED",
-                "total_tokens": tokens if row["state"] == "COMPLETED" else None,
+                "usage_unknown": row["state"] != "COMPLETED" or row.get("usage_unknown") is True,
+                "total_tokens": (tokens if row["state"] == "COMPLETED"
+                                 and row.get("usage_unknown") is not True else None),
             }
         completed = [row for row in rows.values() if row["state"] == "COMPLETED"]
+        known = ([row for row in rows.values()
+                  if row["state"] in {"COMPLETED", "FAILED_TERMINAL"}]
+                 if state["execution_scope"] == "sc_integrator_production" else completed)
         summary[usage_key] = {
-            "llm_calls": sum(row.get("llm_calls") or 0 for row in completed),
+            "llm_calls": sum(row.get("llm_calls") or 0 for row in known),
             "reported_total_tokens": sum(
                 (row.get("total_tokens") or {}).get("total_tokens") or 0
-                for row in completed),
+                for row in known),
             "usage_unknown": any(row["state"] in {"FAILED_TERMINAL", "INTERRUPTED_UNCERTAIN"}
+                                 or row.get("usage_unknown") is True
                                  for row in rows.values()),
         }
         # The existing AL usage log counts completed calls and tokens, but not

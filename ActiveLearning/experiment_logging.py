@@ -174,6 +174,7 @@ def write_completed_run(
         "total_timing": total_timing,
         "total_tokens": total_tokens,
         "llm_calls": result.get("llm_calls"),
+        "usage_unknown": result.get("usage_unknown", False),
         "evaluation_counts": result.get("evaluation_counts", {}),
     }
     if circuit_type != "CurrentMirror":

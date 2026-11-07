@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import hashlib
 import os
 import time
 from collections.abc import Mapping, Sequence
@@ -187,6 +188,7 @@ def call_inverse_design_llm(
     base_url: str | None = None,
     usage_log=None,
     usage_context=None,
+    attempt_log=None,
     *,
     provider: str | None = None,
     request_timeout: float = 120.0,
@@ -209,6 +211,10 @@ def call_inverse_design_llm(
     # Disable SDK retries: this adapter owns the bounded retry/backoff policy.
     client = OpenAI(api_key=key, base_url=url, timeout=request_timeout, max_retries=0)
     for attempt in range(1, max_attempts + 1):
+        if attempt_log is not None:
+            attempt_log({"event": "transport_started", "transport_attempt": attempt,
+                         "request_timeout_seconds": request_timeout,
+                         "max_transport_attempts": max_attempts, "transport": transport})
         try:
             if selected in {"gemini", "qwen"} or (
                 selected == "openai" and transport == "chat_completions"
@@ -227,6 +233,11 @@ def call_inverse_design_llm(
         except Exception as error:
             kind = (qwen_failure_kind(error) if selected == "qwen"
                     else _failure_kind(error))
+            if attempt_log is not None:
+                attempt_log({"event": "transport_failed", "transport_attempt": attempt,
+                             "category": kind or "terminal", "usage_known": False,
+                             "error_type": type(error).__name__,
+                             "status_code": getattr(error, "status_code", None)})
             if kind == "quota":
                 reason = (
                     "account balance is insufficient" if getattr(error, "status_code", None) == 403
@@ -262,6 +273,10 @@ def call_inverse_design_llm(
                     "attempt": attempt,
                     "response_status": "empty",
                 })
+            if attempt_log is not None:
+                attempt_log({"event": "response_empty", "transport_attempt": attempt,
+                             "usage_known": counts is not None,
+                             "completion_status": _value(response, "status")})
             if attempt == max_attempts:
                 raise LLMTransientError(
                     f"{selected} empty response for model {chosen_model} after {attempt} attempts"
@@ -275,6 +290,15 @@ def call_inverse_design_llm(
                 "model": chosen_model,
                 **counts,
             })
+        if attempt_log is not None:
+            choices = _value(response, "choices")
+            finish_reason = (_value(choices[0], "finish_reason") if choices else None)
+            attempt_log({"event": "response_received", "transport_attempt": attempt,
+                         "usage_known": counts is not None,
+                         "completion_status": _value(response, "status") or finish_reason,
+                         "response_chars": len(output_text),
+                         "response_sha256": hashlib.sha256(
+                             output_text.encode("utf-8")).hexdigest()})
         return output_text
 
     raise AssertionError("unreachable LLM retry state")

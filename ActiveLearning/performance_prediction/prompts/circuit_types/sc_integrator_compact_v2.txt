@@ -26,7 +26,13 @@ a universal response polarity. Treat virtual-ground error and output headroom
 according to their metric definitions. Missing or invalid measurements are not
 zero. Do not claim that predicted values were simulated.
 
-Return JSON only: {"predictions":[{"candidate_id":"<exact candidate_id>",
-"predicted_metrics":{"<each requested metric>":<finite numeric value>}}]}.
-Include every candidate exactly once and every requested metric exactly once.
+Required candidate IDs in order: {candidate_ids}
+Required metric keys: {metric_names}
+
+Return JSON only. This is a syntactically valid ONE-CANDIDATE SHAPE EXAMPLE,
+not measured data or predicted values; replace the ID and every number, and
+repeat the object for every required candidate ID:
+{"predictions":[{"candidate_id":"example_id","predicted_metrics":{"integration_step_magnitude_v":1.0,"zero_input_drift_v_per_cycle":2.0,"step_consistency_v":3.0,"virtual_ground_error_v":4.0,"output_headroom_v":5.0}}]}
+Include every actual candidate exactly once and all five requested finite
+numeric metrics exactly once. Never copy the example values into a prediction.
 Do not return explanations, confidence, uncertainty or target judgments.

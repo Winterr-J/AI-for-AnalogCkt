@@ -65,6 +65,8 @@ def build_prompt(circuit_info, definitions, cases, diagnostics):
         "performance_definitions": definitions,
         "historical_pool": pool,
         "prediction_cases": compact_cases,
+        "candidate_ids": [case["candidate_id"] for case in compact_cases],
+        "metric_names": list(definitions),
     }.items():
         prompt = prompt.replace(f"{{{name}}}", _compact_json(value))
     return prompt.rstrip() + "\n\n" + _SC_GUIDANCE.read_text(

@@ -23,6 +23,14 @@ _CIRCUIT_TEMPLATE_FILES = {
 _MAX_ROUND_ATTEMPTS = 3
 
 
+class PredictionFormatError(ValueError):
+    """Safe classification for one rejected prediction response."""
+
+    def __init__(self, category, message):
+        super().__init__(message)
+        self.category = category
+
+
 def _extract_performance_definitions(performance_template):
     body = performance_template["performance_template"]
     keys = ("name", "unit", "direction", "description", "calculation")
@@ -212,8 +220,10 @@ def _build_prompt(circuit_info, performance_definitions, prediction_cases):
     return prompt.rstrip() + "\n\n" + circuit_prompt.strip() + "\n"
 
 
-def _strip_markdown_fence(raw_response):
+def _strip_markdown_fence(raw_response, *, allow_bom=False):
     stripped = raw_response.strip()
+    if allow_bom:
+        stripped = stripped.removeprefix("\ufeff").strip()
     lines = stripped.splitlines()
     if (len(lines) >= 3 and lines[0].strip().casefold() in {"```", "```json"}
             and lines[-1].strip() == "```"):
@@ -221,26 +231,73 @@ def _strip_markdown_fence(raw_response):
     return stripped
 
 
-def _parse_predictions(raw_response, candidate_ids, metric_names):
+def _parse_predictions(raw_response, candidate_ids, metric_names, *, detailed=False):
+    if not detailed:
+        # Preserve the V1 and SampleHold parsing contract unchanged.
+        try:
+            predictions = json.loads(_strip_markdown_fence(raw_response))["predictions"]
+        except (json.JSONDecodeError, KeyError, TypeError) as error:
+            raise ValueError("invalid LLM prediction response") from error
+        if len(predictions) != len(candidate_ids):
+            raise ValueError("prediction count mismatch")
+        expected = set(candidate_ids)
+        parsed = {}
+        for item in predictions:
+            candidate_id = item["candidate_id"]
+            if candidate_id not in expected:
+                raise ValueError(f"unknown candidate_id: {candidate_id}")
+            if candidate_id in parsed:
+                raise ValueError(f"duplicate candidate_id: {candidate_id}")
+            metrics = item["predicted_metrics"]
+            if set(metrics) != set(metric_names):
+                raise ValueError(f"wrong metric keys for {candidate_id}")
+            if not all(
+                name in metrics and isinstance(metrics[name], (int, float))
+                and not isinstance(metrics[name], bool) and np.isfinite(metrics[name])
+                for name in metric_names
+            ):
+                raise ValueError(f"invalid metrics for {candidate_id}")
+            parsed[candidate_id] = {name: float(metrics[name]) for name in metric_names}
+        if set(parsed) != expected:
+            raise ValueError("missing candidate predictions")
+        return parsed
     try:
-        predictions = json.loads(_strip_markdown_fence(raw_response))["predictions"]
-    except (json.JSONDecodeError, KeyError, TypeError) as error:
-        raise ValueError("invalid LLM prediction response") from error
+        document = json.loads(_strip_markdown_fence(raw_response, allow_bom=True))
+    except json.JSONDecodeError as error:
+        raise PredictionFormatError(
+            "JSON_SYNTAX", f"invalid LLM prediction response: JSON syntax at "
+            f"line {error.lineno}, column {error.colno}") from error
+    except (AttributeError, TypeError) as error:
+        raise PredictionFormatError("JSON_SCHEMA", "invalid LLM prediction response") from error
+    if not isinstance(document, dict) or not isinstance(document.get("predictions"), list):
+        raise PredictionFormatError("JSON_SCHEMA", "invalid LLM prediction response")
+    predictions = document["predictions"]
+    if any(not isinstance(item, dict) or not isinstance(item.get("candidate_id"), str)
+           for item in predictions):
+        raise PredictionFormatError("JSON_SCHEMA", "invalid candidate prediction object")
+    actual_ids = [item["candidate_id"] for item in predictions]
+    if len(actual_ids) != len(set(actual_ids)):
+        raise PredictionFormatError("CANDIDATE_DUPLICATE", "duplicate candidate_id")
+    unknown = set(actual_ids) - set(candidate_ids)
+    if unknown:
+        raise PredictionFormatError("CANDIDATE_UNKNOWN",
+                                    f"unknown candidate_id: {sorted(unknown)[0]}")
+    if set(actual_ids) != set(candidate_ids):
+        raise PredictionFormatError("CANDIDATE_MISSING", "prediction count mismatch: missing candidate_id")
     if len(predictions) != len(candidate_ids):
-        raise ValueError("prediction count mismatch")
+        raise PredictionFormatError("CANDIDATE_COUNT", "prediction count mismatch")
 
     expected = set(candidate_ids)
     parsed = {}
     for item in predictions:
         candidate_id = item["candidate_id"]
-        if candidate_id not in expected:
-            raise ValueError(f"unknown candidate_id: {candidate_id}")
-        if candidate_id in parsed:
-            raise ValueError(f"duplicate candidate_id: {candidate_id}")
-
-        metrics = item["predicted_metrics"]
+        metrics = item.get("predicted_metrics")
+        if not isinstance(metrics, dict):
+            raise PredictionFormatError("METRIC_SCHEMA", "wrong metric keys for " + candidate_id)
         if set(metrics) != set(metric_names):
-            raise ValueError(f"wrong metric keys for {candidate_id}")
+            category = ("METRIC_MISSING" if set(metric_names) - set(metrics)
+                        else "METRIC_EXTRA")
+            raise PredictionFormatError(category, "wrong metric keys for " + candidate_id)
         if not all(
             name in metrics
             and isinstance(metrics[name], (int, float))
@@ -248,11 +305,11 @@ def _parse_predictions(raw_response, candidate_ids, metric_names):
             and np.isfinite(metrics[name])
             for name in metric_names
         ):
-            raise ValueError(f"invalid metrics for {candidate_id}")
+            raise PredictionFormatError("METRIC_NONFINITE", f"invalid metrics for {candidate_id}")
         parsed[candidate_id] = {name: float(metrics[name]) for name in metric_names}
 
     if set(parsed) != expected:
-        raise ValueError("missing candidate predictions")
+        raise PredictionFormatError("CANDIDATE_MISSING", "missing candidate predictions")
     return parsed
 
 
@@ -323,6 +380,7 @@ def _collect_committee_rounds(
     candidate_ids,
     metric_names,
     committee_size,
+    *, detailed=False,
 ):
     rounds = []
     attempt_counts = []
@@ -334,20 +392,31 @@ def _collect_committee_rounds(
                 prompt if attempt == 1 else _build_correction_prompt(
                     prompt, candidate_ids, metric_names, validation_errors)
             )
+            set_attempt = getattr(client, "set_prediction_attempt", None)
+            if callable(set_attempt):
+                set_attempt(round_index, attempt)
             raw_response = client(attempt_prompt)
             try:
                 parsed = _parse_predictions(
                     raw_response,
                     candidate_ids,
                     metric_names,
+                    detailed=detailed,
                 )
             except (AttributeError, KeyError, TypeError, ValueError) as error:
                 last_error = error
-                validation_errors.append({
+                detail = {
                     "attempt": attempt,
                     "error_type": type(error).__name__,
                     "message": str(error),
-                })
+                }
+                if detailed:
+                    detail["category"] = getattr(error, "category", "SCHEMA_ERROR")
+                validation_errors.append(detail)
+                record_failure = getattr(client, "record_format_failure", None)
+                if callable(record_failure):
+                    record_failure(getattr(error, "category", "SCHEMA_ERROR"),
+                                   raw_response)
                 continue
             rounds.append(parsed)
             attempt_counts.append(attempt)
@@ -438,6 +507,7 @@ def predict_candidate_performance(
         candidate_ids,
         metric_names,
         committee_size,
+        detailed=prompt_version == "compact_v2",
     )
     return _aggregate_predictions(
         candidates,

@@ -3,6 +3,7 @@
 import inspect
 import json
 import time
+import hashlib
 from collections.abc import Mapping
 from pathlib import Path
 
@@ -42,6 +43,38 @@ def _save_jsonl(items, output_dir, filename):
         for item in items:
             stream.write(json.dumps(item, ensure_ascii=False, default=float) + "\n")
     return path
+
+
+class _DurableUsageLog(list):
+    """Keep the legacy usage schema, but durably append each known response."""
+
+    def __init__(self, output_dir):
+        super().__init__()
+        self.path = (Path(output_dir) / "llm_usage.jsonl"
+                     if output_dir is not None else None)
+
+    def append(self, item):
+        if self.path is not None:
+            self.path.parent.mkdir(parents=True, exist_ok=True)
+            append_jsonl_record(self.path, item)
+        super().append(item)
+
+
+class _AttemptEvents:
+    """Safe V2 metadata only; unknown transport cost is never counted as zero."""
+
+    def __init__(self, output_dir):
+        self.path = (Path(output_dir) / "llm_attempt_events.jsonl"
+                     if output_dir is not None else None)
+        self.usage_unknown = False
+
+    def append(self, item):
+        if item.get("event") in {"transport_failed", "response_empty", "response_received",
+                                 "logical_failed", "logical_completed"}:
+            self.usage_unknown |= item.get("usage_known") is False
+        if self.path is not None:
+            self.path.parent.mkdir(parents=True, exist_ok=True)
+            append_jsonl_record(self.path, item)
 
 
 def _sum_token_usage(entries):
@@ -104,7 +137,7 @@ def _recompute_initial_meets_spec(records, target_specs, circuit_type=None):
     return first_feasible
 
 
-def _make_logged_llm_client(client, usage_log, iteration, stage):
+def _make_logged_llm_client(client, usage_log, iteration, stage, event_log=None):
     if client is not None and not callable(client):
         return client
 
@@ -119,6 +152,22 @@ def _make_logged_llm_client(client, usage_log, iteration, stage):
         for parameter in parameters.values()
     )
     round_number = 0
+    prediction_member = None
+    format_attempt = None
+
+    def set_prediction_attempt(member, attempt):
+        nonlocal prediction_member, format_attempt
+        prediction_member, format_attempt = member, attempt
+
+    def record_format_failure(category, response):
+        if event_log is not None:
+            event_log.append({"event": "format_failed", "iteration": iteration,
+                              "stage": stage, "committee_member": prediction_member,
+                              "format_attempt": format_attempt, "category": category,
+                              "response_chars": len(response) if isinstance(response, str) else None,
+                              "response_sha256": hashlib.sha256(
+                                  response.encode("utf-8")).hexdigest()
+                                  if isinstance(response, str) else None})
 
     def logged(prompt):
         nonlocal round_number
@@ -128,20 +177,39 @@ def _make_logged_llm_client(client, usage_log, iteration, stage):
             "stage": stage,
             "round": round_number,
         }
-        if client is None:
-            return call_inverse_design_llm(
-                prompt,
-                usage_log=usage_log,
-                usage_context=context,
-            )
+        if prediction_member is not None:
+            context.update({"committee_member": prediction_member,
+                            "format_attempt": format_attempt})
+        if event_log is not None:
+            event_log.append({"event": "logical_started", **context})
+        before = len(usage_log)
+        try:
+            if client is None:
+                response = call_inverse_design_llm(
+                    prompt, usage_log=usage_log, usage_context=context,
+                    attempt_log=(lambda event: event_log.append({**context, **event}))
+                    if event_log is not None else None)
+            else:
+                kwargs = {}
+                if accepts_kwargs or "usage_log" in parameters:
+                    kwargs["usage_log"] = usage_log
+                if accepts_kwargs or "usage_context" in parameters:
+                    kwargs["usage_context"] = context
+                response = client(prompt, **kwargs)
+        except Exception as error:
+            if event_log is not None:
+                event_log.append({"event": "logical_failed", **context,
+                                  "category": type(error).__name__,
+                                  "usage_known": len(usage_log) > before})
+            raise
+        if event_log is not None:
+            event_log.append({"event": "logical_completed", **context,
+                              "usage_known": len(usage_log) > before})
+        return response
 
-        kwargs = {}
-        if accepts_kwargs or "usage_log" in parameters:
-            kwargs["usage_log"] = usage_log
-        if accepts_kwargs or "usage_context" in parameters:
-            kwargs["usage_context"] = context
-        return client(prompt, **kwargs)
-
+    if event_log is not None:
+        logged.set_prediction_attempt = set_prediction_attempt
+        logged.record_format_failure = record_format_failure
     return logged
 
 
@@ -174,7 +242,10 @@ def run_active_learning(
     """Run the V1 loop and return records, logs, timing, and token usage."""
     run_start = time.perf_counter()
     iteration_log = []
-    llm_usage_log = []
+    llm_usage_log = _DurableUsageLog(output_dir)
+    attempt_events = (_AttemptEvents(output_dir)
+                      if circuit_info.get("circuit_type") == "SCIntegrator"
+                      and prediction_prompt_version == "compact_v2" else None)
     final_record = None
     stop_reason = "max_iterations"
     stage_totals = {f"{stage}_seconds": 0.0 for stage in _STAGE_NAMES}
@@ -247,7 +318,7 @@ def run_active_learning(
         timing = {}
 
         inverse_client = _make_logged_llm_client(
-            llm_client, llm_usage_log, iteration, "inverse_design"
+            llm_client, llm_usage_log, iteration, "inverse_design", attempt_events
         )
         start = time.perf_counter()
         inverse_result = propose_inverse_design_seed(
@@ -286,7 +357,7 @@ def run_active_learning(
         timing["data_expansion_seconds"] = time.perf_counter() - start
 
         prediction_client = _make_logged_llm_client(
-            llm_client, llm_usage_log, iteration, "performance_prediction"
+            llm_client, llm_usage_log, iteration, "performance_prediction", attempt_events
         )
         start = time.perf_counter()
         predictions = predict_candidate_performance(
@@ -563,7 +634,6 @@ def run_active_learning(
                 Path(output_dir) / "iteration_log.jsonl",
                 iteration_entry,
             )
-            _save_jsonl(llm_usage_log, output_dir, "llm_usage.jsonl")
 
         verified_success = (
             new_record["status"]["joint_success"] is True
@@ -589,5 +659,6 @@ def run_active_learning(
         "total_timing": total_timing,
         "total_tokens": _sum_token_usage(llm_usage_log),
         "llm_calls": len(llm_usage_log),
+        "usage_unknown": attempt_events.usage_unknown if attempt_events is not None else False,
         "evaluation_counts": evaluation_counts,
     }
