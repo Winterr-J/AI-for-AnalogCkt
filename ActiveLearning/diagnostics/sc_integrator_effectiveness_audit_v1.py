@@ -418,11 +418,18 @@ def load_al(root, batch_id, circuit_id, manifest_hash, prep, template):
         raise EvidenceError(f"ambiguous Batch job: {circuit_id}")
     job = jobs[0]
     paths = prep["paths"]
+    source_path = job.get("source_path")
+    source_hashes = prep["receipt"].get("source_sha256")
     if (Path(job.get("config_path", "")).resolve() != paths["config_path"]
             or Path(job.get("d0_path", "")).resolve() != paths["d0_path"]
             or job.get("config_sha256") != sha(paths["config_path"])
             or job.get("d0_sha256") != sha(paths["d0_path"])
-            or job.get("source_sha256") != prep["receipt"].get("source_sha256")
+            or not isinstance(source_path, str) or not source_path
+            or Path(source_path).is_absolute()
+            or not isinstance(source_hashes, dict) or source_path not in source_hashes
+            or not isinstance(source_hashes[source_path], str)
+            or not isinstance(job.get("source_sha256"), str)
+            or job["source_sha256"] != source_hashes[source_path]
             or job.get("target_spec_sha256") != canonical_sha(prep["config"]["target_specs"])):
         raise EvidenceError(f"Batch job not bound to Preparation: {circuit_id}")
     job_state = state.get("jobs", {}).get(circuit_id)

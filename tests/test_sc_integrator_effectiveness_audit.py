@@ -39,6 +39,7 @@ class EffectivenessAuditTests(unittest.TestCase):
             path.mkdir()
         self.batch_id = "MTV2_SCI_PREP_001"
         self.circuit = "circuit_0611"
+        self.source_path = f"dataset/{self.circuit}/topology/{self.circuit}.py"
         self.ids = [f"circuit_{611 + i:04d}" for i in range(10)]
         self.metrics = audit.METRICS
         self.specs = {
@@ -153,7 +154,10 @@ class EffectivenessAuditTests(unittest.TestCase):
             artifacts[path.relative_to(self.prep_dir).as_posix()] = audit.sha(path)
         self.receipt = {"status": "PREPARATION_READY", "batch_id": self.batch_id,
                         "circuit_id": self.circuit,
-                        "source_sha256": "synthetic-source",
+                        "source_sha256": {
+                            self.source_path: "synthetic-source",
+                            f"dataset/{self.circuit}/topology/{self.circuit}.cir":
+                                "synthetic-netlist-source"},
                         "candidate_manifest_sha256": self.manifest_hash,
                         "target_spec_sha256": audit.canonical_sha(self.specs),
                         "config_path": self.config_path.relative_to(self.prep_dir).as_posix(),
@@ -189,6 +193,7 @@ class EffectivenessAuditTests(unittest.TestCase):
                     "candidate_manifest_sha256": self.manifest_hash,
                     "jobs": [{"job_id": self.circuit, "circuit_id": self.circuit,
                               "config_path": str(self.config_path), "d0_path": str(self.d0_path),
+                              "source_path": self.source_path,
                               "source_sha256": "synthetic-source",
                               "config_sha256": audit.sha(self.config_path),
                               "d0_sha256": audit.sha(self.d0_path),
@@ -212,6 +217,20 @@ class EffectivenessAuditTests(unittest.TestCase):
                     {"event": "finished", "attempt": 1, "vector_sha256": "vector",
                      "outcome": "complete"}])
 
+    def rewrite_al_job(self, change):
+        batch_dir = self.batch / self.batch_id
+        manifest_path = batch_dir / "manifest.json"
+        manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+        change(manifest["jobs"][0])
+        manifest["manifest_sha256"] = audit.canonical_sha({
+            "runtime": {key: value for key, value in manifest.items()
+                        if key != "manifest_sha256"}})
+        save_json(manifest_path, manifest)
+        status_path = batch_dir / "status.json"
+        status = json.loads(status_path.read_text(encoding="utf-8"))
+        status["manifest_sha256"] = manifest["manifest_sha256"]
+        save_json(status_path, status)
+
     def execute(self):
         return audit.run(self.repo, self.prep, self.batch, 1, 1, self.output)
 
@@ -231,6 +250,57 @@ class EffectivenessAuditTests(unittest.TestCase):
         self.assertEqual(row["d0_joint_success_count"], "0")
         self.assertEqual(row["al_joint_success_count"], "0")
         self.assertEqual(len(list(self.output.iterdir())), 4)
+
+    def test_source_map_to_scalar_binding_succeeds(self):
+        self.assertEqual(self.receipt["source_sha256"][self.source_path],
+                         "synthetic-source")
+        report = self.execute()
+        self.assertEqual(report["circuits"][self.circuit]["status"], "OK")
+
+    def test_source_path_missing_fails_closed(self):
+        self.rewrite_al_job(lambda job: job.pop("source_path"))
+        report = self.execute()
+        self.assertEqual(report["circuits"][self.circuit]["status"], "INTEGRITY_UNKNOWN")
+        self.assertIn("Batch job not bound to Preparation",
+                      report["circuits"][self.circuit]["error"])
+
+    def test_source_path_not_in_preparation_map_fails_closed(self):
+        self.rewrite_al_job(lambda job: job.update({"source_path": "dataset/other.py"}))
+        report = self.execute()
+        self.assertEqual(report["circuits"][self.circuit]["status"], "INTEGRITY_UNKNOWN")
+        self.assertIn("Batch job not bound to Preparation",
+                      report["circuits"][self.circuit]["error"])
+
+    def test_source_hash_mismatch_fails_closed(self):
+        self.rewrite_al_job(lambda job: job.update({"source_sha256": "wrong"}))
+        report = self.execute()
+        self.assertEqual(report["circuits"][self.circuit]["status"], "INTEGRITY_UNKNOWN")
+        self.assertIn("Batch job not bound to Preparation",
+                      report["circuits"][self.circuit]["error"])
+
+    def test_invalid_source_binding_types_fail_closed(self):
+        cases = (("path_list", {"source_path": [self.source_path]}, None),
+                 ("hash_list", {"source_sha256": ["synthetic-source"]}, None),
+                 ("receipt_list", {}, ["synthetic-source"]),
+                 ("map_value_number", {}, {self.source_path: 123}))
+        for label, job_fields, receipt_hashes in cases:
+            with self.subTest(label=label):
+                self.write_al()
+                self.write_receipt()
+                if job_fields:
+                    self.rewrite_al_job(lambda job: job.update(job_fields))
+                if receipt_hashes is not None:
+                    self.receipt["source_sha256"] = receipt_hashes
+                    save_json(self.prep_dir / "result.json", self.receipt)
+                    save_json(self.prep / self.batch_id / "summary.json", {
+                        "batch_id": self.batch_id, "status": "PREPARATION_COMPLETE",
+                        "circuits": {self.circuit: self.receipt}})
+                report = audit.run(self.repo, self.prep, self.batch, 1, 1,
+                                   self.base / f"output_{label}")
+                self.assertEqual(report["circuits"][self.circuit]["status"],
+                                 "INTEGRITY_UNKNOWN")
+                self.assertIn("Batch job not bound to Preparation",
+                              report["circuits"][self.circuit]["error"])
 
     def test_no_metric_stitching_and_invalid_filter(self):
         rows = [audit.as_sample(self.real_record("a", [3, 1, .5, .5, .5], 1),
