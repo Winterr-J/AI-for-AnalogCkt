@@ -26,9 +26,10 @@ _MAX_ROUND_ATTEMPTS = 3
 class PredictionFormatError(ValueError):
     """Safe classification for one rejected prediction response."""
 
-    def __init__(self, category, message):
+    def __init__(self, category, message, diagnostics=None):
         super().__init__(message)
         self.category = category
+        self.diagnostics = diagnostics or {}
 
 
 def _extract_performance_definitions(performance_template):
@@ -262,11 +263,19 @@ def _parse_predictions(raw_response, candidate_ids, metric_names, *, detailed=Fa
             raise ValueError("missing candidate predictions")
         return parsed
     try:
-        document = json.loads(_strip_markdown_fence(raw_response, allow_bom=True))
+        normalized = _strip_markdown_fence(raw_response, allow_bom=True)
+        document = json.loads(normalized)
     except json.JSONDecodeError as error:
         raise PredictionFormatError(
             "JSON_SYNTAX", f"invalid LLM prediction response: JSON syntax at "
-            f"line {error.lineno}, column {error.colno}") from error
+            f"line {error.lineno}, column {error.colno}", diagnostics={
+                "json_error_msg": error.msg,
+                "json_error_pos": error.pos,
+                "json_error_lineno": error.lineno,
+                "json_error_colno": error.colno,
+                "normalized_response_chars": len(normalized),
+                "chars_after_error": len(normalized) - error.pos,
+            }) from error
     except (AttributeError, TypeError) as error:
         raise PredictionFormatError("JSON_SCHEMA", "invalid LLM prediction response") from error
     if not isinstance(document, dict) or not isinstance(document.get("predictions"), list):
@@ -415,8 +424,12 @@ def _collect_committee_rounds(
                 validation_errors.append(detail)
                 record_failure = getattr(client, "record_format_failure", None)
                 if callable(record_failure):
-                    record_failure(getattr(error, "category", "SCHEMA_ERROR"),
-                                   raw_response)
+                    category = getattr(error, "category", "SCHEMA_ERROR")
+                    if detailed:
+                        record_failure(category, raw_response,
+                                       getattr(error, "diagnostics", None))
+                    else:
+                        record_failure(category, raw_response)
                 continue
             rounds.append(parsed)
             attempt_counts.append(attempt)

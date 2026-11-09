@@ -162,24 +162,34 @@ def _make_logged_llm_client(client, usage_log, iteration, stage, event_log=None)
     round_number = 0
     prediction_member = None
     format_attempt = None
+    completion_status = None
 
     def set_prediction_attempt(member, attempt):
-        nonlocal prediction_member, format_attempt
+        nonlocal prediction_member, format_attempt, completion_status
         prediction_member, format_attempt = member, attempt
+        completion_status = None
 
-    def record_format_failure(category, response):
+    def record_format_failure(category, response, diagnostics=None):
         if event_log is not None:
-            event_log.append({"event": "format_failed", "iteration": iteration,
-                              "stage": stage, "committee_member": prediction_member,
-                              "format_attempt": format_attempt, "category": category,
-                              "response_chars": len(response) if isinstance(response, str) else None,
-                              "response_sha256": hashlib.sha256(
-                                  response.encode("utf-8")).hexdigest()
-                                  if isinstance(response, str) else None})
+            event = {"event": "format_failed", "iteration": iteration,
+                     "stage": stage, "committee_member": prediction_member,
+                     "format_attempt": format_attempt, "category": category,
+                     "response_chars": len(response) if isinstance(response, str) else None,
+                     "response_sha256": hashlib.sha256(
+                         response.encode("utf-8")).hexdigest()
+                         if isinstance(response, str) else None,
+                     "completion_status": completion_status}
+            if diagnostics:
+                event.update({key: diagnostics[key] for key in (
+                    "json_error_msg", "json_error_pos", "json_error_lineno",
+                    "json_error_colno", "normalized_response_chars",
+                    "chars_after_error") if key in diagnostics})
+            event_log.append(event)
 
     def logged(prompt):
-        nonlocal round_number
+        nonlocal round_number, completion_status
         round_number += 1
+        completion_status = None
         context = {
             "iteration": iteration,
             "stage": stage,
@@ -191,11 +201,17 @@ def _make_logged_llm_client(client, usage_log, iteration, stage, event_log=None)
         if event_log is not None:
             event_log.append({"event": "logical_started", **context})
         before = len(usage_log)
+        def record_attempt_event(event):
+            nonlocal completion_status
+            if event.get("event") == "response_received":
+                completion_status = event.get("completion_status")
+            event_log.append({**context, **event})
+
         try:
             if client is None:
                 response = call_inverse_design_llm(
                     prompt, usage_log=usage_log, usage_context=context,
-                    attempt_log=(lambda event: event_log.append({**context, **event}))
+                    attempt_log=record_attempt_event
                     if event_log is not None else None)
             else:
                 kwargs = {}

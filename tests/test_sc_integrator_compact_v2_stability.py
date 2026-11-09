@@ -346,6 +346,65 @@ class CompactV2StabilityTests(unittest.TestCase):
                                          detailed=True)
         self.assertEqual(caught.exception.category, "METRIC_MISSING")
 
+    def test_json_syntax_diagnostics_preserve_exact_parser_positions(self):
+        valid = _response()
+        self.assertEqual(predictor._parse_predictions(
+            valid, IDS, METRICS, detailed=True)[IDS[0]][METRICS[0]], 1.0)
+        self.assertEqual(predictor._parse_predictions(
+            f"```json\n{valid}\n```", IDS, METRICS, detailed=True)[IDS[0]][METRICS[0]], 1.0)
+        short = '{"predictions":' + 'x' * (167 - len('{"predictions":'))
+        self.assertEqual(len(short), 167)
+        for raw in (valid[:-1], valid + " trailing",
+                    '{"predictions":[{"candidate_id":"unfinished}', short):
+            with self.subTest(response_chars=len(raw), tail=raw[-12:]):
+                normalized = predictor._strip_markdown_fence(raw, allow_bom=True)
+                with self.assertRaises(json.JSONDecodeError) as native:
+                    json.loads(normalized)
+                with self.assertRaises(predictor.PredictionFormatError) as caught:
+                    predictor._parse_predictions(raw, IDS, METRICS, detailed=True)
+                self.assertEqual(caught.exception.category, "JSON_SYNTAX")
+                self.assertEqual(caught.exception.diagnostics, {
+                    "json_error_msg": native.exception.msg,
+                    "json_error_pos": native.exception.pos,
+                    "json_error_lineno": native.exception.lineno,
+                    "json_error_colno": native.exception.colno,
+                    "normalized_response_chars": len(normalized),
+                    "chars_after_error": len(normalized) - native.exception.pos,
+                })
+
+    def test_format_failure_event_links_completion_status_without_response_body(self):
+        raw = '{"predictions":['
+
+        def fake_llm(_prompt, *, usage_log, usage_context, attempt_log):
+            usage_log.append({**usage_context, "input_tokens": 3,
+                              "output_tokens": 2, "total_tokens": 5})
+            attempt_log({"event": "response_received", "completion_status": "stop",
+                         "response_chars": len(raw),
+                         "response_sha256": hashlib.sha256(raw.encode()).hexdigest()})
+            return raw
+
+        with tempfile.TemporaryDirectory() as directory:
+            usage = _AL["_DurableUsageLog"](directory)
+            events = _AL["_AttemptEvents"](directory)
+            with patch.dict(_AL, {"call_inverse_design_llm": fake_llm}):
+                client = _AL["_make_logged_llm_client"](
+                    None, usage, 2, "performance_prediction", events)
+                with self.assertRaisesRegex(ValueError, "round 1 failed after 3 attempts"):
+                    predictor._collect_committee_rounds(
+                        client, "TASK", IDS, METRICS, 5, detailed=True)
+            rows = _rows(Path(directory) / "llm_attempt_events.jsonl")
+            failures = [row for row in rows if row["event"] == "format_failed"]
+            self.assertEqual(len(failures), 3)
+            self.assertEqual([row["format_attempt"] for row in failures], [1, 2, 3])
+            self.assertTrue(all(row["completion_status"] == "stop" for row in failures))
+            self.assertTrue(all(row["response_chars"] == len(raw) and
+                                row["response_sha256"] == hashlib.sha256(raw.encode()).hexdigest()
+                                for row in failures))
+            self.assertTrue(all(row["chars_after_error"] == 0 for row in failures))
+            self.assertTrue(all("TASK" not in json.dumps(row) and raw not in json.dumps(row)
+                                for row in rows))
+            self.assertEqual(len(_rows(Path(directory) / "llm_usage.jsonl")), 3)
+
     def test_three_format_failures_keep_durable_usage_and_attempt_identity(self):
         with tempfile.TemporaryDirectory() as directory:
             usage = _AL["_DurableUsageLog"](directory)
